@@ -13,32 +13,31 @@ public abstract class PowerUp extends DynamicEntity {
 
     public PowerUp(double x, double y, double width, double height) {
         super(x, y, width, height);
-        this.velocityX = 0;
-        this.velocityY = EMERGE_SPEED;
-        this.emerging = true;
-        this.emergeTarget = y - height; 
-        this.affectedByGravity = false;
+        setVelocityX(0);                    // ← setter
+        setVelocityY(EMERGE_SPEED);         // ← setter
+        setAffectedByGravity(false);
+        this.emerging     = true;
+        this.emergeTarget = y - height;
     }
 
     @Override
     public void update(double deltaTime) {
-        if (emerging) {
-            y += velocityY * deltaTime;
+        super.update(deltaTime); // BasicPhysics aggiorna la posizione
             if (y <= emergeTarget) {
-                y = emergeTarget;
+                setY(emergeTarget);
                 emerging = false;
-                affectedByGravity = true;   
-                velocityX = MOVE_SPEED;     
+                setAffectedByGravity(true);
+                setVelocityX(MOVE_SPEED);   // ← setter
             }
-        } else {
-            x += velocityX * deltaTime;
+         else {
+            super.update(deltaTime);
         }
     }
 
     
      
     public void reverseDirection() {
-        velocityX = -velocityX;
+        setVelocityX(-getVelocityX());
     }
 
    

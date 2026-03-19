@@ -10,7 +10,11 @@ public class Goomba extends DynamicEntity {
     private static final double SPEED        = 60.0;
     private static final double SQUISH_TIME  = 0.4; // secondi prima di scomparire
  
-    public enum GoombaState { WALK, SQUISHED, DEAD }
+    public enum GoombaState { 
+        WALK, 
+        SQUISHED, 
+        DEAD 
+    }
     private GoombaState state;
     private double squishTimer;
  
@@ -23,7 +27,7 @@ public class Goomba extends DynamicEntity {
     public Goomba(double x, double y) {
         super(x, y, 32, 32);
         this.state = GoombaState.WALK;
-        this.velocityX = -SPEED; // Parte verso sinistra
+         setVelocityX(-SPEED);  // Parte verso sinistra
         this.squishTimer = 0;
         this.animTimer = 0;
         this.animFrame = 0;
@@ -93,7 +97,7 @@ public class Goomba extends DynamicEntity {
     public void squish() {
         if (state != GoombaState.WALK) return;
         state = GoombaState.SQUISHED;
-        velocityX = 0;
+        setVelocityX(0);
         affectedByGravity = false;
     }
  

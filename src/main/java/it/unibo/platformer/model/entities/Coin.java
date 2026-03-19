@@ -26,7 +26,7 @@ public class Coin extends DynamicEntity {
         Coin coin = new Coin(x, y);
         coin.isPopping = true;
         coin.popStartY = y;
-        coin.velocityY = POP_VELOCITY;
+        coin.setVelocityY(POP_VELOCITY);
         coin.affectedByGravity = false; // Gestiamo noi il movimento del pop
         return coin;
     }
@@ -37,8 +37,8 @@ public class Coin extends DynamicEntity {
  
         // Se sta saltando fuori da un blocco
         if (isPopping) {
-            y += velocityY * deltaTime;
-            velocityY += 600 * deltaTime; // Gravità manuale per il pop
+           setVelocityY(getVelocityY() + 600 * deltaTime); // gravità manuale
+           super.update(deltaTime); // aggiorna posizione tramite BasicPhysics
  
             
             if (y >= popStartY) {
