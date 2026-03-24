@@ -4,10 +4,7 @@ import it.unibo.platformer.model.entities.DynamicEntity;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-/*
- * 
- *
- */
+
 public class Player extends DynamicEntity {
 
     public enum PlayerState { SMALL, BIG, INVINCIBLE } //logic states
@@ -175,7 +172,8 @@ public class Player extends DynamicEntity {
     *   If already small, the player dies.
     */
     public boolean takeDamage() {
-        if (playerState == PlayerState.INVINCIBLE) return false;
+        if (playerState == PlayerState.INVINCIBLE) 
+            return false;
         if (playerState == PlayerState.BIG) {
             setState(PlayerState.SMALL);
             return false;
