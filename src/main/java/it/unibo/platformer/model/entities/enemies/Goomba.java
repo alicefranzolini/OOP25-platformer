@@ -7,8 +7,8 @@ import javafx.scene.paint.Color;
 
 public class Goomba extends DynamicEntity {
  
-    private static final double SPEED        = 60.0;
-    private static final double SQUISH_TIME  = 0.4; // secondi prima di scomparire
+    private static final double SPEED = 60.0;
+    private static final double SQUISH_TIME  = 0.4; // how long the squished sprite stays before disappearing
  
     public enum GoombaState { 
         WALK, 
@@ -18,7 +18,7 @@ public class Goomba extends DynamicEntity {
     private GoombaState state;
     private double squishTimer;
  
-    // Animazione camminata
+    // walking animations
     private double animTimer;
     private int animFrame;
     private static final double FRAME_DURATION = 0.2;
@@ -27,7 +27,7 @@ public class Goomba extends DynamicEntity {
     public Goomba(double x, double y) {
         super(x, y, 32, 32);
         this.state = GoombaState.WALK;
-         setVelocityX(-SPEED);  // Parte verso sinistra
+         setVelocityX(-SPEED);  //start walking left
         this.squishTimer = 0;
         this.animTimer = 0;
         this.animFrame = 0;
@@ -38,17 +38,17 @@ public class Goomba extends DynamicEntity {
         switch (state) {
  
             case WALK:
-                // Aggiorna animazione
+                // update animations
                 animTimer += deltaTime;
                 if (animTimer >= FRAME_DURATION) {
                     animTimer = 0;
                     animFrame = (animFrame + 1) % FRAMES;
                 }
-                super.update(deltaTime); // Aggiorna posizione
+                super.update(deltaTime); // update positions
                 break;
  
             case SQUISHED:
-                // Aspetta un po' prima di scomparire
+                // stay flattened then disappear
                 squishTimer += deltaTime;
                 if (squishTimer >= SQUISH_TIME) {
                     destroy();
@@ -66,9 +66,8 @@ public class Goomba extends DynamicEntity {
         if (!active) return;
  
         if (state == GoombaState.SQUISHED) {
-            // Disegna schiacciato (metà altezza)
             gc.setFill(Color.SADDLEBROWN);
-            gc.fillRect(x, y + height / 2, width, height / 2);
+            gc.fillRect(x, y + height / 2, width, height / 2);//squished goomba
             return;
         }
  
@@ -93,7 +92,7 @@ public class Goomba extends DynamicEntity {
         gc.fillOval(x + 22, y + 10, 4, 4);
     }
  
-   //se mario ci salta sopra si appiattisce
+   
     public void squish() {
         if (state != GoombaState.WALK) return;
         state = GoombaState.SQUISHED;
@@ -101,7 +100,7 @@ public class Goomba extends DynamicEntity {
         affectedByGravity = false;
     }
  
-    //se tocca mario di lato restituisce true(mario subisce danno)
+    //if goomba touch Mario it damages him
     public boolean hitsPlayer() {
         return state == GoombaState.WALK;
     }
