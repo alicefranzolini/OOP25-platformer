@@ -16,7 +16,7 @@ public class TestPlayer {
     }
 
     // ------------------------------------------------------------
-    // MOVIMENTO ORIZZONTALE
+    // HORIZONTAL MOVEMENT
     // ------------------------------------------------------------
 
     @Test
@@ -39,7 +39,7 @@ public class TestPlayer {
     }
 
     // ------------------------------------------------------------
-    // SALTO
+    // JUMPING
     // ------------------------------------------------------------
 
     @Test
@@ -64,7 +64,7 @@ public class TestPlayer {
     }
 
     // ------------------------------------------------------------
-    // STATI DEL PLAYER
+    // PLAYER STATES
     // ------------------------------------------------------------
 
     @Test
@@ -87,7 +87,7 @@ public class TestPlayer {
     void testInvincibilityEndsAfterTimer() {
         player.setState(Player.PlayerState.INVINCIBLE);
 
-        // Simula 11 secondi (60 FPS)
+        // Simulate 11 seconds (60 FPS)
         for (int i = 0; i < 11 * 60; i++) {
             player.update(1.0 / 60.0);
         }
@@ -96,7 +96,7 @@ public class TestPlayer {
     }
 
     // ------------------------------------------------------------
-    // DANNI
+    // DAMAGE HANDLING
     // ------------------------------------------------------------
 
     @Test
@@ -126,7 +126,7 @@ public class TestPlayer {
     }
 
     // ------------------------------------------------------------
-    // ANIMAZIONI
+    // ANIMATIONS
     // ------------------------------------------------------------
 
     @Test
