@@ -27,4 +27,3 @@ public class StaticEntity extends Entity {
     public void render(GraphicsContext gc) {
     }
 }
-

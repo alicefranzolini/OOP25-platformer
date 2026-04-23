@@ -2,7 +2,6 @@ package it.unibo.platformer.model.entities;
 
 import javafx.scene.canvas.GraphicsContext;
 
-
  
 
 public abstract class Entity {
@@ -15,7 +14,7 @@ public abstract class Entity {
     protected double width;
     protected double height;
 
-    protected boolean active; //if the entity is alive or not
+    protected boolean active=true; //if the entity is alive
 
    
    //initialize variables for entity creation
@@ -27,16 +26,16 @@ public abstract class Entity {
         this.active = true;
     }
 
-
-    public abstract void update(double deltaTime);//handles logic
-    public abstract void render(GraphicsContext gc);//draws the entity 
-
-   //Returns the rectangle used for collision detection.
-     
+//Returns the rectangle used for collision detection.
     public double[] getBoundingBox() {
         return new double[]{ x, y, width, height };
     }
 
+
+    public abstract void update(double deltaTime);//handles logic
+    public abstract void render(GraphicsContext gc);//draws the entity 
+
+   
 
     public double getX() { 
         return x; }
