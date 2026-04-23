@@ -80,31 +80,30 @@ public class Koopa extends DynamicEntity {
         else                gc.fillRect(x + width - 12, y + height - 8, 12, 8);
     }
 
-    //if mario stomp on koopa it became a shell
+    // if mario stomp on koopa it became a shell
     public void stomp() {
         if (state != KoopaState.WALK) return;
         state      = KoopaState.SHELL;
         setVelocityX(0);
-        height     = 32; // Si abbassa
+        height     = 32;
         y  += 16;
         affectedByGravity = true;
     }
 
-   //when mario kick the shell it slides fast
+    // when mario kick the shell it slides fast
     public void kick(boolean kickRight) {
         if (state != KoopaState.SHELL) return;
+        state = KoopaState.SHELL_MOVING; // FIX: stato aggiornato a SHELL_MOVING
         double speed = kickRight ? SHELL_SPEED : -SHELL_SPEED;
         setVelocityX(speed);
     }
 
-   
-    //moving shell kils enemy
-    
+    // moving shell kills enemies
     public boolean canKillEnemies() {
         return state == KoopaState.SHELL_MOVING;
     }
 
-    //when mario touc it on side
+    // when mario touches it on side
     public boolean hitsPlayer() {
         return state == KoopaState.WALK || state == KoopaState.SHELL_MOVING;
     }
