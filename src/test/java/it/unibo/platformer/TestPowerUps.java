@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Generic PowerUp behaviour tests: emergence, start horizontal movement,
  * reverseDirection, collect -> applyEffect + destroy.
  */
-class TestPowerUppala {
+class TestPowerUps {
 
     private static class TestPowerUp extends PowerUp {
         boolean effectApplied = false;
@@ -34,7 +34,7 @@ class TestPowerUppala {
 
         @Override
         public void render(GraphicsContext gc) {
-            // TODO Auto-generated method stub
+        
             throw new UnsupportedOperationException("Unimplemented method 'render'");
         }
     }
