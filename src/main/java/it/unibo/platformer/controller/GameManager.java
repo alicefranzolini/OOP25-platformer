@@ -1,5 +1,6 @@
 package it.unibo.platformer.controller;
-import it.unibo.platformer.model.Level;
+import it.unibo.platformer.model.level.BasicLevel;
+import it.unibo.platformer.model.level.Level;
 
 public class GameManager {
 
@@ -18,7 +19,7 @@ public class GameManager {
     public GameManager() {
         this.currenState = GameState.MENU;
         this.running = false;
-        this.currentLevel = new Level();
+        this.currentLevel = new BasicLevel();
     }
 
     public void startGame() {
