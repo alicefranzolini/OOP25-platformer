@@ -1,54 +1,63 @@
-package it.unibo.platformer.model.physics;
+package it.unibo.platformer.model.physics.impl;
 
-public class Vector {
+import it.unibo.platformer.model.physics.api.Vector;
+
+public class VectorImpl implements Vector{
     
     private float x;
     private float y;
 
     /*Builder*/
-    public Vector(){};
+    public VectorImpl(){};
 
-    public Vector(float x, float y){
+    public VectorImpl(float x, float y){
         this.x = x;
         this.y = y;
     }
 
     /*Setter*/
+    @Override
     public void setX(float x){
         this.x = x;
     }
-
+    
+    @Override
     public void setY(float y){
         this.y = y;
     }
 
     /*Getter*/
+    @Override
     public float getX(){
         return this.x;
     }
 
+    @Override
     public float getY(){
         return this.y;
     }
 
     /*Methods*/
-    public void add(Vector v){
+    @Override
+    public void add(VectorImpl v){
         this.x += v.getX();
         this.y += v.getY();
     }
 
-    public void sub(Vector v){
+    @Override
+    public void sub(VectorImpl v){
         this.x -= v.getX();
         this.y -= v.getY();
     }
 
+    @Override
     public void scale(float num){   /*multiplication for a number*/
         this.x = this.x * num;
         this.y = this.y * num;
     }
 
-    public Vector clone(){
-        return new Vector(this.x, this.y);
+    public VectorImpl clone(){
+        return new VectorImpl(this.x, this.y);
     }
 
     @Override

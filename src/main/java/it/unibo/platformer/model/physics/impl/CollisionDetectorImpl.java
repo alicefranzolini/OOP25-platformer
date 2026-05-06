@@ -1,10 +1,14 @@
-package it.unibo.platformer.model.physics;
+package it.unibo.platformer.model.physics.impl;
 
 import java.awt.Rectangle;
 import java.lang.Math;
 
-public class CollisionDetector {
+import it.unibo.platformer.model.physics.api.CollisionDetector;
+import it.unibo.platformer.model.physics.api.GameObject;
 
+public class CollisionDetectorImpl implements CollisionDetector{
+
+    @Override
     public boolean collision(GameObject a, GameObject b){
         Rectangle r1 = new Rectangle((int)a.getPosition().getX(),(int)a.getPosition().getY(),(int)a.getWidth(),(int)a.getHeight());
 
@@ -18,7 +22,8 @@ public class CollisionDetector {
     @param StaticEntity
     @return CollisionResult
     */
-    public CollisionResult getCollisionResult(GameObject a, GameObject b){
+    @Override
+    public CollisionResult getCollisionResult(GameObjectImpl a, GameObjectImpl b){
         if(!collision(a, b)){
             return null;
         }else{
@@ -31,7 +36,7 @@ public class CollisionDetector {
             float distanceB = centerAY - centerBY;
 
             float combineWidhts = (a.getWidth() + b.getWidth()) / 2;
-            float combineHeights = (a.getHeight() + a.getHeight()) / 2;
+            float combineHeights = (a.getHeight() + b.getHeight()) / 2;
 
             float insideX = combineWidhts - Math.abs(distanceA);
             float insideY = combineHeights - Math.abs(distanceB);

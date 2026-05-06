@@ -1,46 +1,44 @@
-package it.unibo.platformer.model.entities;
+package it.unibo.platformer.model.entities.worldEntity;
  
+import it.unibo.platformer.model.entities.StaticEntity;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
  
 
 public class Block extends StaticEntity {
- //Può essere un blocco normale, un blocco "?" con sorpresa, o un mattone.
-    public enum BlockType {
-        NORMAL,     // Blocco marrone standard
-        BRICK,      // Mattone distruttibile
-        QUESTION,   // Blocco "?" con power-up o moneta
+ 
+    public enum BlockType {//it can have different type
+        NORMAL,     
+        BRICK,      
+        QUESTION,   
     }
  
     private BlockType type;
-    private boolean hit;           // Se il blocco è già stato colpito
-    private boolean hasContent;    // Se c'è qualcosa dentro (per QUESTION )
-
- 
+    private boolean hit;           // if it's already been hitted
+    private boolean hasContent;    // used for question block
     public Block(double x, double y, BlockType type) {
         super(x, y, 32, 32); // 32x32 pixel
         this.type = type;
         this.hit = false;
-        this.hasContent = (type == BlockType.QUESTION );
+        this.hasContent = (type == BlockType.QUESTION );//only for question block
     
     }
  
-    // Costruttore blocco normale 
+    //constructor for normal block
     public Block(double x, double y) {
         this(x, y, BlockType.NORMAL);
     }
  
     @Override
     public void update(double deltaTime) {
-        
-        
+       
     }
  
     @Override
     public void render(GraphicsContext gc) {
         double renderY = y;
  
-        // Placeholder grafico — sarà sostituito con sprite pixel-art
+        // change with sprite pixel-art
         switch (type) {
             case BRICK:
                 gc.setFill(hit ? Color.GRAY : Color.SADDLEBROWN);
@@ -61,14 +59,14 @@ public class Block extends StaticEntity {
             gc.fillText("?", x + 10, renderY + 22);
         }
     }
- 
-    //restituisce true se c'è contenuto da far uscire.
+ //for the spawning(not here)
     public boolean onHit() {
-        if (hit) return false;
+        if (hit) 
+            return false;
  
         if (hasContent) {
             hit = true;
-            // Il contenuto (moneta o power-up) viene gestito da PowerUpFactory / LevelLoader
+           
             return true;
         }
  
