@@ -4,12 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unibo.platformer.model.entities.Entity;
+import it.unibo.platformer.model.entities.players.Player;
+import it.unibo.platformer.model.physics.*;
+import it.unibo.platformer.model.entities.DynamicEntity;
+import it.unibo.platformer.model.entities.StaticEntity;
 
 public class BasicLevel implements Level {
     private final List<Entity> entities;
 
+    private Player player;
+
+    private final CollisionDetector detector;
+    private final CollisionResolver resolver;
+
     public BasicLevel() {
         this.entities = new ArrayList<>();
+        this.detector = new CollisionDetector();
+        this.resolver = new CollisionResolver();
+    }
+
+    @Override
+    public void setPlayer(Player player) {
+        this.player = player;
+        addEntity(player);
+    }
+
+    @Override
+    public Player getPlayer() {
+        return this.player;
     }
 
     @Override
@@ -35,7 +57,37 @@ public class BasicLevel implements Level {
             }
         }
 
+        for (Entity dynamicEntity : this.entities) {
+            if (!(dynamicEntity instanceof DynamicEntity)) {
+                continue;
+            }
+
+            for (Entity staticEntity : this.entities) {
+                if (!(staticEntity instanceof StaticEntity)) {
+                    continue;
+                }
+
+                GameObject staticObj = new GameObject(
+                    (float) staticEntity.getX(),
+                    (float) staticEntity.getY(),
+                    (float) staticEntity.getWidth(),
+                    (float) staticEntity.getHeight()
+                );
+
+                CollisionResult result = detector.getCollisionResult(((DynamicEntity) dynamicEntity).getGameObject(), staticObj);
+
+                if (result != null) {
+                    try {
+                        resolver.ResolveOne(result);
+                    } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                    }
+                }
+            }
+        }
+
         //remove if entity die
         this.entities.removeIf(entity -> !entity.isActive());
     }
+
 }
