@@ -1,4 +1,4 @@
-package it.unibo.platformer.model;
+package it.unibo.platformer.model.score;
 
 public class ScoreSystem {
 
