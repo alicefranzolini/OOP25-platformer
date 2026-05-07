@@ -2,19 +2,22 @@ package it.unibo.platformer.model.entities;
 
 import javafx.scene.canvas.GraphicsContext;
 
-
- //Classe base per tutte le entità del gioco. 
+ 
 
 public abstract class Entity {
 
+        //position
     protected double x;
     protected double y;
 
+            //sizes
     protected double width;
     protected double height;
 
-    protected boolean active;
+    protected boolean active=true; //if the entity is alive
 
+   
+   //initialize variables for entity creation
     public Entity(double x, double y, double width, double height) {
         this.x = x;
         this.y = y;
@@ -23,19 +26,16 @@ public abstract class Entity {
         this.active = true;
     }
 
-    // Aggiorna lo stato dell'entità ad ogni frame.
-    public abstract void update(double deltaTime);
-
-
-    // Disegna l'entità
-    public abstract void render(GraphicsContext gc);
-
-   //Restituisce il rettangolo di collisione dell'entità.
-     
+//Returns the rectangle used for collision detection.
     public double[] getBoundingBox() {
         return new double[]{ x, y, width, height };
     }
 
+
+    public abstract void update(double deltaTime);//handles logic
+    public abstract void render(GraphicsContext gc);//draws the entity 
+
+   
 
     public double getX() { 
         return x; }

@@ -4,8 +4,8 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class StaticEntity extends Entity {
     
-    // Indica se l'entità è solida (genera collisioni fisiche)
-    protected boolean solid;
+    
+    protected boolean solid;//indicates whether the entity should block movement.(if the players collides with it or can pass through)
 
     public StaticEntity(double x, double y, double width, double height) {
         super(x, y, width, height);
@@ -15,7 +15,7 @@ public class StaticEntity extends Entity {
     
     @Override
     public void update(double deltaTime) {
-        // Nessun aggiornamento di default per entità statiche
+        // empty because static entities do not move or animate by default
     }
 
     public boolean isSolid() { 
@@ -25,7 +25,5 @@ public class StaticEntity extends Entity {
 
     @Override
     public void render(GraphicsContext gc) {
-        throw new UnsupportedOperationException("Unimplemented method 'render'");
     }
 }
-

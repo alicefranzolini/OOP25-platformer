@@ -1,6 +1,8 @@
 package it.unibo.platformer;
 
 import it.unibo.platformer.model.entities.powerup.PowerUp;
+import javafx.scene.canvas.GraphicsContext;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * Generic PowerUp behaviour tests: emergence, start horizontal movement,
  * reverseDirection, collect -> applyEffect + destroy.
  */
-class TestPowerUp {
+class TestPowerUps {
 
     private static class TestPowerUp extends PowerUp {
         boolean effectApplied = false;
@@ -28,6 +30,12 @@ class TestPowerUp {
         public void destroy() {
             destroyedFlag = true;
             // keep simple: mark destroyedFlag; do not rely on engine removal here
+        }
+
+        @Override
+        public void render(GraphicsContext gc) {
+        
+            throw new UnsupportedOperationException("Unimplemented method 'render'");
         }
     }
 
