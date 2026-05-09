@@ -255,17 +255,18 @@ public class Player extends DynamicEntity {
      * @return true if the player should die
      */
     public boolean takeDamage() {
-        if (playerState == PlayerState.INVINCIBLE) return false;
-
-        if (playerState == PlayerState.BIG) {
-            setState(PlayerState.SMALL);
-            playerState     = PlayerState.INVINCIBLE;
-            invincibleTimer = 2.0;
-            return false;
-        }
-
-        return true;
+    if (playerState == PlayerState.INVINCIBLE) {
+        return false;
     }
+
+    if (playerState == PlayerState.BIG) {
+        setState(PlayerState.SMALL);
+        return false;
+    }
+
+    return true; // SMALL → muore
+}
+
 
     /**
      * Starts the death animation.

@@ -1,6 +1,8 @@
 package it.unibo.platformer;
 
 import it.unibo.platformer.model.entities.players.Player;
+import it.unibo.platformer.model.entities.players.Player.PlayerState;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -106,14 +108,15 @@ public class TestPlayer {
     }
 
     @Test
-    void testDamageWhenBigBecomesSmall() {
+        void testDamageWhenBigBecomesSmall() {
         player.setState(Player.PlayerState.BIG);
 
         boolean dead = player.takeDamage();
 
         assertFalse(dead);
-        assertEquals(Player.PlayerState.SMALL, player.getPlayerState());
+        assertEquals(Player.PlayerState.SMALL, player.getPlayerState()); 
     }
+
 
     @Test
     void testDamageWhenInvincibleNoEffect() {
