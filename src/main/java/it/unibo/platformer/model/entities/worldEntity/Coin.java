@@ -35,7 +35,7 @@ public class Coin extends DynamicEntity {
     }
 
     private void loadSprite() {
-        coinSprite = AnimationManager.loadImage("src\\main\\resources\\sprites\\coin.png");
+        coinSprite = AnimationManager.loadImage("/sprites/coin.png");
     }
 
     public static Coin createPopping(double x, double y) {
