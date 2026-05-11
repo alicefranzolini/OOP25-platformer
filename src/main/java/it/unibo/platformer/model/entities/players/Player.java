@@ -1,6 +1,7 @@
 package it.unibo.platformer.model.entities.players;
 
 import it.unibo.platformer.model.entities.DynamicEntity;
+import it.unibo.platformer.model.physics.BasicPhysics;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import it.unibo.platformer.view.AnimationManager;
@@ -69,14 +70,23 @@ public class Player extends DynamicEntity {
     /**
      * Initializes the player at the given position with SMALL size and default states.
      */
-    public Player(double x, double y) {
+    /* public Player(double x, double y) {
         super(x, y, SMALL_W, SMALL_H);
         this.playerState   = PlayerState.SMALL;
         this.spriteState   = SpriteState.IDLE;
         this.facingRight   = true;
         this.visible       = true;
         this.animManager   = new AnimationManager();
+    }*/
+    public Player(double x, double y) {
+        super(x, y, SMALL_W, SMALL_H, new BasicPhysics());
+        this.playerState   = PlayerState.SMALL;
+        this.spriteState   = SpriteState.IDLE;
+        this.facingRight   = true;
+        this.visible       = true;
+        this.animManager   = new AnimationManager();
     }
+
 
     /**
      * Main update loop for the player.
