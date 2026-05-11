@@ -49,9 +49,9 @@ public class Goomba extends DynamicEntity {
      *   /sprites/enemies/goomba_dead.png  → sprite schiacciato
      */
     private void loadAnimations() {
-        Image frame1 = AnimationManager.loadImage("src\\main\\resources\\sprites\\goomba1.png");
-        Image frame2 = AnimationManager.loadImage("src\\main\\resources\\sprites\\goomba2.png");
-        Image dead   = AnimationManager.loadImage("src\\main\\resources\\sprites\\goomba_dead.png");
+        Image frame1 = AnimationManager.loadImage("/sprites/enemies/goomba1.png");
+        Image frame2 = AnimationManager.loadImage("/sprites/enemies/goomba2.png");
+        Image dead   = AnimationManager.loadImage("/sprites/enemies/goomba_dead.png");
 
         // Animazione camminata: 2 sprite singoli messi in array
         if (frame1 != null && frame2 != null) {

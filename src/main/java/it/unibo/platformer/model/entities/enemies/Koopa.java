@@ -57,9 +57,9 @@ public class Koopa extends DynamicEntity {
      *   /sprites/enemies/koopa_shell.png  → guscio fermo e guscio in moto
      */
     private void loadAnimations() {
-        Image walkFrame1  = AnimationManager.loadImage("src\\main\\resources\\sprites\\koopa1.png");
-        Image walkFrame2  = AnimationManager.loadImage("src\\main\\resources\\sprites\\koopa2.png");
-        Image shellSprite = AnimationManager.loadImage("src\\main\\resources\\sprites\\koopa_shell.png");
+        Image walkFrame1  = AnimationManager.loadImage("/sprites/enemies/koopa1.png");
+        Image walkFrame2  = AnimationManager.loadImage("/sprites/enemies/koopa2.png");
+        Image shellSprite = AnimationManager.loadImage(" /sprites/enemies/koopa_shell.png");
 
         // --- Walk: 2 sprite singoli, loop a 0.15 s ---
         if (walkFrame1 != null && walkFrame2 != null) {
