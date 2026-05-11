@@ -1,8 +1,6 @@
 package it.unibo.platformer;
 
 import it.unibo.platformer.model.entities.players.Player;
-import it.unibo.platformer.model.entities.players.Player.PlayerState;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
