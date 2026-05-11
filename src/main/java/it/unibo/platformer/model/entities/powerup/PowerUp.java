@@ -1,6 +1,7 @@
 package it.unibo.platformer.model.entities.powerup;
 
 import it.unibo.platformer.model.entities.DynamicEntity;
+import it.unibo.platformer.model.physics.BasicPhysics;
 
 public abstract class PowerUp extends DynamicEntity {
 
@@ -12,19 +13,31 @@ public abstract class PowerUp extends DynamicEntity {
     private boolean emerging;   // True while the power-up is still emerging from its spawn block 
     private double emergeTarget;    // Y coordinate where the power-up should stop emerging (fully outside the block)
 
-    public PowerUp(double x, double y, double width, double height) {
+  /*  public PowerUp(double x, double y, double width, double height) {
         /*
          *   Initialize position and size, start emergence motion, 
          *   disable gravity until emergence completes
          */
-        super(x, y, width, height);
+    /*    super(x, y, width, height);
         setVelocityX(0);                 // stop horizontal movement initially
         setVelocityY(EMERGE_SPEED);         // set vertical velocity so the power-up moves out of the block
         setAffectedByGravity(false);    // disable gravity while emerging
         this.emerging     = true;
         this.emergeTarget = y - height;
+    } */
+
+    public PowerUp(double x, double y, double width, double height) {
+        super(x, y, width, height, new BasicPhysics());
+
+        setVelocityX(0);                 
+        setVelocityY(EMERGE_SPEED);      
+        setAffectedByGravity(false);     
+
+        this.emerging     = true;
+        this.emergeTarget = y - height;
     }
 
+        
     @Override
     public void update(double deltaTime) {
         // Update base physics (position/velocity) once per frame
