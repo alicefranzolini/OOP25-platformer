@@ -4,16 +4,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import it.unibo.platformer.model.entities.enemies.Koopa;
+import it.unibo.platformer.model.physics.BasicPhysics;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class KoopaTest {
-
+BasicPhysics physics = new BasicPhysics();
     private Koopa koopa;
 
     @BeforeEach
     void setUp() {
-        koopa = new Koopa(100, 200);
+        koopa = new Koopa(100, 200, physics);
     }
 
     @Test

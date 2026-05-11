@@ -1,6 +1,7 @@
 package it.unibo.platformer.model.entities.enemies;
 
 import it.unibo.platformer.model.entities.DynamicEntity;
+import it.unibo.platformer.model.physics.BasicPhysics;
 import it.unibo.platformer.view.AnimationManager;
 import it.unibo.platformer.view.AnimationManager.Animation;
 import javafx.scene.canvas.GraphicsContext;
@@ -29,8 +30,8 @@ public class Goomba extends DynamicEntity {
     private final AnimationManager anim = new AnimationManager();
     private boolean facingLeft = true;
 
-    public Goomba(double x, double y) {
-        super(x, y, 32, 32);
+    public Goomba(double x, double y, BasicPhysics physics) {
+        super(x, y, 32, 32 , physics);
         this.state = GoombaState.WALK;
         setVelocityX(-SPEED);
         this.squishTimer = 0;

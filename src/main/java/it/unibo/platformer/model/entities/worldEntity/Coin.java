@@ -1,6 +1,7 @@
 package it.unibo.platformer.model.entities.worldEntity;
 
 import it.unibo.platformer.model.entities.DynamicEntity;
+import it.unibo.platformer.model.physics.BasicPhysics;
 import it.unibo.platformer.view.AnimationManager;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -25,8 +26,8 @@ public class Coin extends DynamicEntity {
     // Sprite singolo della moneta
     private Image coinSprite;
 
-    public Coin(double x, double y) {
-        super(x, y, 16, 16);
+    public Coin(double x, double y, BasicPhysics physics) {
+        super(x, y, 16, 16, physics);
         this.affectedByGravity = false;
         this.animTimer = 0;
         this.animFrame = 0;
@@ -38,8 +39,8 @@ public class Coin extends DynamicEntity {
         coinSprite = AnimationManager.loadImage("/sprites/coin.png");
     }
 
-    public static Coin createPopping(double x, double y) {
-        Coin coin = new Coin(x, y);
+    public static Coin createPopping(double x, double y, BasicPhysics physics) {
+        Coin coin = new Coin(x, y, physics );
         coin.isPopping = true;
         coin.popStartY = y;
         coin.setVelocityY(POP_VELOCITY);

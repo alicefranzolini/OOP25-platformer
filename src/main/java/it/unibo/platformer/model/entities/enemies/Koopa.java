@@ -4,6 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
 import it.unibo.platformer.model.entities.DynamicEntity;
+import it.unibo.platformer.model.physics.BasicPhysics;
 import it.unibo.platformer.view.AnimationManager;
 import it.unibo.platformer.view.AnimationManager.Animation;
 
@@ -35,8 +36,8 @@ public class Koopa extends DynamicEntity {
     // Constructor
     // -------------------------------------------------------------------------
 
-    public Koopa(double x, double y) {
-        super(x, y, 32, 48);
+    public Koopa(double x, double y, BasicPhysics physics) {
+        super(x, y, 32, 48, physics);
         this.state = KoopaState.WALK;
         this.setVelocityX(-WALK_SPEED);
 
