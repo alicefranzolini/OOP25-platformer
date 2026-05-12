@@ -34,7 +34,7 @@ public abstract class PowerUp extends DynamicEntity {
         setAffectedByGravity(false);     
 
         this.emerging     = true;
-        this.emergeTarget = y - height;
+        this.emergeTarget = getY() - getHeight(); 
     }
 
         
@@ -63,13 +63,20 @@ public abstract class PowerUp extends DynamicEntity {
     }
 
    // Subclasses implement this to apply their specific effect to the player
-    public abstract void applyEffect(Object player);
+   // public abstract void applyEffect(Object player);
 
-    // Called when player collects the power-up: apply effect then destroy this entity    
+    // Called when player collects the power-up: apply effect then destroy this entity   
+    /* 
     public void collect(Object player) {
         applyEffect(player);
         destroy();
     }
+    */
+   public abstract void applyEffect(it.unibo.platformer.model.entities.players.Player player);
+    public void collect(it.unibo.platformer.model.entities.players.Player player) {
+        applyEffect(player);
+        destroy();
+}
 
     // Returns true while the power-up is still emerging (should not be collectible)
     public boolean isEmerging() { 

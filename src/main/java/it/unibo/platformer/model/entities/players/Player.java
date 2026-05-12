@@ -20,7 +20,7 @@ public class Player extends DynamicEntity {
 
 
     public enum PlayerState { SMALL, BIG, INVINCIBLE }   // logic states
-    public enum SpriteState { IDLE, WALK, JUMP }          // graphic states
+    public enum SpriteState { IDLE, WALK, JUMP, DEAD }          // graphic states
 
     private static final double SMALL_W = 16, SMALL_H = 24;
     private static final double BIG_H   = 48;
@@ -143,7 +143,7 @@ public class Player extends DynamicEntity {
      * Handles the death animation manually.
      * Gravity is disabled so we can apply a custom upward jump followed by a fall.
      * When the player falls below the screen, the death animation is considered complete.
-     */
+     
     private void updateDeath(double deltaTime) {
         affectedByGravity = false;
 
@@ -154,6 +154,17 @@ public class Player extends DynamicEntity {
             deathComplete = true;
         }
     }
+*/
+    private void updateDeath(double deltaTime) {
+        affectedByGravity = false;
+        deathVelocityY += DEATH_GRAVITY * deltaTime;
+        setY(getY() + deathVelocityY * deltaTime);
+
+        if (getY() > 1000) {
+            deathComplete = true;
+        }
+    }
+
 
     /**
      * Determines the current animation state based on movement and grounded status.
@@ -200,7 +211,7 @@ public class Player extends DynamicEntity {
      *  - INVINCIBLE → yellow
      *  - BIG → orange-red
      *  - SMALL or DEAD → red
-     */
+     
     @Override
     public void render(GraphicsContext gc) {
         if (!visible) return;
@@ -223,7 +234,34 @@ public class Player extends DynamicEntity {
         gc.setFill(Color.DARKRED);
         gc.fillRect(x + 2, y - 6, width - 4, 8);
     }
+*/
 
+    @Override
+    public void render(GraphicsContext gc) {
+        if (!visible) return;
+
+        double px = getX();
+        double py = getY();
+        double pw = getWidth();
+        double ph = getHeight();
+
+        Color bodyColor;
+        if (dying) {
+            bodyColor = Color.RED;
+        } else if (playerState == PlayerState.INVINCIBLE) {
+            bodyColor = Color.YELLOW;
+        } else if (playerState == PlayerState.BIG) {
+            bodyColor = Color.ORANGERED;
+        } else {
+            bodyColor = Color.RED;
+        }
+
+        gc.setFill(bodyColor);
+        gc.fillRect(px, py, pw, ph);
+
+        gc.setFill(Color.DARKRED);
+        gc.fillRect(px + 2, py - 6, pw - 4, 8);
+    }
 
     /**
      * STATE MANAGEMENT
@@ -234,13 +272,21 @@ public class Player extends DynamicEntity {
     public void setState(PlayerState newState) {
         switch (newState) {
 
-            case BIG:
+/*          case BIG:
                 if (playerState == PlayerState.SMALL) {
                     playerState = PlayerState.BIG;
                     height = BIG_H;
                     y -= (BIG_H - SMALL_H);
                 }
-                break;
+                break;*/
+            case BIG:
+                if (playerState == PlayerState.SMALL) {
+                    playerState = PlayerState.BIG;
+                    height = BIG_H;
+                   // gameObject.getPosition().setY((float)(getY() - (BIG_H - SMALL_H)));
+                    setY(getY() - (BIG_H - SMALL_H));
+                }
+                break;    
 
             case INVINCIBLE:
                 playerState     = PlayerState.INVINCIBLE;
@@ -287,8 +333,7 @@ public class Player extends DynamicEntity {
         if (dying) return;
 
         dying          = true;
-       // spriteState    = SpriteState.DEAD;
-       spriteState    = SpriteState.JUMP; // or IDLE
+        spriteState = SpriteState.DEAD;
         deathVelocityY = DEATH_JUMP_VELOCITY;
 
         setVelocityX(0);
