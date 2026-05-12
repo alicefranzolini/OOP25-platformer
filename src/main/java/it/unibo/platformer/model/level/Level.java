@@ -3,6 +3,7 @@ package it.unibo.platformer.model.level;
 import java.util.List;
 import it.unibo.platformer.model.entities.Entity;
 import it.unibo.platformer.model.entities.players.Player;
+import javafx.scene.canvas.GraphicsContext;
 
 public interface Level {
 
@@ -17,5 +18,7 @@ public interface Level {
     List<Entity> getEntities();
 
     void update(double deltatime);
+
+    void render(GraphicsContext gc);
 }
 

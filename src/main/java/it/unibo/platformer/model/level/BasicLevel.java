@@ -6,6 +6,7 @@ import java.util.List;
 import it.unibo.platformer.model.entities.Entity;
 import it.unibo.platformer.model.entities.players.Player;
 import it.unibo.platformer.model.physics.*;
+import javafx.scene.canvas.GraphicsContext;
 import it.unibo.platformer.model.entities.DynamicEntity;
 import it.unibo.platformer.model.entities.StaticEntity;
 
@@ -88,6 +89,15 @@ public class BasicLevel implements Level {
 
         //remove if entity die
         this.entities.removeIf(entity -> !entity.isActive());
+    }
+
+    @Override
+    public void render(final GraphicsContext gc) {
+        for (final Entity entity : this.entities) {
+            if (entity.isActive()) {
+                entity.render(gc);
+            }
+        }
     }
 
 }

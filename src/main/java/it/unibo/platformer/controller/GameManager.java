@@ -2,6 +2,7 @@ package it.unibo.platformer.controller;
 import it.unibo.platformer.model.level.Level;
 import it.unibo.platformer.model.level.BasicLevelLoader;
 import it.unibo.platformer.model.level.LevelLoader;
+import javafx.scene.canvas.GraphicsContext;
 
 public class GameManager {
 
@@ -93,6 +94,12 @@ public class GameManager {
     private void updateGame(double deltaTime) {
         if (currentLevel != null) {
             currentLevel.update(deltaTime);
+        }
+    }
+
+    public void render(final GraphicsContext gc) {
+        if (this.currentLevel != null) {
+            this.currentLevel.render(gc);
         }
     }
 

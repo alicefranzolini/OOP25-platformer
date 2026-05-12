@@ -12,7 +12,6 @@ public class BasicLevelLoader implements LevelLoader {
 
     @Override
     public Level loadLevel(int levelNumber) {
-        BasicLevel level = new BasicLevel();
 
         switch (levelNumber) {
             case 1:
@@ -24,7 +23,6 @@ public class BasicLevelLoader implements LevelLoader {
             default:
                 return loadLevelOne();
         }
-        return level;
     }
 
     private Level loadLevelOne() {
@@ -53,6 +51,14 @@ public class BasicLevelLoader implements LevelLoader {
         level.addEntity(new Koopa(1200, 450));
 
         return level;
+    }
+
+    private Level loadLevelTwo() {
+        return loadLevelOne();
+    }
+
+    private Level loadLevelthree() {
+        return loadLevelOne();
     }
     
 }
