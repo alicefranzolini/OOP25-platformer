@@ -1,6 +1,7 @@
 package it.unibo.platformer;
 
 import it.unibo.platformer.model.entities.powerup.PowerUp;
+import it.unibo.platformer.model.entities.players.Player;
 import javafx.scene.canvas.GraphicsContext;
 
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ class TestPowerUps {
         }
 
         @Override
-        public void applyEffect(Object player) {
+        public void applyEffect(Player player) {
             effectApplied = true;
         }
 
@@ -34,7 +35,6 @@ class TestPowerUps {
 
         @Override
         public void render(GraphicsContext gc) {
-        
             throw new UnsupportedOperationException("Unimplemented method 'render'");
         }
     }
@@ -64,7 +64,7 @@ class TestPowerUps {
     @Test
     void collectCallsApplyEffectAndDestroy() {
         TestPowerUp p = new TestPowerUp(0, 0);
-        p.collect(new Object());
+        p.collect(null);
         assertTrue(p.effectApplied, "applyEffect should be invoked by collect");
         assertTrue(p.destroyedFlag, "destroy should be invoked by collect");
     }
