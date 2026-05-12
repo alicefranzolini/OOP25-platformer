@@ -14,7 +14,7 @@ public class MushroomPowerUp extends PowerUp {
     public MushroomPowerUp(double x, double y) {
         super(x, y, 32, 32);
     }
-
+/*
     @Override
     public void applyEffect(Object playerObj) {
     // If the collector is a Player, set its state to BIG
@@ -23,7 +23,14 @@ public class MushroomPowerUp extends PowerUp {
         Player player = (Player) playerObj;
         player.setState(Player.PlayerState.BIG);
     }
+*/
+    @Override
+    public void applyEffect(Player player) {
+        if (player == null) return;
+        player.setState(Player.PlayerState.BIG);
+    }
 
+/*
     @Override
     public void render(GraphicsContext gc) {
     // Draw a simple red mushroom: cap (oval), stem (rect), white spots (small ovals)
@@ -36,6 +43,24 @@ public class MushroomPowerUp extends PowerUp {
         gc.setFill(Color.WHITE);    //white spots
         gc.fillOval(x + 6,  y + 4, 6, 6);
         gc.fillOval(x + 20, y + 4, 6, 6);
+    }
+}
+*/
+    @Override
+    public void render(GraphicsContext gc) {
+        if (!active) return;
+        double px = getX();
+        double py = getY();
+        double pw = getWidth();
+        double ph = getHeight();
+
+        gc.setFill(Color.RED);  // cap
+        gc.fillOval(px, py, pw, ph * 0.6);
+        gc.setFill(Color.WHITE);    // stem
+        gc.fillRect(px + 8, py + (int)(ph * 0.5), pw - 16, (int)(ph * 0.5));
+        gc.setFill(Color.WHITE);    // spots
+        gc.fillOval(px + 6,  py + 4, 6, 6);
+        gc.fillOval(px + 20, py + 4, 6, 6);
     }
 }
 

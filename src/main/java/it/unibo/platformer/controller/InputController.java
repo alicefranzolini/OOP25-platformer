@@ -14,7 +14,7 @@ import it.unibo.platformer.model.entities.players.Player;
 // Class for input handling
 public class InputController {
 
-    private final Set<KeyCode> keysPressed = new HashSet<>();
+        private final Set<KeyCode> keysPressed = new HashSet<>();
 
     // Control keys
     private static final KeyCode KEY_LEFT  = KeyCode.LEFT;
