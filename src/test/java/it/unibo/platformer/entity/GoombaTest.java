@@ -1,27 +1,24 @@
 package it.unibo.platformer.entity;
 
-
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import it.unibo.platformer.model.entities.enemies.Goomba;
-import it.unibo.platformer.model.physics.BasicPhysics;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GoombaTest {
-BasicPhysics physics = new BasicPhysics();
+
     private Goomba goomba;
 
     @BeforeEach
     void setUp() {
-        goomba = new Goomba(100, 200, physics);
+        goomba = new Goomba(100, 200);
     }
 
     @Test
     void initialStateIsWalk() {
-        assertEquals(Goomba.GoombaState.WALK, goomba.getState());
+        assertTrue(goomba.isWalking());
     }
 
     @Test
@@ -32,7 +29,7 @@ BasicPhysics physics = new BasicPhysics();
     @Test
     void squishChangesState() {
         goomba.squish();
-        assertEquals(Goomba.GoombaState.SQUISHED, goomba.getState());
+        assertFalse(goomba.isWalking());
     }
 
     @Test
@@ -45,7 +42,8 @@ BasicPhysics physics = new BasicPhysics();
     void squishIdempotent() {
         goomba.squish();
         goomba.squish(); // second call must be ignored
-        assertEquals(Goomba.GoombaState.SQUISHED, goomba.getState());
+        assertFalse(goomba.isWalking());
+        assertFalse(goomba.hitsPlayer());
     }
 
     @Test

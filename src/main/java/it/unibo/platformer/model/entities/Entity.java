@@ -6,15 +6,15 @@ import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Entity {
 
-        //position
+        
     protected double x;
     protected double y;
 
-            //sizes
+           
     protected double width;
     protected double height;
 
-    protected boolean active=true; //if the entity is alive
+    protected boolean active; //if the entity is alive
 
    
    //initialize variables for entity creation
