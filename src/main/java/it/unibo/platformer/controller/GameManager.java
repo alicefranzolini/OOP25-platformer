@@ -2,7 +2,9 @@ package it.unibo.platformer.controller;
 import it.unibo.platformer.model.level.Level;
 import it.unibo.platformer.model.level.BasicLevelLoader;
 import it.unibo.platformer.model.level.LevelLoader;
+import it.unibo.platformer.model.score.ScoreSystem;
 import javafx.scene.canvas.GraphicsContext;
+import it.unibo.platformer.model.entities.players.InputController;
 
 public class GameManager {
 
@@ -13,8 +15,11 @@ public class GameManager {
         PAUSED
     }
 
+    private double cameraX;
+    private final InputController inputController;
     private GameState currenState;
     private boolean running;
+    private final ScoreSystem scoreSystem;
 
     private Level currentLevel;
     private final LevelLoader loader;
@@ -22,9 +27,13 @@ public class GameManager {
     public GameManager() {
         this.currenState = GameState.MENU;
         this.running = false;
-        
+
+        this.scoreSystem = new ScoreSystem();
         this.loader = new BasicLevelLoader();
         this.currentLevel = this.loader.loadLevel(1);
+
+        this.inputController = new InputController();
+        this.cameraX = 0;
     }
 
     public void startGame() {
@@ -62,6 +71,7 @@ public class GameManager {
                 updateMenu();
                 break;
             case PLAYING:
+
                 updateGame(deltaTime);
                 break;
             case PAUSED:
@@ -92,15 +102,34 @@ public class GameManager {
     }
 
     private void updateGame(double deltaTime) {
+        inputController.handleInput(currentLevel.getPlayer());
+
         if (currentLevel != null) {
             currentLevel.update(deltaTime);
+
+            if (this.currentLevel.getPlayer() != null) {
+                this.cameraX = this.currentLevel.getPlayer().getX() - 400;
+
+                if (this.cameraX < 0) {
+                    this.cameraX = 0;
+                }
+            }
         }
     }
 
     public void render(final GraphicsContext gc) {
+
+        gc.clearRect(0, 0, 1280, 720);
+        gc.save();
+        gc.translate(-cameraX, 0);
+
         if (this.currentLevel != null) {
             this.currentLevel.render(gc);
         }
+
+        gc.restore();
+        gc.fillText("Score: " + scoreSystem.getScore(), 20, 30);
+        gc.fillText("Level: 1", 20, 50);
     }
 
     private void updatePaused() {
@@ -113,5 +142,9 @@ public class GameManager {
 
     public GameState getCurrentSate() {
         return currenState;
+    }
+
+    public InputController getInputController() {
+        return this.inputController;
     }
 }

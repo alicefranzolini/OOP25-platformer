@@ -5,6 +5,7 @@ import java.util.List;
 
 import it.unibo.platformer.model.entities.Entity;
 import it.unibo.platformer.model.entities.players.Player;
+import it.unibo.platformer.model.entities.worldEntity.Coin;
 import it.unibo.platformer.model.physics.*;
 import javafx.scene.canvas.GraphicsContext;
 import it.unibo.platformer.model.entities.DynamicEntity;
@@ -82,6 +83,23 @@ public class BasicLevel implements Level {
                         resolver.ResolveOne(result);
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
+                    }
+                }
+            }
+        }
+        if (this.player != null) {
+            for (Entity entity : this.entities) {
+                if (entity instanceof Coin) {
+                    Coin coin = (Coin) entity;
+
+                    boolean collideX = 
+                        player.getX() < coin.getX() + coin.getWidth() && player.getX() + player.getWidth() > coin.getY();
+                    boolean collideY =
+                        player.getY() < coin.getY() + coin.getHeight() && player.getY() + player.getHeight() > coin.getY();
+                    
+                    if (collideX && collideY) {
+                        coin.setActive(false);
+                        System.out.println("Coin collected!");
                     }
                 }
             }
