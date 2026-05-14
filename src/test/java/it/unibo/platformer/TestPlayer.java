@@ -1,6 +1,6 @@
 package it.unibo.platformer;
 
-import it.unibo.platformer.model.entities.players.Player;
+import it.unibo.platformer.model.entities.players.PlayerImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,11 +8,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestPlayer {
 
-    private Player player;
+    private PlayerImpl player;
 
     @BeforeEach
     void setup() {
-        player = new Player(100, 100);
+        player = new PlayerImpl(100, 100);
     }
 
     // ------------------------------------------------------------
@@ -69,30 +69,30 @@ public class TestPlayer {
 
     @Test
     void testPowerUpSmallToBig() {
-        player.setState(Player.PlayerState.BIG);
-        assertEquals(Player.PlayerState.BIG, player.getPlayerState());
+        player.setState(PlayerImpl.PlayerState.BIG);
+        assertEquals(PlayerImpl.PlayerState.BIG, player.getPlayerState());
         assertEquals(48, player.getHeight());
     }
 
     @Test
     void testPowerUpBigToInvincible() {
-        player.setState(Player.PlayerState.BIG);
-        player.setState(Player.PlayerState.INVINCIBLE);
+        player.setState(PlayerImpl.PlayerState.BIG);
+        player.setState(PlayerImpl.PlayerState.INVINCIBLE);
 
-        assertEquals(Player.PlayerState.INVINCIBLE, player.getPlayerState());
+        assertEquals(PlayerImpl.PlayerState.INVINCIBLE, player.getPlayerState());
         assertTrue(player.isInvincible());
     }
 
     @Test
     void testInvincibilityEndsAfterTimer() {
-        player.setState(Player.PlayerState.INVINCIBLE);
+        player.setState(PlayerImpl.PlayerState.INVINCIBLE);
 
         // Simulate 11 seconds (60 FPS)
         for (int i = 0; i < 11 * 60; i++) {
             player.update(1.0 / 60.0);
         }
 
-        assertEquals(Player.PlayerState.BIG, player.getPlayerState());
+        assertEquals(PlayerImpl.PlayerState.BIG, player.getPlayerState());
     }
 
     // ------------------------------------------------------------
@@ -107,23 +107,23 @@ public class TestPlayer {
 
     @Test
         void testDamageWhenBigBecomesSmall() {
-        player.setState(Player.PlayerState.BIG);
+        player.setState(PlayerImpl.PlayerState.BIG);
 
         boolean dead = player.takeDamage();
 
         assertFalse(dead);
-        assertEquals(Player.PlayerState.SMALL, player.getPlayerState()); 
+        assertEquals(PlayerImpl.PlayerState.SMALL, player.getPlayerState()); 
     }
 
 
     @Test
     void testDamageWhenInvincibleNoEffect() {
-        player.setState(Player.PlayerState.INVINCIBLE);
+        player.setState(PlayerImpl.PlayerState.INVINCIBLE);
 
         boolean dead = player.takeDamage();
 
         assertFalse(dead);
-        assertEquals(Player.PlayerState.INVINCIBLE, player.getPlayerState());
+        assertEquals(PlayerImpl.PlayerState.INVINCIBLE, player.getPlayerState());
     }
 
     // ------------------------------------------------------------
@@ -136,7 +136,7 @@ public class TestPlayer {
         player.setOnGround(true);
         player.update(0.016);
 
-        assertEquals(Player.SpriteState.IDLE, player.getSpriteState());
+        assertEquals(PlayerImpl.SpriteState.IDLE, player.getSpriteState());
     }
 
     @Test
@@ -145,7 +145,7 @@ public class TestPlayer {
         player.setOnGround(true);
         player.update(0.016);
 
-        assertEquals(Player.SpriteState.WALK, player.getSpriteState());
+        assertEquals(PlayerImpl.SpriteState.WALK, player.getSpriteState());
     }
 
     @Test
@@ -153,6 +153,6 @@ public class TestPlayer {
         player.setOnGround(false);
         player.update(0.016);
 
-        assertEquals(Player.SpriteState.JUMP, player.getSpriteState());
+        assertEquals(PlayerImpl.SpriteState.JUMP, player.getSpriteState());
     }
 }

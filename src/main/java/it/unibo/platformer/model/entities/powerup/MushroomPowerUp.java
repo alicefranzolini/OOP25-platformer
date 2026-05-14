@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
  *  Class purpose: a star 
  *  that bounces and grants temporary invincibility.
  */
-public class MushroomPowerUp extends PowerUp {
+public class MushroomPowerUp extends PowerUpImpl {
 
     // Class purpose: a mushroom that makes the player BIG.
     public MushroomPowerUp(double x, double y) {

@@ -5,7 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 
-public class StarPowerUp extends PowerUp {
+public class StarPowerUp extends PowerUpImpl {
 
     // the star jump insted of walking
     private static final double BOUNCE_VELOCITY = -400.0;
@@ -40,7 +40,7 @@ public class StarPowerUp extends PowerUp {
     @Override
     public void applyEffect(Player player) {
         if (player == null) return;
-        player.setState(Player.PlayerState.INVINCIBLE);
+            player.setState(Player.PlayerState.INVINCIBLE);
     }
     
     /*

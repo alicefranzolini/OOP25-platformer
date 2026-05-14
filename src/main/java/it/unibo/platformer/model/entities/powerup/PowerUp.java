@@ -1,85 +1,34 @@
 package it.unibo.platformer.model.entities.powerup;
 
-import it.unibo.platformer.model.entities.DynamicEntity;
-import it.unibo.platformer.model.physics.BasicPhysics;
+import it.unibo.platformer.model.entities.players.Player;
 
-public abstract class PowerUp extends DynamicEntity {
+/**
+ * Contract for all power-up entities.
+ * Defines emergence behaviour, effect application, and collection.
+ * Concrete power-ups (Mushroom, Star) implement applyEffect differently
+ * — this is the polymorphism entry point.
+ */
+public interface PowerUp {
 
-    // Horizontal speed used once the power-up has finished emerging
-    protected static final double MOVE_SPEED = 60.0;
-    // Upward velocity used while the power-up is emerging from a block
-    protected static final double EMERGE_SPEED = -40.0; 
+    // Called every frame
+    void update(double deltaTime);
 
-    private boolean emerging;   // True while the power-up is still emerging from its spawn block 
-    private double emergeTarget;    // Y coordinate where the power-up should stop emerging (fully outside the block)
+    // Applies the specific effect to the player (polymorphic)
+    void applyEffect(Player player);
 
-  /*  public PowerUp(double x, double y, double width, double height) {
-        /*
-         *   Initialize position and size, start emergence motion, 
-         *   disable gravity until emergence completes
-         */
-    /*    super(x, y, width, height);
-        setVelocityX(0);                 // stop horizontal movement initially
-        setVelocityY(EMERGE_SPEED);         // set vertical velocity so the power-up moves out of the block
-        setAffectedByGravity(false);    // disable gravity while emerging
-        this.emerging     = true;
-        this.emergeTarget = y - height;
-    } */
+    // Collects the power-up: applies effect and destroys it
+    void collect(Player player);
 
-    public PowerUp(double x, double y, double width, double height) {
-        super(x, y, width, height, new BasicPhysics());
+    // Flips horizontal direction when hitting a wall
+    void reverseDirection();
 
-        setVelocityX(0);                 
-        setVelocityY(EMERGE_SPEED);      
-        setAffectedByGravity(false);     
+    // True while still emerging from the block (not yet collectible)
+    boolean isEmerging();
 
-        this.emerging     = true;
-        this.emergeTarget = getY() - getHeight(); 
-    }
-
-        
-    @Override
-    public void update(double deltaTime) {
-        // Update base physics (position/velocity) once per frame
-        super.update(deltaTime);
-
-            // If still emerging, check if we've reached the target Y
-        if (emerging) {
-            // If reached or passed the target, snap to target and switch to normal physics
-            // enable gravity and start horizontal movement
-            if (getY() <= emergeTarget) {
-                setY(emergeTarget);
-                emerging = false;
-                setAffectedByGravity(true);
-                setVelocityX(MOVE_SPEED);
-            }
-        }
-    }
-
-    
-     // Flip horizontal velocity when hitting an obstacle
-    public void reverseDirection() {
-        setVelocityX(-getVelocityX());
-    }
-
-   // Subclasses implement this to apply their specific effect to the player
-   // public abstract void applyEffect(Object player);
-
-    // Called when player collects the power-up: apply effect then destroy this entity   
-    /* 
-    public void collect(Object player) {
-        applyEffect(player);
-        destroy();
-    }
-    */
-   public abstract void applyEffect(it.unibo.platformer.model.entities.players.Player player);
-    public void collect(it.unibo.platformer.model.entities.players.Player player) {
-        applyEffect(player);
-        destroy();
-}
-
-    // Returns true while the power-up is still emerging (should not be collectible)
-    public boolean isEmerging() { 
-        return emerging; 
-    }
+    // Position and size
+    double getX();
+    double getY();
+    double getWidth();
+    double getHeight();
+    boolean isActive();
 }
