@@ -1,7 +1,7 @@
 package it.unibo.platformer;
 
 import it.unibo.platformer.model.entities.powerup.StarPowerUp;
-import it.unibo.platformer.model.entities.players.Player;
+import it.unibo.platformer.model.entities.players.PlayerImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,11 +29,11 @@ class StarPowerUpTest {
     @Test
     void applyEffectSetsPlayerInvincible() {
         StarPowerUp star = new StarPowerUp(0, 0);
-        Player p = new Player(0, 0);
+        PlayerImpl p = new PlayerImpl(0, 0);
 
         // apply effect
         star.applyEffect(p);
 
-        assertEquals(Player.PlayerState.INVINCIBLE, p.getPlayerState(), "Star should set player to INVINCIBLE");
+        assertEquals(PlayerImpl.PlayerState.INVINCIBLE, p.getPlayerState(), "Star should set player to INVINCIBLE");
     }
 }

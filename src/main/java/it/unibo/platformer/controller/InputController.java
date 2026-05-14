@@ -5,7 +5,7 @@ import javafx.scene.input.KeyCode;  // KeyCode represents a keyboard key
 import java.util.HashSet;
 import java.util.Set; // SET: prevents duplicates, fast to check
 
-import it.unibo.platformer.model.entities.players.Player;
+import it.unibo.platformer.model.entities.players.PlayerImpl;
 
 /**
  * Handles keyboard input and translates it into player actions.
@@ -40,7 +40,7 @@ public class InputController {
      * Applies input to the player.
      * Should be called every frame before update().
      */
-    public void handleInput(Player player) {
+    public void handleInput(PlayerImpl player) {
         boolean left  = keysPressed.contains(KEY_LEFT);
         boolean right = keysPressed.contains(KEY_RIGHT);
 
