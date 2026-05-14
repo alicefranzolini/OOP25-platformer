@@ -8,12 +8,12 @@ import it.unibo.platformer.model.entities.enemies.Goomba;
 import static org.junit.jupiter.api.Assertions.*;
 
 class GoombaTest {
-
+    private final it.unibo.platformer.model.physics.BasicPhysics physics = new it.unibo.platformer.model.physics.BasicPhysics();
     private Goomba goomba;
 
     @BeforeEach
     void setUp() {
-        goomba = new Goomba(100, 200);
+        goomba = new Goomba(100, 200, physics);
     }
 
     @Test

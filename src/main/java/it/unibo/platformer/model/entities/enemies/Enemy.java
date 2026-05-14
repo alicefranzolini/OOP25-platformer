@@ -14,7 +14,7 @@ import javafx.scene.canvas.GraphicsContext;
  * Concrete enemies ({@link Goomba}, {@link Koopa}) extend {@code Enemy} and
  * automatically satisfy this interface.
  */
-public interface IEnemy {
+public interface Enemy {
 
     /**
      * Advances the enemy's logic by {@code deltaTime} seconds.

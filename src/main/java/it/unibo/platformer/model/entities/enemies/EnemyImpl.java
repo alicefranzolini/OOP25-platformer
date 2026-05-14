@@ -108,4 +108,7 @@ public abstract class EnemyImpl extends DynamicEntity implements Enemy {
     public boolean isWalking() {
         return handler instanceof WalkingHandler;
     }
+    public void setHeight(double height) {
+    this.height = height; // Ensure 'height' is the correct name of the field in your base class
+}
 }

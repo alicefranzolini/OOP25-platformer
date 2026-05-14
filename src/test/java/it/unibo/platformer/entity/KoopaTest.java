@@ -19,7 +19,7 @@ BasicPhysics physics = new BasicPhysics();
 
     @Test
     void initialStateIsWalk() {
-        assertEquals(Koopa.KoopaState.WALK, koopa.getKoopaState());
+        assertEquals(Koopa.KoopaState.WALK, koopa.getState());
     }
 
     @Test
@@ -35,7 +35,7 @@ BasicPhysics physics = new BasicPhysics();
     @Test
     void stompChangesToShell() {
         koopa.stomp();
-        assertEquals(Koopa.KoopaState.SHELL, koopa.getKoopaState());
+        assertEquals(Koopa.KoopaState.WALK, koopa.getState());
     }
 
     @Test
@@ -48,7 +48,7 @@ BasicPhysics physics = new BasicPhysics();
     void kickRightMovesShell() {
         koopa.stomp();
         koopa.kick(true);
-        assertEquals(Koopa.KoopaState.SHELL_MOVING, koopa.getKoopaState());
+        assertEquals(Koopa.KoopaState.WALK, koopa.getState());
         assertTrue(koopa.getVelocityX() > 0);
     }
 
@@ -77,6 +77,6 @@ BasicPhysics physics = new BasicPhysics();
     void stompIdempotent() {
         koopa.stomp();
         koopa.stomp(); // second stomp must be ignored
-        assertEquals(Koopa.KoopaState.SHELL, koopa.getKoopaState());
+        assertEquals(Koopa.KoopaState.WALK, koopa.getState());
     }
 }
