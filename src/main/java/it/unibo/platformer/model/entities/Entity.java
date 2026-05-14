@@ -6,15 +6,15 @@ import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Entity {
 
-        //position
+        
     protected double x;
     protected double y;
 
-            //sizes
+           
     protected double width;
     protected double height;
 
-    protected boolean active=true; //if the entity is alive
+    protected boolean active; //if the entity is alive
 
    
    //initialize variables for entity creation
@@ -26,12 +26,45 @@ public abstract class Entity {
         this.active = true;
     }
 
-//Returns the rectangle used for collision detection.
-    public double[] getBoundingBox() {
-        return new double[]{ x, y, width, height };
+ // -------------------------------------------------------------------------
+    // BoundingBox — typed, self-documenting, usable for collision checks
+    // -------------------------------------------------------------------------
+ 
+    /**
+     * Axis-aligned bounding box used for collision detection.
+     */
+    public static final class BoundingBox {
+ 
+        private final double x;
+        private final double y;
+        private final double width;
+        private final double height;
+ 
+        public BoundingBox(double x, double y, double width, double height) {
+            this.x = x;
+            this.y = y;
+            this.width = width;
+            this.height = height;
+        }
+ 
+        public double getX()      { return x; }
+        public double getY()      { return y; }
+        public double getWidth()  { return width; }
+        public double getHeight() { return height; }
+ 
+        /** Returns true if this box overlaps with {@code other}. */
+        public boolean overlaps(BoundingBox other) {
+            return x < other.x + other.width
+                && x + width  > other.x
+                && y < other.y + other.height
+                && y + height > other.y;
+        }
     }
-
-
+ 
+    /** Returns the bounding box of this entity for collision detection. */
+    public BoundingBox getBoundingBox() {
+        return new BoundingBox(x, y, width, height);
+    }
     public abstract void update(double deltaTime);//handles logic
     public abstract void render(GraphicsContext gc);//draws the entity 
 

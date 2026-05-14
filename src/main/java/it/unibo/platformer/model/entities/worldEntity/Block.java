@@ -37,10 +37,10 @@ public class Block extends StaticEntity {
     }
 
     private void loadSprites() {
-        spriteNormal       = AnimationManager.loadImage("src\\main\\resources\\sprites\\block.png");
-        spriteBrick        = AnimationManager.loadImage("src\\main\\resources\\sprites\\brick.png");
-        spriteBrickUsed    = AnimationManager.loadImage("src\\main\\resources\\sprites\\used_brick.png");
-        spriteQuestion     = AnimationManager.loadImage("src\\main\\resources\\sprites\\surprise.png");
+        spriteNormal       = AnimationManager.loadImage("/sprites/block.png");
+        spriteBrick        = AnimationManager.loadImage("/sprites/brick.png");
+        spriteBrickUsed    = AnimationManager.loadImage("/sprites/used_brick.png");
+        spriteQuestion     = AnimationManager.loadImage("/sprites/surprise.png");
     }
 
     @Override

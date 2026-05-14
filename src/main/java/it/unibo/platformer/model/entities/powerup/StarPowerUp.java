@@ -5,7 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 
-public class StarPowerUp extends PowerUp {
+public class StarPowerUp extends PowerUpImpl {
 
     // the star jump insted of walking
     private static final double BOUNCE_VELOCITY = -400.0;
@@ -29,13 +29,21 @@ public class StarPowerUp extends PowerUp {
         }
     }
 
+    /*
     @Override
     public void applyEffect(Object playerObj) {
         if (!(playerObj instanceof Player)) return;
         Player player = (Player) playerObj;
         player.setState(Player.PlayerState.INVINCIBLE);
     }
-
+*/
+    @Override
+    public void applyEffect(Player player) {
+        if (player == null) return;
+            player.setState(Player.PlayerState.INVINCIBLE);
+    }
+    
+    /*
     @Override
     public void render(GraphicsContext gc) {
         if (!active) return;
@@ -58,6 +66,28 @@ public class StarPowerUp extends PowerUp {
         gc.setStroke(Color.ORANGE);
         gc.strokePolygon(px, py, 10);
     }
+    */
+
+    @Override
+    public void render(GraphicsContext gc) {
+        if (!active) return;
+        double cx = getX() + getWidth() / 2;
+        double cy = getY() + getHeight() / 2;
+        double r  = getWidth() / 2;
+        double[] px = new double[10];
+        double[] py = new double[10];
+        for (int i = 0; i < 10; i++) {
+            double angle  = Math.PI / 2 + i * Math.PI / 5;
+            double radius = (i % 2 == 0) ? r : r * 0.45;
+            px[i] = cx + radius * Math.cos(angle);
+            py[i] = cy - radius * Math.sin(angle);
+        }
+        gc.setFill(Color.YELLOW);
+        gc.fillPolygon(px, py, 10);
+        gc.setStroke(Color.ORANGE);
+        gc.strokePolygon(px, py, 10);
+    }
+
 }
 
 // When setting Player.PlayerState.INVINCIBLE, ensure Player starts a timer

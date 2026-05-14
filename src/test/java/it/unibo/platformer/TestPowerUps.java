@@ -1,7 +1,10 @@
 package it.unibo.platformer;
 
-import it.unibo.platformer.model.entities.powerup.PowerUp;
+import it.unibo.platformer.model.entities.powerup.PowerUpImpl;
+//import it.unibo.platformer.model.entities.players.PlayerImpl;
 import javafx.scene.canvas.GraphicsContext;
+import it.unibo.platformer.model.entities.players.Player;
+
 
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class TestPowerUps {
 
-    private static class TestPowerUp extends PowerUp {
+    private static class TestPowerUp extends PowerUpImpl {
         boolean effectApplied = false;
         boolean destroyedFlag = false;
 
@@ -22,7 +25,7 @@ class TestPowerUps {
         }
 
         @Override
-        public void applyEffect(Object player) {
+        public void applyEffect(Player player) {
             effectApplied = true;
         }
 
@@ -34,7 +37,6 @@ class TestPowerUps {
 
         @Override
         public void render(GraphicsContext gc) {
-        
             throw new UnsupportedOperationException("Unimplemented method 'render'");
         }
     }
@@ -64,7 +66,7 @@ class TestPowerUps {
     @Test
     void collectCallsApplyEffectAndDestroy() {
         TestPowerUp p = new TestPowerUp(0, 0);
-        p.collect(new Object());
+        p.collect(null);
         assertTrue(p.effectApplied, "applyEffect should be invoked by collect");
         assertTrue(p.destroyedFlag, "destroy should be invoked by collect");
     }

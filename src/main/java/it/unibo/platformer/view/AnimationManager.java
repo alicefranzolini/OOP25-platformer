@@ -32,11 +32,7 @@ public class AnimationManager {
         private int     curFrame = 0;
         private boolean finished = false;
  
-        /**
-         * @param frames        Array of single PNG images, one per frame.
-         * @param frameDuration Seconds each frame stays on screen.
-         * @param loop          If true the animation loops; if false it stops on the last frame.
-         */
+       
         public Animation(Image[] frames, double frameDuration, boolean loop) {
             this.frames        = frames;
             this.frameDuration = frameDuration;
@@ -110,12 +106,9 @@ public class AnimationManager {
     /**
      * Draw the current frame at (x, y) scaled to (width, height).
      *
-     * @param flipX  Mirror the sprite horizontally (e.g. entity facing left).
+     *
      */
-    public void render(GraphicsContext gc,
-                       double x, double y,
-                       double width, double height,
-                       boolean flipX) {
+    public void render(GraphicsContext gc, double x, double y, double width, double height, boolean flipX) {
  
         Animation a = animations.get(currentKey);
         if (a == null) return;
@@ -162,8 +155,13 @@ public class AnimationManager {
  
     public String  getCurrentKey()     { return currentKey; }
  
+     /** Returns true if an animation with the given key has been registered. */
+    public boolean hasAnimation(String key) {
+        return animations.containsKey(key);
+    }
     public boolean isCurrentFinished() {
         Animation a = animations.get(currentKey);
         return a != null && a.isFinished();
     }
+   
 }
