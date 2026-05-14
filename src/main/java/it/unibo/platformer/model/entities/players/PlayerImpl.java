@@ -6,21 +6,10 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import it.unibo.platformer.view.AnimationManager;
 
-/**
- * Player — Week 3.
- *
- * This class represents the main controllable character.
- * It includes:
- *  - full invincibility state logic
- *  - death animation (jump upward, then fall off-screen)
- *  - hooks for advanced sprite animations via AnimationManager
- *
- */
+
 public class PlayerImpl extends DynamicEntity implements Player {
 
-
-    public enum PlayerState { SMALL, BIG, INVINCIBLE }   // logic states
-    public enum SpriteState { IDLE, WALK, JUMP, DEAD }          // graphic states
+    // PlayerState and SpriteState are now defined in the Player interface
 
     private static final double SMALL_W = 16, SMALL_H = 24;
     private static final double BIG_H   = 48;
