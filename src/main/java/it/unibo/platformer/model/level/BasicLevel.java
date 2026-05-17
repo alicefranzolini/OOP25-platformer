@@ -16,6 +16,11 @@ import javafx.scene.canvas.GraphicsContext;
 
 public class BasicLevel implements Level {
     private final List<Entity> entities;
+    private final int levelNumber;
+    private final double width;
+    private final double height;
+    private final double spawnX;
+    private final double spawnY;
 
     private Player player;
 
@@ -23,9 +28,49 @@ public class BasicLevel implements Level {
     private final CollisionResolver resolver;
 
     public BasicLevel() {
+        this(1, 2000, 720, 100, 300);
+    }
+
+    public BasicLevel(
+        final int levelNumber,
+        final double width,
+        final double height,
+        final double spawnX,
+        final double spawnY
+    ) {
         this.entities = new ArrayList<>();
+        this.levelNumber = levelNumber;
+        this.width = width;
+        this.height = height;
+        this.spawnX = spawnX;
+        this.spawnY = spawnY;
         this.detector = new CollisionDetector();
         this.resolver = new CollisionResolver();
+    }
+
+    @Override
+    public int getLevelNumber() {
+        return this.levelNumber;
+    }
+
+    @Override
+    public double getWidth() {
+        return this.width;
+    }
+
+    @Override
+    public double getHeight() {
+        return this.height;
+    }
+
+    @Override
+    public double getSpawnX() {
+        return this.spawnX;
+    }
+
+    @Override
+    public double getSpawnY() {
+        return this.spawnY;
     }
 
     @Override

@@ -7,6 +7,16 @@ import javafx.scene.canvas.GraphicsContext;
 
 public interface Level {
 
+    int getLevelNumber();
+
+    double getWidth();
+
+    double getHeight();
+
+    double getSpawnX();
+
+    double getSpawnY();
+
     void setPlayer(Player player);
 
     Player getPlayer();
