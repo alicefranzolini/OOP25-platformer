@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.unibo.platformer.model.entities.Entity;
-import it.unibo.platformer.model.entities.players.Player;
-import it.unibo.platformer.model.entities.worldEntity.Coin;
-import it.unibo.platformer.model.physics.*;
-import javafx.scene.canvas.GraphicsContext;
 import it.unibo.platformer.model.entities.DynamicEntity;
 import it.unibo.platformer.model.entities.StaticEntity;
+import it.unibo.platformer.model.entities.players.Player;
+import it.unibo.platformer.model.entities.worldEntity.Coin;
+import it.unibo.platformer.model.physics.CollisionDetector;
+import it.unibo.platformer.model.physics.CollisionResolver;
+import it.unibo.platformer.model.physics.CollisionResult;
+import it.unibo.platformer.model.physics.GameObject;
+import javafx.scene.canvas.GraphicsContext;
 
 public class BasicLevel implements Level {
     private final List<Entity> entities;
@@ -26,9 +29,14 @@ public class BasicLevel implements Level {
     }
 
     @Override
-    public void setPlayer(Player player) {
+    public void setPlayer(final Player player) {
+        if (this.player != null) {
+            removeEntity(this.player);
+        }
         this.player = player;
-        addEntity(player);
+        if (player != null) {
+            addEntity(player);
+        }
     }
 
     @Override
@@ -52,19 +60,19 @@ public class BasicLevel implements Level {
     }
 
     @Override
-    public void update(double deltaTime) {
-        for (Entity entity : this.entities) {
+    public void update(final double deltaTime) {
+        for (final Entity entity : this.entities) {
             if (entity.isActive()) {
                 entity.update(deltaTime);
             }
         }
 
-        for (Entity dynamicEntity : this.entities) {
+        for (final Entity dynamicEntity : this.entities) {
             if (!(dynamicEntity instanceof DynamicEntity)) {
                 continue;
             }
 
-            for (Entity staticEntity : this.entities) {
+            for (final Entity staticEntity : this.entities) {
                 if (!(staticEntity instanceof StaticEntity)) {
                     continue;
                 }
@@ -76,7 +84,10 @@ public class BasicLevel implements Level {
                     (float) staticEntity.getHeight()
                 );
 
-                CollisionResult result = detector.getCollisionResult(((DynamicEntity) dynamicEntity).getGameObject(), staticObj);
+                final CollisionResult result = detector.getCollisionResult(
+                    ((DynamicEntity) dynamicEntity).getGameObject(),
+                    staticObj
+                );
 
                 if (result != null) {
                     try {
@@ -88,16 +99,10 @@ public class BasicLevel implements Level {
             }
         }
         if (this.player != null) {
-            for (Entity entity : this.entities) {
+            for (final Entity entity : this.entities) {
                 if (entity instanceof Coin) {
-                    Coin coin = (Coin) entity;
-
-                    boolean collideX = 
-                        player.getX() < coin.getX() + coin.getWidth() && player.getX() + player.getWidth() > coin.getY();
-                    boolean collideY =
-                        player.getY() < coin.getY() + coin.getHeight() && player.getY() + player.getHeight() > coin.getY();
-                    
-                    if (collideX && collideY) {
+                    final Coin coin = (Coin) entity;
+                    if (overlaps(this.player, coin)) {
                         coin.setActive(false);
                         System.out.println("Coin collected!");
                     }
@@ -107,6 +112,13 @@ public class BasicLevel implements Level {
 
         //remove if entity die
         this.entities.removeIf(entity -> !entity.isActive());
+    }
+
+    private boolean overlaps(final Entity first, final Entity second) {
+        return first.getX() < second.getX() + second.getWidth()
+            && first.getX() + first.getWidth() > second.getX()
+            && first.getY() < second.getY() + second.getHeight()
+            && first.getY() + first.getHeight() > second.getY();
     }
 
     @Override
