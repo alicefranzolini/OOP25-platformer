@@ -30,12 +30,21 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
 
+        gameManager.startGame();
+
         new AnimationTimer() {
+            private long lastUpdate;
 
             @Override
             public void handle(final long now) {
+                if (lastUpdate == 0) {
+                    lastUpdate = now;
+                    return;
+                }
+                final double deltaTime = (now - lastUpdate) / 1_000_000_000.0;
+                lastUpdate = now;
 
-                gameManager.update();
+                gameManager.update(deltaTime);
                 gameManager.render(gc);
             }
         }.start();

@@ -1,12 +1,20 @@
 package it.unibo.platformer.controller;
-import it.unibo.platformer.model.level.Level;
+
+import it.unibo.platformer.model.entities.players.InputController;
 import it.unibo.platformer.model.level.BasicLevelLoader;
+import it.unibo.platformer.model.level.Level;
 import it.unibo.platformer.model.level.LevelLoader;
 import it.unibo.platformer.model.score.ScoreSystem;
 import javafx.scene.canvas.GraphicsContext;
-import it.unibo.platformer.model.entities.players.InputController;
 
 public class GameManager {
+
+    private static final int FIRST_LEVEL = 1;
+    private static final int LAST_LEVEL = 3;
+    private static final double DEFAULT_VIEW_WIDTH = 1280;
+    private static final double DEFAULT_VIEW_HEIGHT = 720;
+    private static final double FIXED_DELTA_TIME = 0.016;
+    private static final double CAMERA_PLAYER_OFFSET = 400;
 
     public enum GameState {
         MENU,
@@ -17,61 +25,96 @@ public class GameManager {
 
     private double cameraX;
     private final InputController inputController;
-    private GameState currenState;
+    private GameState currentState;
     private boolean running;
     private final ScoreSystem scoreSystem;
+    private final double viewWidth;
+    private final double viewHeight;
 
     private Level currentLevel;
     private final LevelLoader loader;
 
     public GameManager() {
-        this.currenState = GameState.MENU;
-        this.running = false;
+        this(DEFAULT_VIEW_WIDTH, DEFAULT_VIEW_HEIGHT);
+    }
 
+    public GameManager(final double viewWidth, final double viewHeight) {
+        this.currentState = GameState.MENU;
+        this.running = false;
         this.scoreSystem = new ScoreSystem();
         this.loader = new BasicLevelLoader();
-        this.currentLevel = this.loader.loadLevel(1);
-
+        this.currentLevel = this.loader.loadLevel(FIRST_LEVEL);
         this.inputController = new InputController();
+        this.viewWidth = viewWidth;
+        this.viewHeight = viewHeight;
         this.cameraX = 0;
     }
 
     public void startGame() {
-        this.currenState = GameState.PLAYING;
+        this.currentState = GameState.PLAYING;
         this.running = true;
     }
 
     public void gameOver() {
-        this.currenState = GameState.GAME_OVER;
+        this.currentState = GameState.GAME_OVER;
         this.running = false;
     }
 
     public void pauseGame() {
-        if (this.currenState == GameState.PLAYING) {
-            this.currenState = GameState.PAUSED;
+        if (this.currentState == GameState.PLAYING) {
+            this.currentState = GameState.PAUSED;
         }
     }
 
     public void resumeGame() {
-        if (this.currenState == GameState.PAUSED) {
-            this.currenState = GameState.PLAYING;
+        if (this.currentState == GameState.PAUSED) {
+            this.currentState = GameState.PLAYING;
+        }
+    }
+
+    public void togglePause() {
+        if (this.currentState == GameState.PLAYING) {
+            pauseGame();
+        } else if (this.currentState == GameState.PAUSED) {
+            resumeGame();
         }
     }
 
     public void backToMenu() {
-        this.currenState = GameState.MENU;
+        this.currentState = GameState.MENU;
         this.running = false;
     }
 
-    public void update() {
-        double deltaTime = 0.016;
+    public void restartGame() {
+        this.scoreSystem.reset();
+        loadLevel(FIRST_LEVEL);
+        startGame();
+    }
 
-        switch (currenState) {
+    public void loadLevel(final int levelNumber) {
+        this.currentLevel = this.loader.loadLevel(levelNumber);
+        this.cameraX = 0;
+    }
+
+    public void nextLevel() {
+        final int currentLevelNumber = this.currentLevel.getLevelNumber();
+        if (currentLevelNumber < LAST_LEVEL) {
+            loadLevel(currentLevelNumber + 1);
+        } else {
+            gameOver();
+        }
+    }
+
+    public void update() {
+        update(FIXED_DELTA_TIME);
+    }
+
+    public void update(final double deltaTime) {
+        switch (currentState) {
             case MENU:
                 updateMenu();
                 break;
             case PLAYING:
-
                 updateGame(deltaTime);
                 break;
             case PAUSED:
@@ -101,35 +144,49 @@ public class GameManager {
         // menu logic
     }
 
-    private void updateGame(double deltaTime) {
-        inputController.handleInput(currentLevel.getPlayer());
-
-        if (currentLevel != null) {
-            currentLevel.update(deltaTime);
-
-            if (this.currentLevel.getPlayer() != null) {
-                this.cameraX = this.currentLevel.getPlayer().getX() - 400;
-
-                if (this.cameraX < 0) {
-                    this.cameraX = 0;
-                }
-            }
+    private void updateGame(final double deltaTime) {
+        if (this.currentLevel == null) {
+            return;
         }
+
+        this.inputController.handleInput(this.currentLevel.getPlayer());
+        this.currentLevel.update(deltaTime);
+        updateCamera();
+    }
+
+    private void updateCamera() {
+        if (this.currentLevel.getPlayer() == null) {
+            this.cameraX = 0;
+            return;
+        }
+
+        final double desiredCameraX = this.currentLevel.getPlayer().getX() - CAMERA_PLAYER_OFFSET;
+        final double maxCameraX = Math.max(0, this.currentLevel.getWidth() - this.viewWidth);
+        this.cameraX = Math.max(0, Math.min(desiredCameraX, maxCameraX));
     }
 
     public void render(final GraphicsContext gc) {
-
-        gc.clearRect(0, 0, 1280, 720);
+        gc.clearRect(0, 0, this.viewWidth, this.viewHeight);
         gc.save();
-        gc.translate(-cameraX, 0);
-
+        gc.translate(-this.cameraX, 0);
         if (this.currentLevel != null) {
             this.currentLevel.render(gc);
         }
-
         gc.restore();
-        gc.fillText("Score: " + scoreSystem.getScore(), 20, 30);
-        gc.fillText("Level: 1", 20, 50);
+        renderSimpleHud(gc);
+    }
+
+    private void renderSimpleHud(final GraphicsContext gc) {
+        gc.fillText("Score: " + this.scoreSystem.getScore(), 20, 30);
+        gc.fillText("Coins: " + this.scoreSystem.getCoins(), 20, 50);
+        gc.fillText("Lives: " + this.scoreSystem.getLives(), 20, 70);
+        gc.fillText("Level: " + this.currentLevel.getLevelNumber(), 20, 90);
+
+        if (this.currentState == GameState.PAUSED) {
+            gc.fillText("PAUSED", this.viewWidth / 2 - 30, 40);
+        } else if (this.currentState == GameState.GAME_OVER) {
+            gc.fillText("GAME OVER", this.viewWidth / 2 - 40, 40);
+        }
     }
 
     private void updatePaused() {
@@ -141,10 +198,26 @@ public class GameManager {
     }
 
     public GameState getCurrentSate() {
-        return currenState;
+        return getCurrentState();
+    }
+
+    public GameState getCurrentState() {
+        return this.currentState;
     }
 
     public InputController getInputController() {
         return this.inputController;
+    }
+
+    public Level getCurrentLevel() {
+        return this.currentLevel;
+    }
+
+    public ScoreSystem getScoreSystem() {
+        return this.scoreSystem;
+    }
+
+    public double getCameraX() {
+        return this.cameraX;
     }
 }
