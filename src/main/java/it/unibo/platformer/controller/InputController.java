@@ -1,8 +1,9 @@
-package it.unibo.platformer.model.entities.players;
+package it.unibo.platformer.controller;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import it.unibo.platformer.model.entities.players.Player;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 

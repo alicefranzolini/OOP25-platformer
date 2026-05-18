@@ -1,13 +1,14 @@
 package it.unibo.platformer.model.entities.enemies;
 
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-
-import it.unibo.platformer.model.entities.DynamicEntity;
+import it.unibo.platformer.model.physics.BasicPhysics;
 import it.unibo.platformer.view.AnimationManager;
 import it.unibo.platformer.view.AnimationManager.Animation;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.paint.Color;
 
-public class Koopa extends DynamicEntity {
+
+public class Koopa extends EnemyImpl {
 
     // -------------------------------------------------------------------------
     // Constants
@@ -17,143 +18,164 @@ public class Koopa extends DynamicEntity {
     private static final double SHELL_SPEED = 300.0;
 
     // -------------------------------------------------------------------------
-    // State
+    // Public state enum
     // -------------------------------------------------------------------------
 
     public enum KoopaState { WALK, SHELL, SHELL_MOVING }
 
+    // -------------------------------------------------------------------------
+    // Private state handlers
+    // -------------------------------------------------------------------------
+
+    private static final class WalkHandler implements EnemyImpl.WalkingHandler {
+        @Override
+        public void update(EnemyImpl e, double deltaTime) {
+            double vx = e.getVelocityX();
+            if (vx < 0) e.facingLeft = true;
+            else if (vx > 0) e.facingLeft = false;
+            e.anim.play("walk");
+            e.anim.update(deltaTime);
+            e.physicsTick(deltaTime);
+        }
+
+        @Override
+        public void render(EnemyImpl e, GraphicsContext gc) {
+            if (e.anim.hasAnimation("walk")) {
+                e.anim.render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.facingLeft);
+            } else {
+                gc.setFill(Color.GREEN);
+                gc.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+            }
+        }
+
+        @Override
+        public boolean hitsPlayer() { return true; }
+    }
+
+    private static final class ShellHandler implements EnemyImpl.EnemyStateHandler {
+        @Override
+        public void update(EnemyImpl e, double deltaTime) {
+            e.anim.play("shell");
+            e.anim.update(deltaTime);
+        }
+
+        @Override
+        public void render(EnemyImpl e, GraphicsContext gc) {
+            if (e.anim.hasAnimation("shell")) {
+                e.anim.render(gc, e.getX(), e.getY(), e.getWidth(), 32, e.facingLeft);
+            } else {
+                gc.setFill(Color.DARKGREEN);
+                gc.fillRect(e.getX(), e.getY(), e.getWidth(), 32);
+            }
+        }
+
+        @Override
+        public boolean hitsPlayer() { return false; }
+    }
+
+    private static final class ShellMovingHandler implements EnemyImpl.EnemyStateHandler {
+        @Override
+        public void update(EnemyImpl e, double deltaTime) {
+            double vx = e.getVelocityX();
+            if (vx < 0) e.facingLeft = true;
+            else if (vx > 0) e.facingLeft = false;
+            e.anim.play("shell_moving");
+            e.anim.update(deltaTime);
+            e.physicsTick(deltaTime);
+        }
+
+        @Override
+        public void render(EnemyImpl e, GraphicsContext gc) {
+            if (e.anim.hasAnimation("shell_moving")) {
+                e.anim.render(gc, e.getX(), e.getY(), e.getWidth(), 32, e.facingLeft);
+            } else {
+                gc.setFill(Color.YELLOWGREEN);
+                gc.fillRect(e.getX(), e.getY(), e.getWidth(), 32);
+            }
+        }
+
+        @Override
+        public boolean hitsPlayer() { return true; }
+    }
+
+    // -------------------------------------------------------------------------
+    // State tracking
+    // -------------------------------------------------------------------------
+
     private KoopaState state;
 
     // -------------------------------------------------------------------------
-    // Animation
+    // Constructors
     // -------------------------------------------------------------------------
 
-    private final AnimationManager anim = new AnimationManager();
-    private boolean facingLeft = true;
+    public Koopa(double x, double y, BasicPhysics physics) {
+        super(x, y, 32, 48, physics);
+        init();
+    }
 
-    // -------------------------------------------------------------------------
-    // Constructor
-    // -------------------------------------------------------------------------
-
-    public Koopa(double x, double y) {
-        super(x, y, 32, 48);
-        this.state = KoopaState.WALK;
-        this.setVelocityX(-WALK_SPEED);
-
-        loadAnimations();
+    private void init() {
+        transitionTo(KoopaState.WALK);
+        setVelocityX(-WALK_SPEED);
         anim.play("walk");
     }
 
     // -------------------------------------------------------------------------
-    // Animation setup — sprite SINGOLI (non spritesheet)
+    // Template Method implementation
     // -------------------------------------------------------------------------
 
-    /**
-     * Carica le animazioni usando file PNG singoli (uno per frame).
-     *
-     * Struttura attesa in resources:
-     *   /sprites/enemies/koopa1.png       → frame 1 camminata
-     *   /sprites/enemies/koopa2.png       → frame 2 camminata
-     *   /sprites/enemies/koopa_shell.png  → guscio fermo e guscio in moto
-     */
-    private void loadAnimations() {
-        Image walkFrame1  = AnimationManager.loadImage("src\\main\\resources\\sprites\\koopa1.png");
-        Image walkFrame2  = AnimationManager.loadImage("src\\main\\resources\\sprites\\koopa2.png");
-        Image shellSprite = AnimationManager.loadImage("src\\main\\resources\\sprites\\koopa_shell.png");
+    @Override
+    protected void loadAnimations() {
+        Image walkFrame1  = AnimationManager.loadImage("/sprites/enemies/koopa1.png");
+        Image walkFrame2  = AnimationManager.loadImage("/sprites/enemies/koopa2.png");
+        Image shellSprite = AnimationManager.loadImage("/sprites/enemies/koopa_shell.png");
 
-        // --- Walk: 2 sprite singoli, loop a 0.15 s ---
         if (walkFrame1 != null && walkFrame2 != null) {
-            Image[] walkFrames = { walkFrame1, walkFrame2 };
-            anim.register("walk", new Animation(walkFrames, 0.15, true));
+            anim.register("walk", new Animation(new Image[]{walkFrame1, walkFrame2}, 0.15, true));
         } else {
-            System.err.println("[Koopa] Sprite camminata non trovati – uso fallback.");
+            System.err.println("[Koopa] Walk sprites not found – using fallback.");
         }
-
-        // --- Shell (fermo): 1 sprite, non loopato ---
         if (shellSprite != null) {
-            Image[] shellFrames = { shellSprite };
-            anim.register("shell", new Animation(shellFrames, 1.0, false));
-
-            // --- Shell moving: stesso sprite del guscio ma animato velocemente ---
-            // Usiamo lo stesso PNG; l'effetto di moto viene dalla velocità
-            Image[] movingFrames = { shellSprite };
-            anim.register("shell_moving", new Animation(movingFrames, 0.08, true));
+            anim.register("shell",        new Animation(new Image[]{shellSprite}, 1.0,  false));
+            anim.register("shell_moving", new Animation(new Image[]{shellSprite}, 0.08, true));
         } else {
-            System.err.println("[Koopa] Sprite koopa_shell non trovato – uso fallback.");
+            System.err.println("[Koopa] Shell sprite not found – using fallback.");
         }
     }
 
     // -------------------------------------------------------------------------
-    // Game logic
+    // State transition
     // -------------------------------------------------------------------------
 
-    @Override
-    public void update(double deltaTime) {
-        // direzione sprite
-        double vx = getVelocityX();
-        if (vx < 0) facingLeft = true;
-        else if (vx > 0) facingLeft = false;
-
-        // sync animazione allo stato
-        switch (state) {
-            case WALK         -> anim.play("walk");
-            case SHELL        -> anim.play("shell");
-            case SHELL_MOVING -> anim.play("shell_moving");
-        }
-
-        anim.update(deltaTime);
-
-        // fisica solo quando si muove
-        if (state == KoopaState.WALK || state == KoopaState.SHELL_MOVING) {
-            super.update(deltaTime);
-        }
-    }
-
-    @Override
-    public void render(GraphicsContext gc) {
-        if (!active) return;
-
-        if (state == KoopaState.SHELL || state == KoopaState.SHELL_MOVING) {
-            // Il guscio è più basso: 32x32 invece di 32x48
-            anim.render(gc, x, y, width, 32, facingLeft);
-        } else {
-            anim.render(gc, x, y, width, height, facingLeft);
-        }
+    private void transitionTo(KoopaState newState) {
+        this.state = newState;
+        EnemyStateHandler h = switch (newState) {
+            case WALK         -> new WalkHandler();
+            case SHELL        -> new ShellHandler();
+            case SHELL_MOVING -> new ShellMovingHandler();
+        };
+        transitionTo(h);
     }
 
     // -------------------------------------------------------------------------
-    // State transitions
+    // Public API
     // -------------------------------------------------------------------------
 
-    /** Mario ha saltato su Koopa → diventa guscio fermo. */
     public void stomp() {
         if (state != KoopaState.WALK) return;
-        state = KoopaState.SHELL;
+        transitionTo(KoopaState.SHELL);
         setVelocityX(0);
-        height = 32;
-        y += 16;
+        setHeight(32);
+        setY(getY() + 16);
         affectedByGravity = true;
     }
 
-    /** Mario ha calciato il guscio → scivola velocemente. */
     public void kick(boolean kickRight) {
         if (state != KoopaState.SHELL) return;
-        state = KoopaState.SHELL_MOVING;
-        double speed = kickRight ? SHELL_SPEED : -SHELL_SPEED;
-        setVelocityX(speed);
+        transitionTo(KoopaState.SHELL_MOVING);
+        setVelocityX(kickRight ? SHELL_SPEED : -SHELL_SPEED);
     }
 
-    // -------------------------------------------------------------------------
-    // Queries
-    // -------------------------------------------------------------------------
-
-    public boolean canKillEnemies() {
-        return state == KoopaState.SHELL_MOVING;
-    }
-
-    public boolean hitsPlayer() {
-        return state == KoopaState.WALK || state == KoopaState.SHELL_MOVING;
-    }
-
-    public KoopaState getKoopaState() { return state; }
+    public KoopaState getState()       { return state; }
+    public boolean canKillEnemies()    { return state == KoopaState.SHELL_MOVING; }
+    public boolean isInShell()         { return state == KoopaState.SHELL || state == KoopaState.SHELL_MOVING; }
 }

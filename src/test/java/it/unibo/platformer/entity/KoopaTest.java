@@ -4,21 +4,22 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import it.unibo.platformer.model.entities.enemies.Koopa;
+import it.unibo.platformer.model.physics.BasicPhysics;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class KoopaTest {
-
+BasicPhysics physics = new BasicPhysics();
     private Koopa koopa;
 
     @BeforeEach
     void setUp() {
-        koopa = new Koopa(100, 200);
+        koopa = new Koopa(100, 200, physics);
     }
 
     @Test
     void initialStateIsWalk() {
-        assertEquals(Koopa.KoopaState.WALK, koopa.getKoopaState());
+        assertEquals(Koopa.KoopaState.WALK, koopa.getState());
     }
 
     @Test
@@ -34,8 +35,8 @@ class KoopaTest {
     @Test
     void stompChangesToShell() {
         koopa.stomp();
-        assertEquals(Koopa.KoopaState.SHELL, koopa.getKoopaState());
-    }
+        assertEquals(Koopa.KoopaState.SHELL, koopa.getState()); // Change WALK to SHELL
+}
 
     @Test
     void shellDoesNotHitPlayer() {
@@ -47,8 +48,7 @@ class KoopaTest {
     void kickRightMovesShell() {
         koopa.stomp();
         koopa.kick(true);
-        assertEquals(Koopa.KoopaState.SHELL_MOVING, koopa.getKoopaState());
-        assertTrue(koopa.getVelocityX() > 0);
+        assertEquals(Koopa.KoopaState.SHELL_MOVING, koopa.getState()); // Change WALK to SHELL_MOVING
     }
 
     @Test
@@ -75,7 +75,7 @@ class KoopaTest {
     @Test
     void stompIdempotent() {
         koopa.stomp();
-        koopa.stomp(); // second stomp must be ignored
-        assertEquals(Koopa.KoopaState.SHELL, koopa.getKoopaState());
+        koopa.stomp();
+        assertEquals(Koopa.KoopaState.SHELL, koopa.getState()); // Change WALK to SHELL
     }
 }

@@ -2,10 +2,11 @@ package it.unibo.platformer.model.level;
 
 import it.unibo.platformer.model.entities.enemies.Goomba;
 import it.unibo.platformer.model.entities.enemies.Koopa;
-import it.unibo.platformer.model.entities.players.Player;
+import it.unibo.platformer.model.entities.players.PlayerImpl;
 import it.unibo.platformer.model.entities.worldEntity.Block;
 import it.unibo.platformer.model.entities.worldEntity.Block.BlockType;
 import it.unibo.platformer.model.entities.worldEntity.Coin;
+import it.unibo.platformer.model.physics.BasicPhysics;
 
 public class BasicLevelLoader implements LevelLoader {
 
@@ -41,11 +42,11 @@ public class BasicLevelLoader implements LevelLoader {
         level.addEntity(new Block(500, 350, BlockType.QUESTION));
 
         // coin
-        level.addEntity(new Coin(700, 300));
+        level.addEntity(createCoin(700, 300));
 
         // enemies
-        level.addEntity(new Goomba(900, 450));
-        level.addEntity(new Koopa(1200, 450));
+        level.addEntity(createGoomba(900, 450));
+        level.addEntity(createKoopa(1200, 450));
 
         return level;
     }
@@ -62,13 +63,13 @@ public class BasicLevelLoader implements LevelLoader {
         level.addEntity(new Block(812, 390));
         level.addEntity(new Block(844, 390));
 
-        level.addEntity(new Coin(560, 320));
-        level.addEntity(new Coin(820, 350));
-        level.addEntity(new Coin(1120, 300));
+        level.addEntity(createCoin(560, 320));
+        level.addEntity(createCoin(820, 350));
+        level.addEntity(createCoin(1120, 300));
 
-        level.addEntity(new Goomba(980, 450));
-        level.addEntity(new Goomba(1260, 450));
-        level.addEntity(new Koopa(1600, 450));
+        level.addEntity(createGoomba(980, 450));
+        level.addEntity(createGoomba(1260, 450));
+        level.addEntity(createKoopa(1600, 450));
 
         return level;
     }
@@ -87,14 +88,14 @@ public class BasicLevelLoader implements LevelLoader {
         level.addEntity(new Block(1450, 360, BlockType.BRICK));
         level.addEntity(new Block(1482, 360, BlockType.BRICK));
 
-        level.addEntity(new Coin(370, 350));
-        level.addEntity(new Coin(720, 300));
-        level.addEntity(new Coin(1140, 370));
-        level.addEntity(new Coin(1490, 320));
+        level.addEntity(createCoin(370, 350));
+        level.addEntity(createCoin(720, 300));
+        level.addEntity(createCoin(1140, 370));
+        level.addEntity(createCoin(1490, 320));
 
-        level.addEntity(new Goomba(900, 450));
-        level.addEntity(new Koopa(1320, 450));
-        level.addEntity(new Koopa(1900, 450));
+        level.addEntity(createGoomba(900, 450));
+        level.addEntity(createKoopa(1320, 450));
+        level.addEntity(createKoopa(1900, 450));
 
         return level;
     }
@@ -108,7 +109,7 @@ public class BasicLevelLoader implements LevelLoader {
             PLAYER_SPAWN_Y
         );
 
-        level.setPlayer(new Player(level.getSpawnX(), level.getSpawnY()));
+        level.setPlayer(new PlayerImpl(level.getSpawnX(), level.getSpawnY()));
         return level;
     }
 
@@ -116,6 +117,18 @@ public class BasicLevelLoader implements LevelLoader {
         for (int x = 0; x < level.getWidth(); x += TILE_SIZE) {
             level.addEntity(new Block(x, FLOOR_Y));
         }
+    }
+
+    private Coin createCoin(final double x, final double y) {
+        return new Coin(x, y, new BasicPhysics());
+    }
+
+    private Goomba createGoomba(final double x, final double y) {
+        return new Goomba(x, y, new BasicPhysics());
+    }
+
+    private Koopa createKoopa(final double x, final double y) {
+        return new Koopa(x, y, new BasicPhysics());
     }
     
 }

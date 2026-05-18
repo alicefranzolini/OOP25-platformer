@@ -78,11 +78,11 @@ public class BasicLevel implements Level {
     @Override
     public void setPlayer(final Player player) {
         if (this.player != null) {
-            removeEntity(this.player);
+            removeEntity(playerEntity(this.player));
         }
         this.player = player;
         if (player != null) {
-            addEntity(player);
+            addEntity(playerEntity(player));
         }
     }
 
@@ -169,6 +169,17 @@ public class BasicLevel implements Level {
 
         //remove if entity die
         this.entities.removeIf(entity -> !entity.isActive());
+    }
+
+    private Entity playerEntity(final Player player) {
+        return (Entity) player;
+    }
+
+    private boolean overlaps(final Player first, final Entity second) {
+        return first.getX() < second.getX() + second.getWidth()
+            && first.getX() + first.getWidth() > second.getX()
+            && first.getY() < second.getY() + second.getHeight()
+            && first.getY() + first.getHeight() > second.getY();
     }
 
     private boolean overlaps(final Entity first, final Entity second) {

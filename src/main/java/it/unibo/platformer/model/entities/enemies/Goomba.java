@@ -1,162 +1,161 @@
 package it.unibo.platformer.model.entities.enemies;
-
-import it.unibo.platformer.model.entities.DynamicEntity;
+ 
+import it.unibo.platformer.model.physics.BasicPhysics;
 import it.unibo.platformer.view.AnimationManager;
 import it.unibo.platformer.view.AnimationManager.Animation;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+ 
 
-public class Goomba extends DynamicEntity {
-
-    private static final double SPEED        = 60.0;
-    private static final double SQUISH_TIME  = 0.4;
-
-    public enum GoombaState {
-        WALK,
-        SQUISHED,
-        DEAD
-    }
-
-    private GoombaState state;
-    private double squishTimer;
-
-    // Animazione camminata
+public class Goomba extends EnemyImpl {
+ 
+    // -------------------------------------------------------------------------
+    // Constants
+    // -------------------------------------------------------------------------
+ 
+    private static final double WALK_SPEED     = 60.0;
+    private static final double SQUISH_TIME    = 0.4;
     private static final double FRAME_DURATION = 0.2;
-    //private static final int    FRAMES         = 2;
-
-    // AnimationManager gestisce i frame
-    private final AnimationManager anim = new AnimationManager();
-    private boolean facingLeft = true;
-
-    public Goomba(double x, double y) {
-        super(x, y, 32, 32);
-        this.state = GoombaState.WALK;
-        setVelocityX(-SPEED);
-        this.squishTimer = 0;
-
-        loadAnimations();
+ 
+    // -------------------------------------------------------------------------
+    // Public state enum
+    // -------------------------------------------------------------------------
+ 
+    public enum GoombaState { WALK, SQUISHED }
+ 
+    // -------------------------------------------------------------------------
+    // Private state handlers
+    // -------------------------------------------------------------------------
+ 
+    private static final class WalkHandler implements EnemyImpl.WalkingHandler {
+        @Override
+        public void update(EnemyImpl e, double deltaTime) {
+            double vx = e.getVelocityX();
+            if (vx < 0) e.facingLeft = true;
+            else if (vx > 0) e.facingLeft = false;
+            e.anim.play("walk");
+            e.anim.update(deltaTime);
+            e.physicsTick(deltaTime);
+        }
+ 
+        @Override
+        public void render(EnemyImpl e, GraphicsContext gc) {
+            if (e.anim.hasAnimation("walk")) {
+                e.anim.render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.facingLeft);
+            } else {
+                renderFallback(e, gc);
+            }
+        }
+ 
+        private void renderFallback(EnemyImpl e, GraphicsContext gc) {
+            gc.setFill(Color.SADDLEBROWN);
+            gc.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+            gc.setFill(Color.WHITE);
+            gc.fillOval(e.getX() + 4,  e.getY() + 8, 8, 8);
+            gc.fillOval(e.getX() + 20, e.getY() + 8, 8, 8);
+            gc.setFill(Color.BLACK);
+            gc.fillOval(e.getX() + 6,  e.getY() + 10, 4, 4);
+            gc.fillOval(e.getX() + 22, e.getY() + 10, 4, 4);
+        }
+ 
+        @Override
+        public boolean hitsPlayer() { return true; }
+    }
+ 
+    private static final class SquishHandler implements EnemyImpl.EnemyStateHandler {
+        private double squishTimer = 0;
+ 
+        @Override
+        public void update(EnemyImpl e, double deltaTime) {
+            e.anim.play("squished");
+            e.anim.update(deltaTime);
+            squishTimer += deltaTime;
+            if (squishTimer >= SQUISH_TIME) {
+                e.destroy();
+            }
+        }
+ 
+        @Override
+        public void render(EnemyImpl e, GraphicsContext gc) {
+            double halfH = e.getHeight() / 2.0;
+            if (e.anim.hasAnimation("squished")) {
+                e.anim.render(gc, e.getX(), e.getY() + halfH, e.getWidth(), halfH, e.facingLeft);
+            } else {
+                gc.setFill(Color.SADDLEBROWN);
+                gc.fillRect(e.getX(), e.getY() + halfH, e.getWidth(), halfH);
+            }
+        }
+ 
+        @Override
+        public boolean hitsPlayer() { return false; }
+    }
+ 
+    // -------------------------------------------------------------------------
+    // State tracking
+    // -------------------------------------------------------------------------
+ 
+    private GoombaState state;
+ 
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+ 
+    public Goomba(double x, double y, BasicPhysics physics) {
+        super(x, y, 32, 32, physics);
+        init();
+    }
+ 
+    
+    private void init() {
+        transitionTo(GoombaState.WALK);
+        setVelocityX(-WALK_SPEED);
         anim.play("walk");
     }
-
-    /**
-     * Carica le animazioni usando sprite SINGOLI (non spritesheet).
-     * Ogni immagine è un file PNG separato.
-     *
-     * Struttura attesa in resources:
-     *   /sprites/enemies/goomba1.png      → frame 1 camminata
-     *   /sprites/enemies/goomba2.png      → frame 2 camminata
-     *   /sprites/enemies/goomba_dead.png  → sprite schiacciato
-     */
-    private void loadAnimations() {
-        Image frame1 = AnimationManager.loadImage("src\\main\\resources\\sprites\\goomba1.png");
-        Image frame2 = AnimationManager.loadImage("src\\main\\resources\\sprites\\goomba2.png");
-        Image dead   = AnimationManager.loadImage("src\\main\\resources\\sprites\\goomba_dead.png");
-
-        // Animazione camminata: 2 sprite singoli messi in array
+ 
+    // -------------------------------------------------------------------------
+    // Template Method implementation
+    // -------------------------------------------------------------------------
+ 
+    @Override
+    protected void loadAnimations() {
+        Image frame1 = AnimationManager.loadImage("/sprites/enemies/goomba1.png");
+        Image frame2 = AnimationManager.loadImage("/sprites/enemies/goomba2.png");
+        Image dead   = AnimationManager.loadImage("/sprites/enemies/goomba_dead.png");
+ 
         if (frame1 != null && frame2 != null) {
-            Image[] walkFrames = { frame1, frame2 };
-            anim.register("walk", new Animation(walkFrames, FRAME_DURATION, true));
+            anim.register("walk", new Animation(new Image[]{frame1, frame2}, FRAME_DURATION, true));
         } else {
-            System.err.println("[Goomba] Sprite camminata non trovati – uso fallback.");
+            System.err.println("[Goomba] Walk sprites not found – using fallback.");
         }
-
-        // Animazione schiacciato: 1 sprite singolo
         if (dead != null) {
-            Image[] deadFrames = { dead };
-            anim.register("squished", new Animation(deadFrames, SQUISH_TIME, false));
+            anim.register("squished", new Animation(new Image[]{dead}, SQUISH_TIME, false));
         } else {
-            System.err.println("[Goomba] Sprite goomba_dead non trovato – uso fallback.");
+            System.err.println("[Goomba] Squish sprite not found – using fallback.");
         }
     }
-
-    @Override
-    public void update(double deltaTime) {
-        switch (state) {
-
-            case WALK:
-                // direzione sprite
-                if (getVelocityX() < 0) facingLeft = true;
-                else if (getVelocityX() > 0) facingLeft = false;
-
-                anim.play("walk");
-                anim.update(deltaTime);
-                super.update(deltaTime);
-                break;
-
-            case SQUISHED:
-                anim.play("squished");
-                anim.update(deltaTime);
-                squishTimer += deltaTime;
-                if (squishTimer >= SQUISH_TIME) {
-                    destroy();
-                }
-                break;
-
-            case DEAD:
-                destroy();
-                break;
-        }
+ 
+    // -------------------------------------------------------------------------
+    // State transition
+    // -------------------------------------------------------------------------
+ 
+    private void transitionTo(GoombaState newState) {
+        this.state = newState;
+        transitionTo(newState == GoombaState.WALK
+            ? new WalkHandler()
+            : new SquishHandler());
     }
-
-    @Override
-    public void render(GraphicsContext gc) {
-        if (!active) return;
-
-        // Se AnimationManager ha frame disponibili li usa
-        // altrimenti cade nel fallback rettangoli
-        String key = (state == GoombaState.SQUISHED) ? "squished" : "walk";
-
-        if (animHasFrames(key)) {
-            if (state == GoombaState.SQUISHED) {
-                // Schiacciato: sprite nella metà inferiore
-                anim.render(gc, x, y + height / 2.0, width, height / 2.0, facingLeft);
-            } else {
-                anim.render(gc, x, y, width, height, facingLeft);
-            }
-        } else {
-            renderFallback(gc);
-        }
-    }
-
-    /** Controlla se l'animazione corrente ha almeno un frame caricato. */
-    private boolean animHasFrames(String key) {
-        // Tentiamo di giocare l'animazione e vedere se rende qualcosa
-        // (AnimationManager.render non disegna se frame == null)
-        // Usiamo isCurrentFinished come proxy: se l'animazione esiste ritorna false
-        anim.play(key);
-        return true; // AnimationManager stampa errore ma non crasha se mancano
-    }
-
-    /** Fallback con rettangoli colorati se gli sprite non sono disponibili. */
-    private void renderFallback(GraphicsContext gc) {
-        if (state == GoombaState.SQUISHED) {
-            gc.setFill(Color.SADDLEBROWN);
-            gc.fillRect(x, y + height / 2.0, width, height / 2.0);
-            return;
-        }
-
-        gc.setFill(Color.SADDLEBROWN);
-        gc.fillRect(x, y, width, height);
-
-        gc.setFill(Color.WHITE);
-        gc.fillOval(x + 4,  y + 8, 8, 8);
-        gc.fillOval(x + 20, y + 8, 8, 8);
-        gc.setFill(Color.BLACK);
-        gc.fillOval(x + 6,  y + 10, 4, 4);
-        gc.fillOval(x + 22, y + 10, 4, 4);
-    }
-
+ 
+    // -------------------------------------------------------------------------
+    // Public API
+    // -------------------------------------------------------------------------
+ 
     public void squish() {
         if (state != GoombaState.WALK) return;
-        state = GoombaState.SQUISHED;
+        transitionTo(GoombaState.SQUISHED);
         setVelocityX(0);
         affectedByGravity = false;
     }
-
-    public boolean hitsPlayer() {
-        return state == GoombaState.WALK;
-    }
-
+ 
     public GoombaState getState() { return state; }
 }

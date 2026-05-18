@@ -1,6 +1,5 @@
 package it.unibo.platformer.controller;
 
-import it.unibo.platformer.model.entities.players.InputController;
 import it.unibo.platformer.model.level.BasicLevelLoader;
 import it.unibo.platformer.model.level.Level;
 import it.unibo.platformer.model.level.LevelLoader;
