@@ -1,22 +1,21 @@
 package it.unibo.platformer.model.entities;
 
 
-import it.unibo.platformer.model.physics.BasicPhysics;
-import it.unibo.platformer.model.physics.GameObject;
+import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
+import it.unibo.platformer.model.physics.impl.GameObjectImpl;
 
 public abstract class DynamicEntity extends Entity {
 
 
-    protected final GameObject gameObject;//stores position size and velocity
-    protected final BasicPhysics physics ;
+    protected final GameObjectImpl gameObject;//stores position size and velocity
+    private static final BasicPhysicsImpl physics = new BasicPhysicsImpl();//applies gravity and movement
  
     protected boolean affectedByGravity; //if true the entity falls
     protected boolean onGround;//if on the ground the gravity stops
 
     public DynamicEntity(double x, double y, double width, double height , BasicPhysics physics) {
         super(x, y, width, height);
-        this.physics = physics;
-        this.gameObject       = new GameObject((float) x, (float) y, (float) width, (float) height);
+        this.gameObject       = new GameObjectImpl((float) x, (float) y, (float) width, (float) height);
         this.affectedByGravity = true;
         this.onGround          = false;
     }
@@ -83,5 +82,5 @@ public abstract class DynamicEntity extends Entity {
     }
  
     
-    public GameObject getGameObject() { return gameObject; }
+    public GameObjectImpl getGameObject() { return gameObject; }
 }

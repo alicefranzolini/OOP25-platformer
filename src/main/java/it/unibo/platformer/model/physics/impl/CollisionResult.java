@@ -1,21 +1,21 @@
-package it.unibo.platformer.model.physics;
+package it.unibo.platformer.model.physics.impl;
 
 public class CollisionResult {
-    private GameObject dynamicObj;
-    private GameObject staticObj;
+    private GameObjectImpl dynamicObj;
+    private GameObjectImpl staticObj;
     private CollisionSide side;
 
-    public CollisionResult(GameObject dynamicObj, GameObject staticObj, CollisionSide side){
+    public CollisionResult(GameObjectImpl dynamicObj, GameObjectImpl staticObj, CollisionSide side){
         this.dynamicObj = dynamicObj;
         this.staticObj = staticObj;
         this.side = side;
     }
 
-    public GameObject getDynamicObj(){
+    public GameObjectImpl getDynamicObj(){
         return this.dynamicObj;
     }
 
-    public GameObject getStaticObj(){
+    public GameObjectImpl getStaticObj(){
         return this.staticObj;
     }
 
