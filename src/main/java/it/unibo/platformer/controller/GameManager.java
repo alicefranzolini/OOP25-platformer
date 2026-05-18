@@ -110,6 +110,8 @@ public class GameManager {
     }
 
     public void update(final double deltaTime) {
+        handleGameCommands();
+
         switch (currentState) {
             case MENU:
                 updateMenu();
@@ -123,6 +125,18 @@ public class GameManager {
             case GAME_OVER:
                 updateGameOver();
                 break;
+        }
+    }
+
+    private void handleGameCommands() {
+        // Restart has priority because it creates a new game state.
+        if (this.inputController.consumeRestartPressed()) {
+            restartGame();
+            return;
+        }
+
+        if (this.inputController.consumePausePressed()) {
+            togglePause();
         }
     }
 
@@ -160,6 +174,7 @@ public class GameManager {
             return;
         }
 
+        // The camera follows the player, but it cannot go outside the level.
         final double desiredCameraX = this.currentLevel.getPlayer().getX() - CAMERA_PLAYER_OFFSET;
         final double maxCameraX = Math.max(0, this.currentLevel.getWidth() - this.viewWidth);
         this.cameraX = Math.max(0, Math.min(desiredCameraX, maxCameraX));
@@ -177,6 +192,7 @@ public class GameManager {
     }
 
     private void renderSimpleHud(final GraphicsContext gc) {
+        // Temporary HUD. Later it can be moved to a dedicated view class.
         gc.fillText("Score: " + this.scoreSystem.getScore(), 20, 30);
         gc.fillText("Coins: " + this.scoreSystem.getCoins(), 20, 50);
         gc.fillText("Lives: " + this.scoreSystem.getLives(), 20, 70);

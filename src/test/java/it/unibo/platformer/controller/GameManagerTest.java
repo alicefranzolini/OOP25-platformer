@@ -2,6 +2,7 @@ package it.unibo.platformer.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Test;
 
 class GameManagerTest {
@@ -60,5 +61,36 @@ class GameManagerTest {
 
         gameManager.nextLevel();
         assertEquals(GameManager.GameState.GAME_OVER, gameManager.getCurrentState());
+    }
+
+    @Test
+    void pauseKeyTogglesPauseOnlyOncePerPress() {
+        final GameManager gameManager = new GameManager();
+
+        gameManager.startGame();
+        gameManager.getInputController().pressKey(KeyCode.ESCAPE);
+        gameManager.update();
+        gameManager.update();
+
+        assertEquals(GameManager.GameState.PAUSED, gameManager.getCurrentState());
+
+        gameManager.getInputController().releaseKey(KeyCode.ESCAPE);
+        gameManager.getInputController().pressKey(KeyCode.ESCAPE);
+        gameManager.update();
+
+        assertEquals(GameManager.GameState.PLAYING, gameManager.getCurrentState());
+    }
+
+    @Test
+    void restartKeyLoadsFirstLevelAndStartsGame() {
+        final GameManager gameManager = new GameManager();
+
+        gameManager.loadLevel(3);
+        gameManager.gameOver();
+        gameManager.getInputController().pressKey(KeyCode.R);
+        gameManager.update();
+
+        assertEquals(GameManager.GameState.PLAYING, gameManager.getCurrentState());
+        assertEquals(1, gameManager.getCurrentLevel().getLevelNumber());
     }
 }

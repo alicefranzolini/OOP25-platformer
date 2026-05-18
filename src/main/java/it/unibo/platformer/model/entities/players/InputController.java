@@ -1,65 +1,84 @@
 package it.unibo.platformer.model.entities.players;
 
-import javafx.scene.Scene;  // la Scene è la scena JavaFX del gioco, registra gli eventi della tastiera
-import javafx.scene.input.KeyCode;  // KeyCode rappresenta un tasto della tastiera.
 import java.util.HashSet;
-import java.util.Set; // SET: per non permettere duplicati , veloce da controllare
+import java.util.Set;
 
-/**
- * 
- * Gestisce gli input da tastiera e li traduce in azioni del player.
- *
- */
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 
-// clsse per la gestione degli input 
 public class InputController {
 
-    private final Set<KeyCode> keysPressed = new HashSet<>();
-
-    // Tasti di controllo
-    private static final KeyCode KEY_LEFT  = KeyCode.LEFT;
+    private static final KeyCode KEY_LEFT = KeyCode.LEFT;
     private static final KeyCode KEY_RIGHT = KeyCode.RIGHT;
-    private static final KeyCode KEY_JUMP  = KeyCode.SPACE;
-    private static final KeyCode KEY_RUN   = KeyCode.SHIFT;
+    private static final KeyCode KEY_JUMP = KeyCode.SPACE;
+    private static final KeyCode KEY_RUN = KeyCode.SHIFT;
+    private static final KeyCode KEY_PAUSE = KeyCode.ESCAPE;
+    private static final KeyCode KEY_RESTART = KeyCode.R;
 
-    /**
-     * 
-     * Registra gli event listener sulla scena JavaFX.
-     * serve per collegare la tastiera alla scena JavaFX
-     * 
-     * Da chiamare una volta sola all'avvio.
-     */
-    public void register(Scene scene) {
-        scene.setOnKeyPressed(e  -> keysPressed.add(e.getCode()));
-        /**
-         *  quando viene premuto un tasto JavaFX genera un evento , e.getCode() prende il codice del tasto digitato, il tasto viene aggiunto al Set
-         */
-        scene.setOnKeyReleased(e -> keysPressed.remove(e.getCode()));
-        /**
-         *  quando un tasto viene rilasciato , viene rimosso dal Set 
-         */
+    private final Set<KeyCode> keysPressed = new HashSet<>();
+    private final Set<KeyCode> keysToConsume = new HashSet<>();
+
+    // Connects the keyboard events of the scene to this controller.
+    public void register(final Scene scene) {
+        scene.setOnKeyPressed(event -> pressKey(event.getCode()));
+        scene.setOnKeyReleased(event -> releaseKey(event.getCode()));
     }
 
-    /**
-     * Applica gli input al player.
-     * Da chiamare ogni frame prima di update().
-     */
-    public void handleInput(Player player) {
-        boolean left  = keysPressed.contains(KEY_LEFT);
-        boolean right = keysPressed.contains(KEY_RIGHT);
-
-        if (left && !right)       player.moveLeft();
-        else if (right && !left)  player.moveRight();
-        else                      player.stopX();
-
-        // Il salto viene gestito da Player nella settimana 2 (Sabrina)
-        // Qui esponiamo solo il metodo per sapere se il tasto è premuto
+    public void pressKey(final KeyCode key) {
+        // A key is consumed only when it has just been pressed.
+        if (!this.keysPressed.contains(key)) {
+            this.keysToConsume.add(key);
+        }
+        this.keysPressed.add(key);
     }
 
-    // valuto con delle booleane le varie opzioni
+    public void releaseKey(final KeyCode key) {
+        this.keysPressed.remove(key);
+    }
 
-    public boolean isJumpPressed() { return keysPressed.contains(KEY_JUMP); }
-    public boolean isRunPressed()  { return keysPressed.contains(KEY_RUN);  }
-    public boolean isLeftPressed() { return keysPressed.contains(KEY_LEFT); }
-    public boolean isRightPressed(){ return keysPressed.contains(KEY_RIGHT);}
+    // Applies movement and jump input to the player.
+    public void handleInput(final Player player) {
+        if (player == null) {
+            return;
+        }
+
+        final boolean left = isLeftPressed();
+        final boolean right = isRightPressed();
+
+        if (left && !right) {
+            player.moveLeft();
+        } else if (right && !left) {
+            player.moveRight();
+        } else {
+            player.stopX();
+        }
+
+        player.setJumpRequested(isJumpPressed());
+    }
+
+    public boolean isJumpPressed() {
+        return this.keysPressed.contains(KEY_JUMP);
+    }
+
+    public boolean isRunPressed() {
+        return this.keysPressed.contains(KEY_RUN);
+    }
+
+    public boolean isLeftPressed() {
+        return this.keysPressed.contains(KEY_LEFT);
+    }
+
+    public boolean isRightPressed() {
+        return this.keysPressed.contains(KEY_RIGHT);
+    }
+
+    public boolean consumePausePressed() {
+        // Pause is an action, so it must happen once for each key press.
+        return this.keysToConsume.remove(KEY_PAUSE);
+    }
+
+    public boolean consumeRestartPressed() {
+        // Restart is also consumed once to avoid restarting every frame.
+        return this.keysToConsume.remove(KEY_RESTART);
+    }
 }
