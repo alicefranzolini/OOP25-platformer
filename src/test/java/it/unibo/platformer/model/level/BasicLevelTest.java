@@ -23,6 +23,7 @@ class BasicLevelTest {
 
         assertFalse(level.getEntities().contains(coin));
         assertFalse(coin.isActive());
+        assertEquals(1, level.getCollectedCoins());
     }
 
     @Test
@@ -38,6 +39,21 @@ class BasicLevelTest {
 
         assertTrue(level.getEntities().contains(coin));
         assertTrue(coin.isActive());
+        assertEquals(0, level.getCollectedCoins());
+    }
+
+    @Test
+    void collectedCoinsCanBeResetAfterScoreUpdate() {
+        final BasicLevel level = new BasicLevel();
+        final Player player = new Player(100, 300);
+        final Coin coin = new Coin(105, 300);
+
+        level.setPlayer(player);
+        level.addEntity(coin);
+        level.update(0);
+        level.resetCollectedCoins();
+
+        assertEquals(0, level.getCollectedCoins());
     }
 
     @Test

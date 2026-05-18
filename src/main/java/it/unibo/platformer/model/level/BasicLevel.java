@@ -21,6 +21,7 @@ public class BasicLevel implements Level {
     private final double height;
     private final double spawnX;
     private final double spawnY;
+    private int collectedCoins;
 
     private Player player;
 
@@ -44,6 +45,7 @@ public class BasicLevel implements Level {
         this.height = height;
         this.spawnX = spawnX;
         this.spawnY = spawnY;
+        this.collectedCoins = 0;
         this.detector = new CollisionDetector();
         this.resolver = new CollisionResolver();
     }
@@ -105,6 +107,16 @@ public class BasicLevel implements Level {
     }
 
     @Override
+    public int getCollectedCoins() {
+        return this.collectedCoins;
+    }
+
+    @Override
+    public void resetCollectedCoins() {
+        this.collectedCoins = 0;
+    }
+
+    @Override
     public void update(final double deltaTime) {
         for (final Entity entity : this.entities) {
             if (entity.isActive()) {
@@ -149,7 +161,7 @@ public class BasicLevel implements Level {
                     final Coin coin = (Coin) entity;
                     if (overlaps(this.player, coin)) {
                         coin.setActive(false);
-                        System.out.println("Coin collected!");
+                        this.collectedCoins++;
                     }
                 }
             }

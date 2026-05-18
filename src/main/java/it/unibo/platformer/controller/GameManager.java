@@ -16,6 +16,7 @@ public class GameManager {
     private static final double DEFAULT_VIEW_HEIGHT = 720;
     private static final double FIXED_DELTA_TIME = 0.016;
     private static final double CAMERA_PLAYER_OFFSET = 400;
+    private static final int COIN_SCORE = 100;
 
     public enum GameState {
         MENU,
@@ -168,7 +169,19 @@ public class GameManager {
 
         this.inputController.handleInput(this.currentLevel.getPlayer());
         this.currentLevel.update(deltaTime);
+        updateScoreFromLevel();
         updateCamera();
+    }
+
+    private void updateScoreFromLevel() {
+        final int collectedCoins = this.currentLevel.getCollectedCoins();
+
+        for (int i = 0; i < collectedCoins; i++) {
+            this.scoreSystem.addCoin();
+            this.scoreSystem.addScore(COIN_SCORE);
+        }
+
+        this.currentLevel.resetCollectedCoins();
     }
 
     private void updateCamera() {

@@ -27,6 +27,10 @@ public interface Level {
 
     List<Entity> getEntities();
 
+    int getCollectedCoins();
+
+    void resetCollectedCoins();
+
     void update(double deltatime);
 
     void render(GraphicsContext gc);

@@ -2,6 +2,7 @@ package it.unibo.platformer.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import it.unibo.platformer.model.entities.worldEntity.Coin;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Test;
 
@@ -92,5 +93,18 @@ class GameManagerTest {
 
         assertEquals(GameManager.GameState.PLAYING, gameManager.getCurrentState());
         assertEquals(1, gameManager.getCurrentLevel().getLevelNumber());
+    }
+
+    @Test
+    void collectingCoinUpdatesScoreSystem() {
+        final GameManager gameManager = new GameManager();
+
+        gameManager.getCurrentLevel().addEntity(new Coin(105, 300));
+        gameManager.startGame();
+        gameManager.update(0);
+
+        assertEquals(1, gameManager.getScoreSystem().getCoins());
+        assertEquals(100, gameManager.getScoreSystem().getScore());
+        assertEquals(0, gameManager.getCurrentLevel().getCollectedCoins());
     }
 }
