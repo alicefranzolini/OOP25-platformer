@@ -17,6 +17,7 @@ public class GameManager {
     private static final double FIXED_DELTA_TIME = 0.016;
     private static final double CAMERA_PLAYER_OFFSET = 400;
     private static final int COIN_SCORE = 100;
+    private static final double LEVEL_END_DISTANCE = 64;
 
     public enum GameState {
         MENU,
@@ -101,12 +102,7 @@ public class GameManager {
     }
 
     public void nextLevel() {
-        final int currentLevelNumber = this.currentLevel.getLevelNumber();
-        if (currentLevelNumber < LAST_LEVEL) {
-            loadLevel(currentLevelNumber + 1);
-        } else {
-            gameOver();
-        }
+        backToMenu();
     }
 
     public void update() {
@@ -159,7 +155,11 @@ public class GameManager {
     }
 
     private void updateMenu() {
-        // menu logic
+        final int selectedLevel = this.inputController.consumeSelectedLevel();
+        if (selectedLevel >= FIRST_LEVEL && selectedLevel <= LAST_LEVEL) {
+            loadLevel(selectedLevel);
+            startGame();
+        }
     }
 
     private void updateGame(final double deltaTime) {
@@ -170,6 +170,7 @@ public class GameManager {
         this.inputController.handleInput(this.currentLevel.getPlayer());
         this.currentLevel.update(deltaTime);
         updateScoreFromLevel();
+        checkLevelEnd();
         updateCamera();
     }
 
@@ -182,6 +183,19 @@ public class GameManager {
         }
 
         this.currentLevel.resetCollectedCoins();
+    }
+
+    private void checkLevelEnd() {
+        if (this.currentLevel.getPlayer() == null) {
+            return;
+        }
+
+        final double playerEndX = this.currentLevel.getPlayer().getX()
+            + this.currentLevel.getPlayer().getWidth();
+
+        if (playerEndX >= this.currentLevel.getWidth() - LEVEL_END_DISTANCE) {
+            backToMenu();
+        }
     }
 
     private void updateCamera() {

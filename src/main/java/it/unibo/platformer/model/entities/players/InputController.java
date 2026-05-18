@@ -14,6 +14,9 @@ public class InputController {
     private static final KeyCode KEY_RUN = KeyCode.SHIFT;
     private static final KeyCode KEY_PAUSE = KeyCode.ESCAPE;
     private static final KeyCode KEY_RESTART = KeyCode.R;
+    private static final KeyCode KEY_LEVEL_ONE = KeyCode.DIGIT1;
+    private static final KeyCode KEY_LEVEL_TWO = KeyCode.DIGIT2;
+    private static final KeyCode KEY_LEVEL_THREE = KeyCode.DIGIT3;
 
     private final Set<KeyCode> keysPressed = new HashSet<>();
     private final Set<KeyCode> keysToConsume = new HashSet<>();
@@ -80,5 +83,16 @@ public class InputController {
     public boolean consumeRestartPressed() {
         // Restart is also consumed once to avoid restarting every frame.
         return this.keysToConsume.remove(KEY_RESTART);
+    }
+
+    public int consumeSelectedLevel() {
+        if (this.keysToConsume.remove(KEY_LEVEL_ONE)) {
+            return 1;
+        } else if (this.keysToConsume.remove(KEY_LEVEL_TWO)) {
+            return 2;
+        } else if (this.keysToConsume.remove(KEY_LEVEL_THREE)) {
+            return 3;
+        }
+        return 0;
     }
 }

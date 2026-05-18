@@ -55,13 +55,8 @@ class GameManagerTest {
 
         gameManager.loadLevel(1);
         gameManager.nextLevel();
-        assertEquals(2, gameManager.getCurrentLevel().getLevelNumber());
-
-        gameManager.nextLevel();
-        assertEquals(3, gameManager.getCurrentLevel().getLevelNumber());
-
-        gameManager.nextLevel();
-        assertEquals(GameManager.GameState.GAME_OVER, gameManager.getCurrentState());
+        assertEquals(GameManager.GameState.MENU, gameManager.getCurrentState());
+        assertEquals(1, gameManager.getCurrentLevel().getLevelNumber());
     }
 
     @Test
@@ -106,5 +101,27 @@ class GameManagerTest {
         assertEquals(1, gameManager.getScoreSystem().getCoins());
         assertEquals(100, gameManager.getScoreSystem().getScore());
         assertEquals(0, gameManager.getCurrentLevel().getCollectedCoins());
+    }
+
+    @Test
+    void menuLevelSelectionStartsSelectedLevel() {
+        final GameManager gameManager = new GameManager();
+
+        gameManager.getInputController().pressKey(KeyCode.DIGIT3);
+        gameManager.update();
+
+        assertEquals(GameManager.GameState.PLAYING, gameManager.getCurrentState());
+        assertEquals(3, gameManager.getCurrentLevel().getLevelNumber());
+    }
+
+    @Test
+    void reachingEndOfLevelReturnsToMenu() {
+        final GameManager gameManager = new GameManager();
+
+        gameManager.startGame();
+        gameManager.getCurrentLevel().getPlayer().setX(gameManager.getCurrentLevel().getWidth());
+        gameManager.update(0);
+
+        assertEquals(GameManager.GameState.MENU, gameManager.getCurrentState());
     }
 }

@@ -1,6 +1,7 @@
 package it.unibo.platformer.model.entities.players;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javafx.scene.input.KeyCode;
@@ -39,5 +40,15 @@ class InputControllerTest {
         inputController.releaseKey(KeyCode.R);
         inputController.pressKey(KeyCode.R);
         assertTrue(inputController.consumeRestartPressed());
+    }
+
+    @Test
+    void levelSelectionReturnsSelectedLevelOnlyOnce() {
+        final InputController inputController = new InputController();
+
+        inputController.pressKey(KeyCode.DIGIT2);
+
+        assertEquals(2, inputController.consumeSelectedLevel());
+        assertEquals(0, inputController.consumeSelectedLevel());
     }
 }
