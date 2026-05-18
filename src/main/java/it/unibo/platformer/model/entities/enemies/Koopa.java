@@ -1,113 +1,181 @@
 package it.unibo.platformer.model.entities.enemies;
 
+import it.unibo.platformer.model.physics.BasicPhysics;
+import it.unibo.platformer.view.AnimationManager;
+import it.unibo.platformer.view.AnimationManager.Animation;
 import javafx.scene.canvas.GraphicsContext;
-import it.unibo.platformer.model.entities.DynamicEntity;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
 
-public class Koopa extends DynamicEntity {
+public class Koopa extends EnemyImpl {
+
+    // -------------------------------------------------------------------------
+    // Constants
+    // -------------------------------------------------------------------------
 
     private static final double WALK_SPEED  = 50.0;
     private static final double SHELL_SPEED = 300.0;
 
+    // -------------------------------------------------------------------------
+    // Public state enum
+    // -------------------------------------------------------------------------
+
     public enum KoopaState { WALK, SHELL, SHELL_MOVING }
 
-    private KoopaState state;
-    private double animTimer;
-    private int animFrame;
-    private static final double FRAME_DURATION = 0.2;
+    // -------------------------------------------------------------------------
+    // Private state handlers
+    // -------------------------------------------------------------------------
 
-    public Koopa(double x, double y) {
-        super(x, y, 32, 48); 
-        this.state     = KoopaState.WALK;
-        this.setVelocityX (-WALK_SPEED);
-    }
-
-    @Override
-    public void update(double deltaTime) {
-        animTimer += deltaTime;
-        if (animTimer >= FRAME_DURATION) {
-            animTimer = 0;
-            animFrame = (animFrame + 1) % 2;
+    private static final class WalkHandler implements EnemyImpl.WalkingHandler {
+        @Override
+        public void update(EnemyImpl e, double deltaTime) {
+            double vx = e.getVelocityX();
+            if (vx < 0) e.facingLeft = true;
+            else if (vx > 0) e.facingLeft = false;
+            e.anim.play("walk");
+            e.anim.update(deltaTime);
+            e.physicsTick(deltaTime);
         }
-        if (state == KoopaState.WALK || state == KoopaState.SHELL_MOVING) {
-            super.update(deltaTime);
-        }
-    }
 
-    @Override
-    public void render(GraphicsContext gc) {
-        if (!active) return;
-
-        if (state == KoopaState.SHELL || state == KoopaState.SHELL_MOVING) {
-           
-            gc.setFill(Color.GREEN);
-            gc.fillOval(x, y + height / 2, width, height / 2);
-            gc.setStroke(Color.DARKGREEN);
-            gc.strokeOval(x, y + height / 2, width, height / 2);
-            if (state == KoopaState.SHELL_MOVING) {
-               
-                gc.setStroke(Color.YELLOW);
-                gc.strokeLine(x + 4, y + height * 0.6, x + 4, y + height * 0.9);
-                gc.strokeLine(x + width - 4, y + height * 0.6, x + width - 4, y + height * 0.9);
+        @Override
+        public void render(EnemyImpl e, GraphicsContext gc) {
+            if (e.anim.hasAnimation("walk")) {
+                e.anim.render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.facingLeft);
+            } else {
+                gc.setFill(Color.GREEN);
+                gc.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
             }
-            return;
         }
 
-        // body
-        gc.setFill(Color.GREEN);
-        gc.fillRect(x, y + 16, width, height - 16);
-
-        // head
-        gc.setFill(Color.LIGHTYELLOW);
-        gc.fillOval(x + 4, y, width - 8, 20);
-
-        //shell
-        gc.setFill(Color.DARKGREEN);
-        gc.fillOval(x, y + 14, width, height - 20);
-
-        // eyes
-        gc.setFill(Color.WHITE);
-        gc.fillOval(x + 6,  y + 2, 8, 8);
-        gc.fillOval(x + 18, y + 2, 8, 8);
-        gc.setFill(Color.BLACK);
-        gc.fillOval(x + 8,  y + 4, 4, 4);
-        gc.fillOval(x + 20, y + 4, 4, 4);
-
-        // feet
-        gc.setFill(Color.LIGHTYELLOW);
-        if (animFrame == 0) gc.fillRect(x,              y + height - 8, 12, 8);
-        else                gc.fillRect(x + width - 12, y + height - 8, 12, 8);
+        @Override
+        public boolean hitsPlayer() { return true; }
     }
 
-    //if mario stomp on koopa it became a shell
+    private static final class ShellHandler implements EnemyImpl.EnemyStateHandler {
+        @Override
+        public void update(EnemyImpl e, double deltaTime) {
+            e.anim.play("shell");
+            e.anim.update(deltaTime);
+        }
+
+        @Override
+        public void render(EnemyImpl e, GraphicsContext gc) {
+            if (e.anim.hasAnimation("shell")) {
+                e.anim.render(gc, e.getX(), e.getY(), e.getWidth(), 32, e.facingLeft);
+            } else {
+                gc.setFill(Color.DARKGREEN);
+                gc.fillRect(e.getX(), e.getY(), e.getWidth(), 32);
+            }
+        }
+
+        @Override
+        public boolean hitsPlayer() { return false; }
+    }
+
+    private static final class ShellMovingHandler implements EnemyImpl.EnemyStateHandler {
+        @Override
+        public void update(EnemyImpl e, double deltaTime) {
+            double vx = e.getVelocityX();
+            if (vx < 0) e.facingLeft = true;
+            else if (vx > 0) e.facingLeft = false;
+            e.anim.play("shell_moving");
+            e.anim.update(deltaTime);
+            e.physicsTick(deltaTime);
+        }
+
+        @Override
+        public void render(EnemyImpl e, GraphicsContext gc) {
+            if (e.anim.hasAnimation("shell_moving")) {
+                e.anim.render(gc, e.getX(), e.getY(), e.getWidth(), 32, e.facingLeft);
+            } else {
+                gc.setFill(Color.YELLOWGREEN);
+                gc.fillRect(e.getX(), e.getY(), e.getWidth(), 32);
+            }
+        }
+
+        @Override
+        public boolean hitsPlayer() { return true; }
+    }
+
+    // -------------------------------------------------------------------------
+    // State tracking
+    // -------------------------------------------------------------------------
+
+    private KoopaState state;
+
+    // -------------------------------------------------------------------------
+    // Constructors
+    // -------------------------------------------------------------------------
+
+    public Koopa(double x, double y, BasicPhysics physics) {
+        super(x, y, 32, 48, physics);
+        init();
+    }
+
+    private void init() {
+        transitionTo(KoopaState.WALK);
+        setVelocityX(-WALK_SPEED);
+        anim.play("walk");
+    }
+
+    // -------------------------------------------------------------------------
+    // Template Method implementation
+    // -------------------------------------------------------------------------
+
+    @Override
+    protected void loadAnimations() {
+        Image walkFrame1  = AnimationManager.loadImage("/sprites/enemies/koopa1.png");
+        Image walkFrame2  = AnimationManager.loadImage("/sprites/enemies/koopa2.png");
+        Image shellSprite = AnimationManager.loadImage("/sprites/enemies/koopa_shell.png");
+
+        if (walkFrame1 != null && walkFrame2 != null) {
+            anim.register("walk", new Animation(new Image[]{walkFrame1, walkFrame2}, 0.15, true));
+        } else {
+            System.err.println("[Koopa] Walk sprites not found – using fallback.");
+        }
+        if (shellSprite != null) {
+            anim.register("shell",        new Animation(new Image[]{shellSprite}, 1.0,  false));
+            anim.register("shell_moving", new Animation(new Image[]{shellSprite}, 0.08, true));
+        } else {
+            System.err.println("[Koopa] Shell sprite not found – using fallback.");
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // State transition
+    // -------------------------------------------------------------------------
+
+    private void transitionTo(KoopaState newState) {
+        this.state = newState;
+        EnemyStateHandler h = switch (newState) {
+            case WALK         -> new WalkHandler();
+            case SHELL        -> new ShellHandler();
+            case SHELL_MOVING -> new ShellMovingHandler();
+        };
+        transitionTo(h);
+    }
+
+    // -------------------------------------------------------------------------
+    // Public API
+    // -------------------------------------------------------------------------
+
     public void stomp() {
         if (state != KoopaState.WALK) return;
-        state      = KoopaState.SHELL;
+        transitionTo(KoopaState.SHELL);
         setVelocityX(0);
-        height     = 32; // Si abbassa
-        y  += 16;
+        setHeight(32);
+        setY(getY() + 16);
         affectedByGravity = true;
     }
 
-   //when mario kick the shell it slides fast
     public void kick(boolean kickRight) {
         if (state != KoopaState.SHELL) return;
-        double speed = kickRight ? SHELL_SPEED : -SHELL_SPEED;
-        setVelocityX(speed);
+        transitionTo(KoopaState.SHELL_MOVING);
+        setVelocityX(kickRight ? SHELL_SPEED : -SHELL_SPEED);
     }
 
-   
-    //moving shell kils enemy
-    
-    public boolean canKillEnemies() {
-        return state == KoopaState.SHELL_MOVING;
-    }
-
-    //when mario touc it on side
-    public boolean hitsPlayer() {
-        return state == KoopaState.WALK || state == KoopaState.SHELL_MOVING;
-    }
-
-    public KoopaState getKoopaState() { return state; }
+    public KoopaState getState()       { return state; }
+    public boolean canKillEnemies()    { return state == KoopaState.SHELL_MOVING; }
+    public boolean isInShell()         { return state == KoopaState.SHELL || state == KoopaState.SHELL_MOVING; }
 }

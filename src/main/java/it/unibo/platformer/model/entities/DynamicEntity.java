@@ -13,12 +13,27 @@ public abstract class DynamicEntity extends Entity {
     protected boolean affectedByGravity; //if true the entity falls
     protected boolean onGround;//if on the ground the gravity stops
 
-    public DynamicEntity(double x, double y, double width, double height) {
+    public DynamicEntity(double x, double y, double width, double height , BasicPhysics physics) {
         super(x, y, width, height);
         this.gameObject       = new GameObjectImpl((float) x, (float) y, (float) width, (float) height);
         this.affectedByGravity = true;
         this.onGround          = false;
     }
+
+
+    @Override
+    public double getX() { return gameObject.getPosition().getX(); }
+ 
+    @Override
+    public double getY() { return gameObject.getPosition().getY(); }
+ 
+    @Override
+    public void setX(double x) { gameObject.getPosition().setX((float) x); }
+ 
+    @Override
+    public void setY(double y) { gameObject.getPosition().setY((float) y); }
+ 
+
 
     @Override
     public void update(double deltaTime) {
@@ -27,8 +42,7 @@ public abstract class DynamicEntity extends Entity {
         } else if (!affectedByGravity) { // moves only according to velocity
             gameObject.getPosition().add(gameObject.getSpeed());
         }
-        x = gameObject.getPosition().getX();
-        y = gameObject.getPosition().getY();
+        
     }
 
     //for velocity 
@@ -48,18 +62,6 @@ public abstract class DynamicEntity extends Entity {
         gameObject.getSpeed().setY((float) vy);
     }
  
-    // for positions
-    @Override
-    public void setX(double x) {
-        this.x = x;
-        gameObject.getPosition().setX((float) x);
-    }
- 
-    @Override
-    public void setY(double y) {
-        this.y = y;
-        gameObject.getPosition().setY((float) y);
-    }
  
    
     public boolean isAffectedByGravity() { return affectedByGravity; }
@@ -67,8 +69,10 @@ public abstract class DynamicEntity extends Entity {
  
     public void setAffectedByGravity(boolean g) { this.affectedByGravity = g; }
  
- 
-    //to prevent error with fall or bounce 
+ /**
+     * Sets whether the entity is resting on the ground.
+     * Zeroes vertical velocity when landing to prevent bouncing artefacts.
+     */
     public void setOnGround(boolean onGround) {
         this.onGround = onGround;
         if (onGround) {
