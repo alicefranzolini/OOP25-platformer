@@ -5,6 +5,7 @@ import it.unibo.platformer.model.level.BasicLevelLoader;
 import it.unibo.platformer.model.level.Level;
 import it.unibo.platformer.model.level.LevelLoader;
 import it.unibo.platformer.model.score.ScoreSystem;
+import it.unibo.platformer.view.HudView;
 import javafx.scene.canvas.GraphicsContext;
 
 public class GameManager {
@@ -28,6 +29,7 @@ public class GameManager {
     private GameState currentState;
     private boolean running;
     private final ScoreSystem scoreSystem;
+    private final HudView hudView;
     private final double viewWidth;
     private final double viewHeight;
 
@@ -42,6 +44,7 @@ public class GameManager {
         this.currentState = GameState.MENU;
         this.running = false;
         this.scoreSystem = new ScoreSystem();
+        this.hudView = new HudView();
         this.loader = new BasicLevelLoader();
         this.currentLevel = this.loader.loadLevel(FIRST_LEVEL);
         this.inputController = new InputController();
@@ -188,21 +191,13 @@ public class GameManager {
             this.currentLevel.render(gc);
         }
         gc.restore();
-        renderSimpleHud(gc);
-    }
-
-    private void renderSimpleHud(final GraphicsContext gc) {
-        // Temporary HUD. Later it can be moved to a dedicated view class.
-        gc.fillText("Score: " + this.scoreSystem.getScore(), 20, 30);
-        gc.fillText("Coins: " + this.scoreSystem.getCoins(), 20, 50);
-        gc.fillText("Lives: " + this.scoreSystem.getLives(), 20, 70);
-        gc.fillText("Level: " + this.currentLevel.getLevelNumber(), 20, 90);
-
-        if (this.currentState == GameState.PAUSED) {
-            gc.fillText("PAUSED", this.viewWidth / 2 - 30, 40);
-        } else if (this.currentState == GameState.GAME_OVER) {
-            gc.fillText("GAME OVER", this.viewWidth / 2 - 40, 40);
-        }
+        this.hudView.render(
+            gc,
+            this.scoreSystem,
+            this.currentLevel.getLevelNumber(),
+            this.currentState,
+            this.viewWidth
+        );
     }
 
     private void updatePaused() {
