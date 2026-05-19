@@ -55,6 +55,7 @@ public class TestPhysics {
         GameObject obj = new GameObjectImpl(0, 0, 10, 10);
 
         float initialSpeedY = obj.getSpeed().getY();
+        
         physics.update(obj);
 
         assertTrue(obj.getSpeed().getY() > initialSpeedY,
