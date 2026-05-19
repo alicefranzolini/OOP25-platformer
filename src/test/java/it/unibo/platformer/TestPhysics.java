@@ -88,4 +88,18 @@ public class TestPhysics {
         assertEquals(staticobj, collision.getStaticObj());
     }
     
+    @Test
+    public void TestCollisionDetector(){
+        GameObjectImpl o1 = new GameObjectImpl(10, 20, 30, 40);
+        GameObjectImpl o2 = new GameObjectImpl(20, 30, 40, 50);
+
+        CollisionDetectorImpl CollDet = new CollisionDetectorImpl();
+
+        assertEquals(true, CollDet.collision(o1, o2));
+
+        assertNotNull(CollDet.getCollisionResult(o1, o2));
+        CollisionResult res = new CollisionResult(o1, o2, CollisionSide.LEFT);
+        assertEquals(res.getSide(), CollDet.getCollisionResult(o1, o2).getSide());
+
+    }
 }
