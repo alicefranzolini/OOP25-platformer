@@ -2,19 +2,42 @@ package it.unibo.platformer.model.entities.powerup;
 
 import it.unibo.platformer.model.entities.players.Player;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
+import it.unibo.platformer.view.AnimationManager;
+import it.unibo.platformer.view.AnimationManager.Animation;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
+
 
 /**
- *  Class purpose: a star 
+ *  Class purpose: a mushroom power-up that makes the player BIG. 
  *  that bounces and grants temporary invincibility.
  */
 public class MushroomPowerUp extends PowerUpImpl {
 
     // Class purpose: a mushroom that makes the player BIG.
+
+    private final AnimationManager anim = new AnimationManager();
+
     public MushroomPowerUp(double x, double y, BasicPhysics physics) {
         super(x, y, 32, 32, physics);
+        loadSprite();
+        anim.play("mushroom");
     }
+
+    /**
+     * Loads the mushroom sprite.
+     * Expected resource:
+     *   /sprites/powerup/red_mushroom.png
+     */
+    private void loadSprite() {
+        Image img = AnimationManager.loadImage("/sprites/powerup/red_mushroom.png");
+        if (img != null) {
+            anim.register("mushroom", new Animation(new Image[]{img}, 1.0, false));
+        } else {
+            System.err.println("[MushroomPowerUp] Sprite red_mushroom non trovato – uso fallback.");
+        }
+    }
+
 /*
     @Override
     public void applyEffect(Object playerObj) {
@@ -55,13 +78,11 @@ public class MushroomPowerUp extends PowerUpImpl {
         double pw = getWidth();
         double ph = getHeight();
 
-        gc.setFill(Color.RED);  // cap
-        gc.fillOval(px, py, pw, ph * 0.6);
-        gc.setFill(Color.WHITE);    // stem
-        gc.fillRect(px + 8, py + (int)(ph * 0.5), pw - 16, (int)(ph * 0.5));
-        gc.setFill(Color.WHITE);    // spots
-        gc.fillOval(px + 6,  py + 4, 6, 6);
-        gc.fillOval(px + 20, py + 4, 6, 6);
+        // Try sprite first
+        anim.render(gc, px, py, pw, ph, false);
+
+        // If the animation manager did not render anything, no fallback is available here.
+        // The animation is expected to handle missing sprite cases internally.
     }
 }
 
