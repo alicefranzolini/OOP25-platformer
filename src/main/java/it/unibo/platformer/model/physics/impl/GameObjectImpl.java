@@ -52,4 +52,9 @@ public class GameObjectImpl implements GameObject{
         return "Position: "+this.position+"- Speed: "+this.speed+"- Width: "+this.width+"- Height: "+this.height;
     }
 
+    @Override
+    public boolean IsOnGround(){
+        /*TODO*/
+        return true;
+    }
 }

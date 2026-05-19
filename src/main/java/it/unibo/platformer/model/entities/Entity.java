@@ -2,9 +2,6 @@ package it.unibo.platformer.model.entities;
 
 import javafx.scene.canvas.GraphicsContext;
 
-
- 
-
 public abstract class Entity {
 
         //position
@@ -16,7 +13,6 @@ public abstract class Entity {
     protected double height;
 
     protected boolean active; //if the entity is alive or not
-
    
    //initialize variables for entity creation
     public Entity(double x, double y, double width, double height) {
