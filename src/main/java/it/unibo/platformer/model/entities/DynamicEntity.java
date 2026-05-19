@@ -1,7 +1,6 @@
 package it.unibo.platformer.model.entities;
 
 
-import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 import it.unibo.platformer.model.physics.impl.GameObjectImpl;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 
@@ -9,16 +8,16 @@ public abstract class DynamicEntity extends Entity {
 
 
     protected final GameObjectImpl gameObject;//stores position size and velocity
-    private static final BasicPhysicsImpl physics = new BasicPhysicsImpl();//applies gravity and movement
+    private  final BasicPhysics physics ;//applies gravity and movement
  
     protected boolean affectedByGravity; //if true the entity falls
     protected boolean onGround;//if on the ground the gravity stops
-
-    public DynamicEntity(double x, double y, double width, double height , BasicPhysics physics) {
+    public DynamicEntity(double x, double y, double width, double height , BasicPhysics physics){
         super(x, y, width, height);
         this.gameObject       = new GameObjectImpl((float) x, (float) y, (float) width, (float) height);
         this.affectedByGravity = true;
         this.onGround          = false;
+        this.physics = physics;
     }
 
 
@@ -36,14 +35,19 @@ public abstract class DynamicEntity extends Entity {
  
 
 
-    @Override
-    public void update(double deltaTime) {
-        if (affectedByGravity && !onGround) {//if in air updates the physics
-            physics.update(gameObject);
-        } else if (!affectedByGravity) { // moves only according to velocity
-            gameObject.getPosition().add(gameObject.getSpeed());
+   @Override
+    public void update(final double deltaTime) {
+        if (affectedByGravity && !onGround) {
+            // Full physics step: gravity accumulation + position integration
+            physics.update(gameObject, deltaTime);
+        } else if (!affectedByGravity) {
+            // Gravity-free movement (e.g. moving shell): integrate X and Y manually
+            final float dx = gameObject.getSpeed().getX() * (float) deltaTime;
+            final float dy = gameObject.getSpeed().getY() * (float) deltaTime;
+            gameObject.getPosition().setX(gameObject.getPosition().getX() + dx);
+            gameObject.getPosition().setY(gameObject.getPosition().getY() + dy);
         }
-        
+        // else: on ground with gravity — position managed by collision resolver
     }
 
     //for velocity 
