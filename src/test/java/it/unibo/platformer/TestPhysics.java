@@ -55,7 +55,7 @@ public class TestPhysics {
         GameObject obj = new GameObjectImpl(0, 0, 10, 10);
 
         float initialSpeedY = obj.getSpeed().getY();
-        physics.update(obj);
+        physics.UpdatePosition(obj, 16);
 
         assertTrue(obj.getSpeed().getY() > initialSpeedY,
             "Vertical speed error");
@@ -66,7 +66,7 @@ public class TestPhysics {
         BasicPhysics physics = new BasicPhysicsImpl();
         GameObject obj = new GameObjectImpl(0, 0, 10, 10);
 
-        physics.update(obj);
+        physics.UpdatePosition(obj, 0);
 
         assertNotEquals(0, obj.getPosition().getY(),
             "The position must change");
