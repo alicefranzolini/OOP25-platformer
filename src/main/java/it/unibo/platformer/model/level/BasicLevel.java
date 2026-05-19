@@ -184,13 +184,6 @@ public class BasicLevel implements Level {
             && first.getY() + first.getHeight() > second.getY();
     }
 
-    private boolean overlaps(final Entity first, final Entity second) {
-        return first.getX() < second.getX() + second.getWidth()
-            && first.getX() + first.getWidth() > second.getX()
-            && first.getY() < second.getY() + second.getHeight()
-            && first.getY() + first.getHeight() > second.getY();
-    }
-
     @Override
     public void render(final GraphicsContext gc) {
         for (final Entity entity : this.entities) {
