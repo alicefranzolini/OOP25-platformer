@@ -316,9 +316,12 @@ public class PlayerImpl extends DynamicEntity implements Player {
         String animKey = getCurrentAnimKey();
         animManager.play(animKey);
 
-        // animManager.render returns without drawing if no sprite is loaded
-        // so we attempt sprite first, then fallback
-        boolean rendered = animManager.render(gc, px, py, pw, ph, !facingRight);
+        // animManager.render is void, so use animation registration state
+        // to decide whether to draw the sprite or fallback.
+        boolean rendered = animManager.hasAnimation(animKey);
+        if (rendered) {
+            animManager.render(gc, px, py, pw, ph, !facingRight);
+        }
 
         if (!rendered) {
             // Fallback: colored rectangle
