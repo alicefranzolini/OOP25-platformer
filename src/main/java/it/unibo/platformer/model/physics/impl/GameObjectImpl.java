@@ -7,12 +7,14 @@ public class GameObjectImpl implements GameObject{
     private VectorImpl speed;
     private float width;
     private float height;
+    private boolean onGround;
 
     public GameObjectImpl(float x, float y, float width, float height){
         this.position = new VectorImpl(x, y);
         this.speed = new VectorImpl(0, 0);
         this.width = width;
         this.height = height;
+        this.onGround = false;
     }
 
     @Override
@@ -53,9 +55,16 @@ public class GameObjectImpl implements GameObject{
     }
 
     @Override
-    public boolean IsOnGround(){
-        if(){
-            return true;
+    public void SetOnGround(){
+        if(this.onGround == false){
+            this.onGround = true;
+        }else{
+            this.onGround = false;
         }
+    }
+
+    @Override
+    public boolean IsOnGround(){
+        return this.onGround;
     }
 }

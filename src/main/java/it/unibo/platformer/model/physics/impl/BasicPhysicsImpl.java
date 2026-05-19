@@ -11,6 +11,7 @@ public class BasicPhysicsImpl implements BasicPhysics{
     public void UpdatePosition(GameObject o, double DeltaTime){
         /*Update the speed*/
         if(!o.IsOnGround()){
+        /*If the object isn't on the ground, it fall */
         o.getSpeed().setY(o.getSpeed().getY() + (GRAVITY * (float) DeltaTime));
         }else{
         /*Update the position*/

@@ -17,4 +17,6 @@ public interface GameObject {
     public VectorImpl getSpeed();
 
     public boolean IsOnGround();
+
+    public void SetOnGround();
 }
