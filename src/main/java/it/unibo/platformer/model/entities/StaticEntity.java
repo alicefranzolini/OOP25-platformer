@@ -2,7 +2,7 @@ package it.unibo.platformer.model.entities;
 
 import javafx.scene.canvas.GraphicsContext;
 
-public class StaticEntity extends Entity {
+public abstract class StaticEntity extends Entity {
     
     
     protected boolean solid;//indicates whether the entity should block movement.(if the players collides with it or can pass through)
@@ -27,4 +27,3 @@ public class StaticEntity extends Entity {
     public void render(GraphicsContext gc) {
     }
 }
-

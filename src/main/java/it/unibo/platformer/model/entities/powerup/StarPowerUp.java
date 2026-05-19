@@ -1,18 +1,44 @@
 package it.unibo.platformer.model.entities.powerup;
 
 import it.unibo.platformer.model.entities.players.Player;
+import it.unibo.platformer.model.physics.api.BasicPhysics;
+import it.unibo.platformer.view.AnimationManager;
+import it.unibo.platformer.view.AnimationManager.Animation;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
-
-public class StarPowerUp extends PowerUp {
+public class StarPowerUp extends PowerUpImpl {
 
     // the star jump insted of walking
     private static final double BOUNCE_VELOCITY = -400.0;
 
+    private final AnimationManager anim = new AnimationManager();
+    private boolean spriteLoaded = false;
+
     // Create a star power-up with a 32x32 size
-    public StarPowerUp(double x, double y) {
-        super(x, y, 32, 32);
+    public StarPowerUp(double x, double y, BasicPhysics physics) {
+        super(x, y, 32, 32, physics);
+        loadSprite();
+        if (spriteLoaded) {
+            anim.play("star");
+        }
+    }
+
+    /**
+     * Loads the star sprite.
+     * Expected resource:
+     *   /sprites/powerup/star.png
+     */
+    private void loadSprite() {
+        Image img = AnimationManager.loadImage("/sprites/powerup/star.png");
+        if (img != null) {
+            anim.register("star", new Animation(new Image[]{img}, 1.0, false));
+            spriteLoaded = true;
+        } else {
+            spriteLoaded = false;
+            System.err.println("[StarPowerUp] Sprite star non trovato – uso fallback.");
+        }
     }
 
     @Override
@@ -27,15 +53,25 @@ public class StarPowerUp extends PowerUp {
             setVelocityY(BOUNCE_VELOCITY);
             setOnGround(false);
         }
+
+        anim.update(deltaTime);
     }
 
+    /*
     @Override
     public void applyEffect(Object playerObj) {
         if (!(playerObj instanceof Player)) return;
         Player player = (Player) playerObj;
         player.setState(Player.PlayerState.INVINCIBLE);
     }
-
+*/
+    @Override
+    public void applyEffect(Player player) {
+        if (player == null) return;
+        player.setState(Player.PlayerState.INVINCIBLE);
+    }
+    
+    /*
     @Override
     public void render(GraphicsContext gc) {
         if (!active) return;
@@ -57,6 +93,38 @@ public class StarPowerUp extends PowerUp {
         gc.fillPolygon(px, py, 10);
         gc.setStroke(Color.ORANGE);
         gc.strokePolygon(px, py, 10);
+    }
+    */
+
+    @Override
+    public void render(GraphicsContext gc) {
+        if (!active) return;
+        double px = getX();
+        double py = getY();
+        double pw = getWidth();
+        double ph = getHeight();
+
+        if (spriteLoaded) {
+            anim.render(gc, px, py, pw, ph, false);
+            return;
+        }
+
+        // Fallback: draw a simple yellow star polygon
+        double cx = px + pw / 2;
+        double cy = py + ph / 2;
+        double r  = pw / 2;
+        double[] xs = new double[10];
+        double[] ys = new double[10];
+        for (int i = 0; i < 10; i++) {
+            double angle  = Math.PI / 2 + i * Math.PI / 5;
+            double radius = (i % 2 == 0) ? r : r * 0.45;
+            xs[i] = cx + radius * Math.cos(angle);
+            ys[i] = cy - radius * Math.sin(angle);
+        }
+        gc.setFill(Color.YELLOW);
+        gc.fillPolygon(xs, ys, 10);
+        gc.setStroke(Color.ORANGE);
+        gc.strokePolygon(xs, ys, 10);
     }
 }
 
