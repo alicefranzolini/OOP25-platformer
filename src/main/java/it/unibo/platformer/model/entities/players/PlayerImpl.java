@@ -4,8 +4,9 @@ import it.unibo.platformer.model.entities.DynamicEntity;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 import it.unibo.platformer.view.AnimationManager;
-
+import it.unibo.platformer.view.AnimationManager.Animation;
 
 public class PlayerImpl extends DynamicEntity implements Player {
 
@@ -50,7 +51,7 @@ public class PlayerImpl extends DynamicEntity implements Player {
     private double  deathVelocityY;
     private boolean deathComplete;
 
-    // Animation manager for sprite-based animations (used in Week 4)
+    // Animation manager for sprite-based animations
     private final AnimationManager animManager;
 
     // Whether the player can collide with other objects (disabled during death)
@@ -74,8 +75,80 @@ public class PlayerImpl extends DynamicEntity implements Player {
         this.facingRight   = true;
         this.visible       = true;
         this.animManager   = new AnimationManager();
+        loadAnimations();
     }
 
+    /**
+     * Loads all sprite animations for small, big, and dead states.
+     * Sprites are single PNG files (not spritesheets).
+     *
+     * Expected resource structure:
+     *   /sprites/player/mario_small_idle.png
+     *   /sprites/player/mario_small_walk_1.png
+     *   /sprites/player/mario_small_walk_2.png
+     *   /sprites/player/mario_small_walk_3.png
+     *   /sprites/player/mario_small_jump.png
+     *   /sprites/player/mario_big_idle.png
+     *   /sprites/player/mario_big_walk_1.png
+     *   /sprites/player/mario_big_walk_2.png
+     *   /sprites/player/mario_big_walk_3.png
+     *   /sprites/player/mario_big_jump.png
+     *   /sprites/player/mario_dead.png
+     */
+    private void loadAnimations() {
+        // --- SMALL animations ---
+        Image smallIdle  = AnimationManager.loadImage("/sprites/player/mario_small_idle.png");
+        Image smallWalk1 = AnimationManager.loadImage("/sprites/player/mario_small_walk_1.png");
+        Image smallWalk2 = AnimationManager.loadImage("/sprites/player/mario_small_walk_2.png");
+        Image smallWalk3 = AnimationManager.loadImage("/sprites/player/mario_small_walk_3.png");
+        Image smallJump  = AnimationManager.loadImage("/sprites/player/mario_small_jump.png");
+
+        if (smallIdle != null)
+            animManager.register("small_idle", new Animation(new Image[]{smallIdle}, 1.0, false));
+        if (smallWalk1 != null && smallWalk2 != null && smallWalk3 != null)
+            animManager.register("small_walk", new Animation(new Image[]{smallWalk1, smallWalk2, smallWalk3}, WALK_FRAME_DURATION, true));
+        if (smallJump != null)
+            animManager.register("small_jump", new Animation(new Image[]{smallJump}, 1.0, false));
+
+        // --- BIG animations ---
+        Image bigIdle  = AnimationManager.loadImage("/sprites/player/mario_big_idle.png");
+        Image bigWalk1 = AnimationManager.loadImage("/sprites/player/mario_big_walk_1.png");
+        Image bigWalk2 = AnimationManager.loadImage("/sprites/player/mario_big_walk_2.png");
+        Image bigWalk3 = AnimationManager.loadImage("/sprites/player/mario_big_walk_3.png");
+        Image bigJump  = AnimationManager.loadImage("/sprites/player/mario_big_jump.png");
+
+        if (bigIdle != null)
+            animManager.register("big_idle", new Animation(new Image[]{bigIdle}, 1.0, false));
+        if (bigWalk1 != null && bigWalk2 != null && bigWalk3 != null)
+            animManager.register("big_walk", new Animation(new Image[]{bigWalk1, bigWalk2, bigWalk3}, WALK_FRAME_DURATION, true));
+        if (bigJump != null)
+            animManager.register("big_jump", new Animation(new Image[]{bigJump}, 1.0, false));
+
+        // --- DEAD animation ---
+        Image dead = AnimationManager.loadImage("/sprites/player/mario_dead.png");
+        if (dead != null)
+            animManager.register("dead", new Animation(new Image[]{dead}, 1.0, false));
+
+        // Start with small idle
+        animManager.play("small_idle");
+    }
+
+    /**
+     * Returns the animation key to use based on current player and sprite state.
+     * Falls back gracefully if an animation is not registered.
+     */
+    private String getCurrentAnimKey() {
+        boolean isBig = (playerState == PlayerState.BIG || playerState == PlayerState.INVINCIBLE);
+        String prefix = isBig ? "big" : "small";
+
+        if (spriteState == SpriteState.DEAD) return "dead";
+
+        return switch (spriteState) {
+            case WALK -> prefix + "_walk";
+            case JUMP -> prefix + "_jump";
+            default   -> prefix + "_idle";
+        };
+    }
 
     /**
      * Main update loop for the player.
@@ -123,6 +196,9 @@ public class PlayerImpl extends DynamicEntity implements Player {
 
         updateSpriteState();
         updateWalkAnimation(deltaTime);
+
+        // Sync AnimationManager to current state
+        animManager.play(getCurrentAnimKey());
         animManager.update(deltaTime);
 
         super.update(deltaTime);
@@ -149,11 +225,13 @@ public class PlayerImpl extends DynamicEntity implements Player {
         deathVelocityY += DEATH_GRAVITY * deltaTime;
         setY(getY() + deathVelocityY * deltaTime);
 
+        animManager.play("dead");
+        animManager.update(deltaTime);
+
         if (getY() > 1000) {
             deathComplete = true;
         }
     }
-
 
     /**
      * Determines the current animation state based on movement and grounded status.
@@ -193,10 +271,10 @@ public class PlayerImpl extends DynamicEntity implements Player {
 
     /**
      * Renders the player on screen.
-     * If advanced sprite animations are available, AnimationManager will handle them.
-     * Otherwise, a simple colored rectangle is drawn as a placeholder.
+     * Uses AnimationManager sprites when available.
+     * Falls back to colored rectangle if sprites are missing.
      *
-     * The color reflects the player's current state:
+     * The fallback color reflects the player's current state:
      *  - INVINCIBLE → yellow
      *  - BIG → orange-red
      *  - SMALL or DEAD → red
@@ -234,22 +312,33 @@ public class PlayerImpl extends DynamicEntity implements Player {
         double pw = getWidth();
         double ph = getHeight();
 
-        Color bodyColor;
-        if (dying) {
-            bodyColor = Color.RED;
-        } else if (playerState == PlayerState.INVINCIBLE) {
-            bodyColor = Color.YELLOW;
-        } else if (playerState == PlayerState.BIG) {
-            bodyColor = Color.ORANGERED;
-        } else {
-            bodyColor = Color.RED;
+        // Try to render with sprite
+        String animKey = getCurrentAnimKey();
+        animManager.play(animKey);
+
+        // animManager.render returns without drawing if no sprite is loaded
+        // so we attempt sprite first, then fallback
+        boolean rendered = animManager.render(gc, px, py, pw, ph, !facingRight);
+
+        if (!rendered) {
+            // Fallback: colored rectangle
+            Color bodyColor;
+            if (dying) {
+                bodyColor = Color.RED;
+            } else if (playerState == PlayerState.INVINCIBLE) {
+                bodyColor = Color.YELLOW;
+            } else if (playerState == PlayerState.BIG) {
+                bodyColor = Color.ORANGERED;
+            } else {
+                bodyColor = Color.RED;
+            }
+
+            gc.setFill(bodyColor);
+            gc.fillRect(px, py, pw, ph);
+
+            gc.setFill(Color.DARKRED);
+            gc.fillRect(px + 2, py - 6, pw - 4, 8);
         }
-
-        gc.setFill(bodyColor);
-        gc.fillRect(px, py, pw, ph);
-
-        gc.setFill(Color.DARKRED);
-        gc.fillRect(px + 2, py - 6, pw - 4, 8);
     }
 
     /**
@@ -313,7 +402,6 @@ public class PlayerImpl extends DynamicEntity implements Player {
         return true; // SMALL → muore
     }
 
-
     /**
      * Starts the death animation.
      * The player jumps upward, stops colliding, and eventually falls off-screen.
@@ -337,12 +425,14 @@ public class PlayerImpl extends DynamicEntity implements Player {
     public void moveLeft()  {
         if (!dying) {
             setVelocityX(-MOVE_SPEED);
+            facingRight = false;
         }
     }
     @Override
     public void moveRight() {
         if (!dying) {
             setVelocityX( MOVE_SPEED);
+            facingRight = true;
         }
     }
     @Override
