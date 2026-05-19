@@ -4,14 +4,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import it.unibo.platformer.model.physics.api.BasicPhysics;
-import it.unibo.platformer.model.physics.api.CollisionDetector;
-import it.unibo.platformer.model.physics.api.GameObject;
-import it.unibo.platformer.model.physics.api.Vector;
 import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 import it.unibo.platformer.model.physics.impl.CollisionDetectorImpl;
+import it.unibo.platformer.model.physics.impl.CollisionResult;
 import it.unibo.platformer.model.physics.impl.GameObjectImpl;
 import it.unibo.platformer.model.physics.impl.VectorImpl;
+import it.unibo.platformer.model.physics.impl.CollisionSide;
 
 public class TestPhysics {
     
@@ -73,6 +71,21 @@ public class TestPhysics {
         assertEquals(speed.getY(), o.getSpeed().getY());
         assertEquals(30, o.getWidth());
         assertEquals(40, o.getHeight());
+        o.SetOnGround(true);
+        assertEquals(true, o.IsOnGround());
+    }
+
+    @Test
+    public void TestCollisionResult(){
+        GameObjectImpl dinamicobj = new GameObjectImpl(10, 20, 10, 20);
+        GameObjectImpl staticobj = new GameObjectImpl(20, 30, 20, 30);
+        CollisionSide side = CollisionSide.TOP;
+
+        CollisionResult collision = new CollisionResult(dinamicobj, staticobj, side);
+
+        assertEquals(side, collision.getSide());
+        assertEquals(dinamicobj, collision.getDynamicObj());
+        assertEquals(staticobj, collision.getStaticObj());
     }
     
 }
