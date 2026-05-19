@@ -8,10 +8,10 @@ public class BasicPhysicsImpl implements BasicPhysics{
     private static final float GRAVITY = 800.0f;
 
     @Override
-    public void update(GameObject o, float DeltaTime){
+    public void UpdatePosition(GameObject o, double DeltaTime){
         /*Update the speed*/
         if(!o.IsOnGround()){
-        o.getSpeed().setY(o.getSpeed().getY() + (GRAVITY * DeltaTime));
+        o.getSpeed().setY(o.getSpeed().getY() + (GRAVITY * (float) DeltaTime));
         }else{
         /*Update the position*/
         o.getPosition().setX(o.getPosition().getX() + o.getSpeed().getX() * (float)DeltaTime);

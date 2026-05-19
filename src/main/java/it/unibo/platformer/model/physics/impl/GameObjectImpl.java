@@ -54,7 +54,8 @@ public class GameObjectImpl implements GameObject{
 
     @Override
     public boolean IsOnGround(){
-        if()
-        return true;
+        if(){
+            return true;
+        }
     }
 }

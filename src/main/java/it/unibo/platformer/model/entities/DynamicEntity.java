@@ -39,7 +39,7 @@ public abstract class DynamicEntity extends Entity {
     public void update( final double deltaTime) {
         if (affectedByGravity && !onGround) {
             // Full physics step: gravity accumulation + position integration
-            physics.update(gameObject, deltaTime);
+            physics.UpdatePosition(gameObject, deltaTime);
         } else if (!affectedByGravity) {
             // Gravity-free movement (e.g. moving shell): integrate X and Y manually
             final float dx = gameObject.getSpeed().getX() * (float) deltaTime;
