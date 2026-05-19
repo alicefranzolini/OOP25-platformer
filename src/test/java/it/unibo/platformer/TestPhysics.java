@@ -16,6 +16,15 @@ import it.unibo.platformer.model.physics.impl.VectorImpl;
 public class TestPhysics {
     
     @Test
+    public void TestGetSetVector(){
+        VectorImpl v1 = new VectorImpl();
+        v1.setX(10);
+        v1.setY(20);
+        assertEquals(10, v1.getX());
+        assertEquals(20, v1.getY());
+    }
+
+    @Test
     public void TestVectorAdd(){
         VectorImpl v1 = new VectorImpl(10, 20);
         VectorImpl v2 = new VectorImpl(10, 30);
