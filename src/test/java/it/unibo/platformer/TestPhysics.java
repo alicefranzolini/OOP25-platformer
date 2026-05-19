@@ -32,5 +32,25 @@ public class TestPhysics {
         assertEquals(20, v1.getX());
         assertEquals(50, v1.getY());
     }
+
+    @Test
+    public void TestVectorSub(){
+        VectorImpl v1 = new VectorImpl(10, 20);
+        VectorImpl v2 = new VectorImpl(20, 30);
+        v1.sub(v2);
+        assertEquals(-10, v1.getX());
+        assertEquals(-10, v1.getY());
+    }
+
+    @Test
+    public void TestScale(){
+        VectorImpl v1 = new VectorImpl(10, 20);
+        v1.scale(2);
+        assertEquals(20, v1.getX());
+        assertEquals(40, v1.getY());
+    }
+
+    @Test
+    public void 
     
 }
