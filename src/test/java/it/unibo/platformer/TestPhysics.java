@@ -60,6 +60,19 @@ public class TestPhysics {
         assertEquals(v1.getY(), v2.getY());
     }
 
-
+    @Test
+    public void TestGameObject(){
+        GameObjectImpl o = new GameObjectImpl(10, 20, 30, 40);
+        VectorImpl pos = new VectorImpl(10, 20);
+        VectorImpl speed = new VectorImpl(10,10);
+        assertEquals(pos.getX(), o.getPosition().getX());
+        assertEquals(pos.getY(), o.getPosition().getY());
+        assertEquals(false, o.IsOnGround());
+        o.setSpeed(10, 10);
+        assertEquals(speed.getX(), o.getSpeed().getX());
+        assertEquals(speed.getY(), o.getSpeed().getY());
+        assertEquals(30, o.getWidth());
+        assertEquals(40, o.getHeight());
+    }
     
 }
