@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import it.unibo.platformer.model.entities.Entity;
 import it.unibo.platformer.model.entities.worldEntity.Coin;
-import it.unibo.platformer.model.physics.BasicPhysics;
+import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Test;
 
@@ -96,7 +96,7 @@ class GameManagerTest {
     void collectingCoinUpdatesScoreSystem() {
         final GameManager gameManager = new GameManager();
 
-        gameManager.getCurrentLevel().addEntity(new Coin(105, 300, new BasicPhysics()));
+        gameManager.getCurrentLevel().addEntity(new Coin(105, 300, new BasicPhysicsImpl()));
         gameManager.startGame();
         gameManager.update(0);
 

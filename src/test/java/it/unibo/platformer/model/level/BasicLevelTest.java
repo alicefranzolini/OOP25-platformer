@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import it.unibo.platformer.model.entities.players.PlayerImpl;
 import it.unibo.platformer.model.entities.worldEntity.Coin;
-import it.unibo.platformer.model.physics.BasicPhysics;
+import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 import org.junit.jupiter.api.Test;
 
 class BasicLevelTest {
@@ -14,8 +14,8 @@ class BasicLevelTest {
     @Test
     void collectsCoinWhenPlayerBoundingBoxOverlapsIt() {
         final BasicLevel level = new BasicLevel();
-        final PlayerImpl player = new PlayerImpl(100, 300);
-        final Coin coin = new Coin(105, 300, new BasicPhysics());
+        final PlayerImpl player = new PlayerImpl(100, 300, new BasicPhysicsImpl());
+        final Coin coin = new Coin(105, 300, new BasicPhysicsImpl());
 
         level.setPlayer(player);
         level.addEntity(coin);
@@ -30,8 +30,8 @@ class BasicLevelTest {
     @Test
     void doesNotCollectCoinWhenPlayerDoesNotOverlapIt() {
         final BasicLevel level = new BasicLevel();
-        final PlayerImpl player = new PlayerImpl(100, 300);
-        final Coin coin = new Coin(200, 300, new BasicPhysics());
+        final PlayerImpl player = new PlayerImpl(100, 300, new BasicPhysicsImpl());
+        final Coin coin = new Coin(200, 300, new BasicPhysicsImpl());
 
         level.setPlayer(player);
         level.addEntity(coin);
@@ -46,8 +46,8 @@ class BasicLevelTest {
     @Test
     void collectedCoinsCanBeResetAfterScoreUpdate() {
         final BasicLevel level = new BasicLevel();
-        final PlayerImpl player = new PlayerImpl(100, 300);
-        final Coin coin = new Coin(105, 300, new BasicPhysics());
+        final PlayerImpl player = new PlayerImpl(100, 300, new BasicPhysicsImpl());
+        final Coin coin = new Coin(105, 300, new BasicPhysicsImpl());
 
         level.setPlayer(player);
         level.addEntity(coin);
@@ -60,8 +60,8 @@ class BasicLevelTest {
     @Test
     void replacingPlayerRemovesPreviousPlayerFromLevel() {
         final BasicLevel level = new BasicLevel();
-        final PlayerImpl firstPlayer = new PlayerImpl(100, 300);
-        final PlayerImpl secondPlayer = new PlayerImpl(150, 300);
+        final PlayerImpl firstPlayer = new PlayerImpl(100, 300, new BasicPhysicsImpl());
+        final PlayerImpl secondPlayer = new PlayerImpl(150, 300, new BasicPhysicsImpl());
 
         level.setPlayer(firstPlayer);
         level.setPlayer(secondPlayer);

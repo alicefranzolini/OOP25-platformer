@@ -6,7 +6,8 @@ import it.unibo.platformer.model.entities.players.PlayerImpl;
 import it.unibo.platformer.model.entities.worldEntity.Block;
 import it.unibo.platformer.model.entities.worldEntity.Block.BlockType;
 import it.unibo.platformer.model.entities.worldEntity.Coin;
-import it.unibo.platformer.model.physics.BasicPhysics;
+import it.unibo.platformer.model.physics.api.BasicPhysics;
+import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 
 public class BasicLevelLoader implements LevelLoader {
 
@@ -109,7 +110,7 @@ public class BasicLevelLoader implements LevelLoader {
             PLAYER_SPAWN_Y
         );
 
-        level.setPlayer(new PlayerImpl(level.getSpawnX(), level.getSpawnY()));
+        level.setPlayer(new PlayerImpl(level.getSpawnX(), level.getSpawnY(), createPhysics()));
         return level;
     }
 
@@ -120,15 +121,19 @@ public class BasicLevelLoader implements LevelLoader {
     }
 
     private Coin createCoin(final double x, final double y) {
-        return new Coin(x, y, new BasicPhysics());
+        return new Coin(x, y, createPhysics());
     }
 
     private Goomba createGoomba(final double x, final double y) {
-        return new Goomba(x, y, new BasicPhysics());
+        return new Goomba(x, y, createPhysics());
     }
 
     private Koopa createKoopa(final double x, final double y) {
-        return new Koopa(x, y, new BasicPhysics());
+        return new Koopa(x, y, createPhysics());
+    }
+
+    private BasicPhysics createPhysics() {
+        return new BasicPhysicsImpl();
     }
     
 }

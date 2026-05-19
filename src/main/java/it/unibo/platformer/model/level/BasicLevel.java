@@ -8,10 +8,12 @@ import it.unibo.platformer.model.entities.DynamicEntity;
 import it.unibo.platformer.model.entities.StaticEntity;
 import it.unibo.platformer.model.entities.players.Player;
 import it.unibo.platformer.model.entities.worldEntity.Coin;
-import it.unibo.platformer.model.physics.CollisionDetector;
-import it.unibo.platformer.model.physics.CollisionResolver;
-import it.unibo.platformer.model.physics.CollisionResult;
-import it.unibo.platformer.model.physics.GameObject;
+import it.unibo.platformer.model.physics.api.CollisionDetector;
+import it.unibo.platformer.model.physics.api.CollisionResolver;
+import it.unibo.platformer.model.physics.impl.CollisionDetectorImpl;
+import it.unibo.platformer.model.physics.impl.CollisionResolverImpl;
+import it.unibo.platformer.model.physics.impl.CollisionResult;
+import it.unibo.platformer.model.physics.impl.GameObjectImpl;
 import javafx.scene.canvas.GraphicsContext;
 
 public class BasicLevel implements Level {
@@ -46,8 +48,8 @@ public class BasicLevel implements Level {
         this.spawnX = spawnX;
         this.spawnY = spawnY;
         this.collectedCoins = 0;
-        this.detector = new CollisionDetector();
-        this.resolver = new CollisionResolver();
+        this.detector = new CollisionDetectorImpl();
+        this.resolver = new CollisionResolverImpl();
     }
 
     @Override
@@ -134,7 +136,7 @@ public class BasicLevel implements Level {
                     continue;
                 }
 
-                GameObject staticObj = new GameObject(
+                final GameObjectImpl staticObj = new GameObjectImpl(
                     (float) staticEntity.getX(),
                     (float) staticEntity.getY(),
                     (float) staticEntity.getWidth(),
