@@ -18,5 +18,5 @@ public interface GameObject {
 
     public boolean IsOnGround();
 
-    public void SetOnGround();
+    public void SetOnGround(boolean onGround);
 }

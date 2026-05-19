@@ -55,12 +55,8 @@ public class GameObjectImpl implements GameObject{
     }
 
     @Override
-    public void SetOnGround(){
-        if(this.onGround == false){
-            this.onGround = true;
-        }else{
-            this.onGround = false;
-        }
+    public void SetOnGround(boolean onGround){
+        this.onGround = onGround;
     }
 
     @Override
