@@ -51,6 +51,15 @@ public class TestPhysics {
     }
 
     @Test
-    public void 
+    public void TestClone(){
+        VectorImpl v1 = new VectorImpl(10,20);
+        VectorImpl v2 = v1.clone();
+
+        assertEquals(v1.getClass(), v2.getClass());
+        assertEquals(v1.getX(), v2.getX());
+        assertEquals(v1.getY(), v2.getY());
+    }
+
+
     
 }
