@@ -1,0 +1,260 @@
+package it.unibo.platformer.controller;
+
+import it.unibo.platformer.model.level.BasicLevelLoader;
+import it.unibo.platformer.model.level.Level;
+import it.unibo.platformer.model.level.LevelLoader;
+import it.unibo.platformer.model.score.ScoreSystem;
+import it.unibo.platformer.view.HudView;
+import javafx.scene.canvas.GraphicsContext;
+
+public class GameManager {
+
+    private static final int FIRST_LEVEL = 1;
+    private static final int LAST_LEVEL = 3;
+    private static final double DEFAULT_VIEW_WIDTH = 1280;
+    private static final double DEFAULT_VIEW_HEIGHT = 720;
+    private static final double FIXED_DELTA_TIME = 0.016;
+    private static final double CAMERA_PLAYER_OFFSET = 400;
+    private static final int COIN_SCORE = 100;
+    private static final double LEVEL_END_DISTANCE = 64;
+
+    public enum GameState {
+        MENU,
+        PLAYING,
+        GAME_OVER,
+        PAUSED
+    }
+
+    private double cameraX;
+    private final InputController inputController;
+    private GameState currentState;
+    private boolean running;
+    private final ScoreSystem scoreSystem;
+    private final HudView hudView;
+    private final double viewWidth;
+    private final double viewHeight;
+
+    private Level currentLevel;
+    private final LevelLoader loader;
+
+    public GameManager() {
+        this(DEFAULT_VIEW_WIDTH, DEFAULT_VIEW_HEIGHT);
+    }
+
+    public GameManager(final double viewWidth, final double viewHeight) {
+        this.currentState = GameState.MENU;
+        this.running = false;
+        this.scoreSystem = new ScoreSystem();
+        this.hudView = new HudView();
+        this.loader = new BasicLevelLoader();
+        this.currentLevel = this.loader.loadLevel(FIRST_LEVEL);
+        this.inputController = new InputController();
+        this.viewWidth = viewWidth;
+        this.viewHeight = viewHeight;
+        this.cameraX = 0;
+    }
+
+    public void startGame() {
+        this.currentState = GameState.PLAYING;
+        this.running = true;
+    }
+
+    public void gameOver() {
+        this.currentState = GameState.GAME_OVER;
+        this.running = false;
+    }
+
+    public void pauseGame() {
+        if (this.currentState == GameState.PLAYING) {
+            this.currentState = GameState.PAUSED;
+        }
+    }
+
+    public void resumeGame() {
+        if (this.currentState == GameState.PAUSED) {
+            this.currentState = GameState.PLAYING;
+        }
+    }
+
+    public void togglePause() {
+        if (this.currentState == GameState.PLAYING) {
+            pauseGame();
+        } else if (this.currentState == GameState.PAUSED) {
+            resumeGame();
+        }
+    }
+
+    public void backToMenu() {
+        this.currentState = GameState.MENU;
+        this.running = false;
+    }
+
+    public void restartGame() {
+        this.scoreSystem.reset();
+        loadLevel(FIRST_LEVEL);
+        startGame();
+    }
+
+    public void loadLevel(final int levelNumber) {
+        this.currentLevel = this.loader.loadLevel(levelNumber);
+        this.cameraX = 0;
+    }
+
+    public void nextLevel() {
+        backToMenu();
+    }
+
+    public void update() {
+        update(FIXED_DELTA_TIME);
+    }
+
+    public void update(final double deltaTime) {
+        handleGameCommands();
+
+        switch (currentState) {
+            case MENU:
+                updateMenu();
+                break;
+            case PLAYING:
+                updateGame(deltaTime);
+                break;
+            case PAUSED:
+                updatePaused();
+                break;
+            case GAME_OVER:
+                updateGameOver();
+                break;
+        }
+    }
+
+    private void handleGameCommands() {
+        // Restart has priority because it creates a new game state.
+        if (this.inputController.consumeRestartPressed()) {
+            restartGame();
+            return;
+        }
+
+        if (this.inputController.consumePausePressed()) {
+            togglePause();
+        }
+    }
+
+    public void gameLoop() {
+        this.running = true;
+
+        while (running) {
+            update();
+
+            try {
+                Thread.sleep(16);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void updateMenu() {
+        final int selectedLevel = this.inputController.consumeSelectedLevel();
+        if (selectedLevel >= FIRST_LEVEL && selectedLevel <= LAST_LEVEL) {
+            loadLevel(selectedLevel);
+            startGame();
+        }
+    }
+
+    private void updateGame(final double deltaTime) {
+        if (this.currentLevel == null) {
+            return;
+        }
+
+        this.inputController.handleInput(this.currentLevel.getPlayer());
+        this.currentLevel.update(deltaTime);
+        updateScoreFromLevel();
+        checkLevelEnd();
+        updateCamera();
+    }
+
+    private void updateScoreFromLevel() {
+        final int collectedCoins = this.currentLevel.getCollectedCoins();
+
+        for (int i = 0; i < collectedCoins; i++) {
+            this.scoreSystem.addCoin();
+            this.scoreSystem.addScore(COIN_SCORE);
+        }
+
+        this.currentLevel.resetCollectedCoins();
+    }
+
+    private void checkLevelEnd() {
+        if (this.currentLevel.getPlayer() == null) {
+            return;
+        }
+
+        final double playerEndX = this.currentLevel.getPlayer().getX()
+            + this.currentLevel.getPlayer().getWidth();
+
+        if (playerEndX >= this.currentLevel.getWidth() - LEVEL_END_DISTANCE) {
+            backToMenu();
+        }
+    }
+
+    private void updateCamera() {
+        if (this.currentLevel.getPlayer() == null) {
+            this.cameraX = 0;
+            return;
+        }
+
+        // The camera follows the player, but it cannot go outside the level.
+        final double desiredCameraX = this.currentLevel.getPlayer().getX() - CAMERA_PLAYER_OFFSET;
+        final double maxCameraX = Math.max(0, this.currentLevel.getWidth() - this.viewWidth);
+        this.cameraX = Math.max(0, Math.min(desiredCameraX, maxCameraX));
+    }
+
+    public void render(final GraphicsContext gc) {
+        gc.clearRect(0, 0, this.viewWidth, this.viewHeight);
+        gc.save();
+        gc.translate(-this.cameraX, 0);
+        if (this.currentLevel != null) {
+            this.currentLevel.render(gc);
+        }
+        gc.restore();
+        this.hudView.render(
+            gc,
+            this.scoreSystem,
+            this.currentLevel.getLevelNumber(),
+            this.currentState,
+            this.viewWidth
+        );
+    }
+
+    private void updatePaused() {
+        // paused logic
+    }
+
+    private void updateGameOver() {
+        // game over logic
+    }
+
+    public GameState getCurrentSate() {
+        return getCurrentState();
+    }
+
+    public GameState getCurrentState() {
+        return this.currentState;
+    }
+
+    public InputController getInputController() {
+        return this.inputController;
+    }
+
+    public Level getCurrentLevel() {
+        return this.currentLevel;
+    }
+
+    public ScoreSystem getScoreSystem() {
+        return this.scoreSystem;
+    }
+
+    public double getCameraX() {
+        return this.cameraX;
+    }
+}
