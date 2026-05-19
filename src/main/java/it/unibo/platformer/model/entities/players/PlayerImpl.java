@@ -1,7 +1,7 @@
 package it.unibo.platformer.model.entities.players;
 
 import it.unibo.platformer.model.entities.DynamicEntity;
-import it.unibo.platformer.model.physics.BasicPhysics;
+import it.unibo.platformer.model.physics.api.BasicPhysics;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import it.unibo.platformer.view.AnimationManager;
@@ -67,8 +67,8 @@ public class PlayerImpl extends DynamicEntity implements Player {
         this.visible       = true;
         this.animManager   = new AnimationManager();
     }*/
-    public PlayerImpl(double x, double y) {
-        super(x, y, SMALL_W, SMALL_H, new BasicPhysics());
+    public PlayerImpl(double x, double y, BasicPhysics physics) {
+        super(x, y, SMALL_W, SMALL_H, physics);
         this.playerState   = PlayerState.SMALL;
         this.spriteState   = SpriteState.IDLE;
         this.facingRight   = true;

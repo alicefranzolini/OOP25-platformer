@@ -3,6 +3,7 @@ package it.unibo.platformer.model.entities;
 
 import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 import it.unibo.platformer.model.physics.impl.GameObjectImpl;
+import it.unibo.platformer.model.physics.api.BasicPhysics;
 
 public abstract class DynamicEntity extends Entity {
 

@@ -4,12 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import it.unibo.platformer.model.entities.enemies.Koopa;
-import it.unibo.platformer.model.physics.BasicPhysics;
+import it.unibo.platformer.model.physics.api.BasicPhysics;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class KoopaTest {
-BasicPhysics physics = new BasicPhysics();
+BasicPhysics physics;
     private Koopa koopa;
 
     @BeforeEach

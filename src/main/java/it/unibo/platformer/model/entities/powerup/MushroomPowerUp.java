@@ -1,6 +1,7 @@
 package it.unibo.platformer.model.entities.powerup;
 
 import it.unibo.platformer.model.entities.players.Player;
+import it.unibo.platformer.model.physics.api.BasicPhysics;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -11,8 +12,8 @@ import javafx.scene.paint.Color;
 public class MushroomPowerUp extends PowerUpImpl {
 
     // Class purpose: a mushroom that makes the player BIG.
-    public MushroomPowerUp(double x, double y) {
-        super(x, y, 32, 32);
+    public MushroomPowerUp(double x, double y, BasicPhysics physics) {
+        super(x, y, 32, 32, physics);
     }
 /*
     @Override

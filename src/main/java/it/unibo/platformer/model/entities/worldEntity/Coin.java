@@ -1,7 +1,7 @@
 package it.unibo.platformer.model.entities.worldEntity;
 
 import it.unibo.platformer.model.entities.DynamicEntity;
-import it.unibo.platformer.model.physics.BasicPhysics;
+import it.unibo.platformer.model.physics.api.BasicPhysics;
 import it.unibo.platformer.view.AnimationManager;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;

@@ -2,13 +2,13 @@ package it.unibo.platformer.entity;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
+import it.unibo.platformer.model.physics.api.BasicPhysics;
 import it.unibo.platformer.model.entities.enemies.Goomba;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GoombaTest {
-    private final it.unibo.platformer.model.physics.BasicPhysics physics = new it.unibo.platformer.model.physics.BasicPhysics();
+    BasicPhysics physics;
     private Goomba goomba;
 
     @BeforeEach

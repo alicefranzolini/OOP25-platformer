@@ -1,18 +1,20 @@
 package it.unibo.platformer;
 
 import it.unibo.platformer.model.entities.players.PlayerImpl;
+import it.unibo.platformer.model.physics.api.BasicPhysics;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestPlayer {
-
+    private BasicPhysics physics;
     private PlayerImpl player;
 
     @BeforeEach
     void setup() {
-        player = new PlayerImpl(100, 100);
+        player = new PlayerImpl(100, 100, physics);
     }
 
     // ------------------------------------------------------------

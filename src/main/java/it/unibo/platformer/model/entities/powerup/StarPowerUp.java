@@ -1,6 +1,7 @@
 package it.unibo.platformer.model.entities.powerup;
 
 import it.unibo.platformer.model.entities.players.Player;
+import it.unibo.platformer.model.physics.api.BasicPhysics;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -11,8 +12,8 @@ public class StarPowerUp extends PowerUpImpl {
     private static final double BOUNCE_VELOCITY = -400.0;
 
     // Create a star power-up with a 32x32 size
-    public StarPowerUp(double x, double y) {
-        super(x, y, 32, 32);
+    public StarPowerUp(double x, double y, BasicPhysics physics) {
+        super(x, y, 32, 32, physics);
     }
 
     @Override

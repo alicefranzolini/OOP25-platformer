@@ -1,7 +1,7 @@
 package it.unibo.platformer.model.entities.powerup;
 
 import it.unibo.platformer.model.entities.DynamicEntity;
-import it.unibo.platformer.model.physics.BasicPhysics;
+import it.unibo.platformer.model.physics.api.BasicPhysics;
 import it.unibo.platformer.model.entities.players.Player;
 
 public abstract class PowerUpImpl extends DynamicEntity implements PowerUp {
@@ -27,9 +27,9 @@ public abstract class PowerUpImpl extends DynamicEntity implements PowerUp {
         this.emergeTarget = y - height;
     } */
 
-    public PowerUpImpl(double x, double y, double width, double height) {
-        super(x, y, width, height, new BasicPhysics());
-
+    public PowerUpImpl(double x, double y, double width, double height, BasicPhysics physics) {
+        super(x, y, width, height, physics);
+        
         setVelocityX(0);
         setVelocityY(EMERGE_SPEED);
         setAffectedByGravity(false);

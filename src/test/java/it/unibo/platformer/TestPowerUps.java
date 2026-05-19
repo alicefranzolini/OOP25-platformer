@@ -1,6 +1,7 @@
 package it.unibo.platformer;
 
 import it.unibo.platformer.model.entities.powerup.PowerUpImpl;
+import it.unibo.platformer.model.physics.api.BasicPhysics;
 //import it.unibo.platformer.model.entities.players.PlayerImpl;
 import javafx.scene.canvas.GraphicsContext;
 import it.unibo.platformer.model.entities.players.Player;
@@ -15,13 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * reverseDirection, collect -> applyEffect + destroy.
  */
 class TestPowerUps {
+    private BasicPhysics physics;
 
     private static class TestPowerUp extends PowerUpImpl {
         boolean effectApplied = false;
         boolean destroyedFlag = false;
 
-        TestPowerUp(double x, double y) {
-            super(x, y, 16, 16);
+        TestPowerUp(double x, double y, BasicPhysics physics) {
+            super(x, y, 16, 16, physics);
         }
 
         @Override
@@ -43,7 +45,7 @@ class TestPowerUps {
 
     @Test
     void emergenceCompletesAndStartsHorizontalMovement() {
-        TestPowerUp p = new TestPowerUp(100, 200);
+        TestPowerUp p = new TestPowerUp(100, 200, physics);
         assertTrue(p.isEmerging(), "Should start in emerging state");
 
         // simulate frames until emerging finishes (adjust iterations if physics differs)
@@ -57,7 +59,7 @@ class TestPowerUps {
 
     @Test
     void reverseDirectionFlipsVelocityX() {
-        TestPowerUp p = new TestPowerUp(0, 0);
+        TestPowerUp p = new TestPowerUp(0, 0, physics);
         p.setVelocityX(50);
         p.reverseDirection();
         assertEquals(-50.0, p.getVelocityX(), 1e-6);
@@ -65,7 +67,7 @@ class TestPowerUps {
 
     @Test
     void collectCallsApplyEffectAndDestroy() {
-        TestPowerUp p = new TestPowerUp(0, 0);
+        TestPowerUp p = new TestPowerUp(0, 0, physics);
         p.collect(null);
         assertTrue(p.effectApplied, "applyEffect should be invoked by collect");
         assertTrue(p.destroyedFlag, "destroy should be invoked by collect");

@@ -3,12 +3,12 @@ package it.unibo.platformer.entity;
 import org.junit.jupiter.api.Test;
 
 import it.unibo.platformer.model.entities.worldEntity.Coin;
-import it.unibo.platformer.model.physics.BasicPhysics;
+import it.unibo.platformer.model.physics.api.BasicPhysics;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CoinTest {
-BasicPhysics physics = new BasicPhysics();
+BasicPhysics physics;
     @Test
     void staticCoinNotPopping() {
         Coin coin = new Coin(50, 50, physics);
