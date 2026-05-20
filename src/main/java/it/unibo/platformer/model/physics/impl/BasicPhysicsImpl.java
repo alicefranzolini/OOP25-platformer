@@ -13,10 +13,9 @@ public class BasicPhysicsImpl implements BasicPhysics{
         if(!o.IsOnGround()){
         /*If the object isn't on the ground, it fall */
         o.getSpeed().setY(o.getSpeed().getY() + (GRAVITY * (float) DeltaTime));
-        }else{
+        }
         /*Update the position*/
         o.getPosition().setX(o.getPosition().getX() + o.getSpeed().getX() * (float)DeltaTime);
         o.getPosition().setY(o.getPosition().getY() + o.getSpeed().getY() * (float)DeltaTime);
-        }
     }
 }
