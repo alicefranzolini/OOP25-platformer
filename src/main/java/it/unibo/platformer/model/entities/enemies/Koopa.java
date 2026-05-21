@@ -116,6 +116,7 @@ public class Koopa extends EnemyImpl {
     private void init() {
         transitionTo(KoopaState.WALK);
         setVelocityX(-WALK_SPEED);
+         facingLeft = true;
         anim.play("walk");
     }
 
