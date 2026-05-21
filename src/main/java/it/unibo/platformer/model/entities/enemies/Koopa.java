@@ -31,8 +31,8 @@ public class Koopa extends EnemyImpl {
         @Override
         public void update(EnemyImpl e, double deltaTime) {
             double vx = e.getVelocityX();
-            if (vx < 0) e.facingLeft = true;
-            else if (vx > 0) e.facingLeft = false;
+            if (vx < 0) e.facingLeft = false;
+            else if (vx > 0) e.facingLeft = true;
             e.anim.play("walk");
             e.anim.update(deltaTime);
             e.physicsTick(deltaTime);
@@ -116,7 +116,6 @@ public class Koopa extends EnemyImpl {
     private void init() {
         transitionTo(KoopaState.WALK);
         setVelocityX(-WALK_SPEED);
-         facingLeft = true;
         anim.play("walk");
     }
 
