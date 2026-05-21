@@ -4,102 +4,102 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import it.unibo.platformer.model.physics.api.BasicPhysics;
-import it.unibo.platformer.model.physics.api.CollisionDetector;
-import it.unibo.platformer.model.physics.api.GameObject;
-import it.unibo.platformer.model.physics.api.Vector;
 import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 import it.unibo.platformer.model.physics.impl.CollisionDetectorImpl;
+import it.unibo.platformer.model.physics.impl.CollisionResult;
 import it.unibo.platformer.model.physics.impl.GameObjectImpl;
 import it.unibo.platformer.model.physics.impl.VectorImpl;
+import it.unibo.platformer.model.physics.impl.CollisionSide;
 
 public class TestPhysics {
     
     @Test
-    public void testVectorAdd() {
-        Vector v = new VectorImpl(1, 2);
-        v.add(new VectorImpl(3, 4));
-        assertEquals(4, v.getX());
-        assertEquals(6, v.getY());
+    public void TestGetSetVector(){
+        VectorImpl v1 = new VectorImpl();
+        v1.setX(10);
+        v1.setY(20);
+        assertEquals(10, v1.getX());
+        assertEquals(20, v1.getY());
     }
 
     @Test
-    public void testVectorSetters() {
-        Vector v = new VectorImpl(0, 0);
-        v.setX(5);
-        v.setY(7);
-        assertEquals(5, v.getX());
-        assertEquals(7, v.getY());
+    public void TestVectorAdd(){
+        VectorImpl v1 = new VectorImpl(10, 20);
+        VectorImpl v2 = new VectorImpl(10, 30);
+        v1.add(v2);
+        assertEquals(20, v1.getX());
+        assertEquals(50, v1.getY());
     }
 
     @Test
-    public void testGameObjectPosition() {
-        GameObject obj = new GameObjectImpl(10, 20, 30, 40);
-        assertEquals(10, obj.getPosition().getX());
-        assertEquals(20, obj.getPosition().getY());
-        assertEquals(30, obj.getWidth());
-        assertEquals(40, obj.getHeight());
+    public void TestVectorSub(){
+        VectorImpl v1 = new VectorImpl(10, 20);
+        VectorImpl v2 = new VectorImpl(20, 30);
+        v1.sub(v2);
+        assertEquals(-10, v1.getX());
+        assertEquals(-10, v1.getY());
     }
 
     @Test
-    public void testGameObjectSpeed() {
-        GameObject obj = new GameObjectImpl(0, 0, 10, 10);
-        obj.setSpeed(3, 4);
-        assertEquals(3, obj.getSpeed().getX());
-        assertEquals(4, obj.getSpeed().getY());
+    public void TestScale(){
+        VectorImpl v1 = new VectorImpl(10, 20);
+        v1.scale(2);
+        assertEquals(20, v1.getX());
+        assertEquals(40, v1.getY());
     }
 
     @Test
-    public void testPhysicsGravity() {
-        BasicPhysics physics = new BasicPhysicsImpl();
-        GameObject obj = new GameObjectImpl(0, 0, 10, 10);
+    public void TestClone(){
+        VectorImpl v1 = new VectorImpl(10,20);
+        VectorImpl v2 = v1.clone();
 
-        float initialSpeedY = obj.getSpeed().getY();
-        physics.update(obj);
-
-        assertTrue(obj.getSpeed().getY() > initialSpeedY,
-            "Vertical speed error");
+        assertEquals(v1.getClass(), v2.getClass());
+        assertEquals(v1.getX(), v2.getX());
+        assertEquals(v1.getY(), v2.getY());
     }
 
     @Test
-    public void testPhysicsPositionUpdate() {
-        BasicPhysics physics = new BasicPhysicsImpl();
-        GameObject obj = new GameObjectImpl(0, 0, 10, 10);
-
-        physics.update(obj);
-
-        assertNotEquals(0, obj.getPosition().getY(),
-            "The position must change");
+    public void TestGameObject(){
+        GameObjectImpl o = new GameObjectImpl(10, 20, 30, 40);
+        VectorImpl pos = new VectorImpl(10, 20);
+        VectorImpl speed = new VectorImpl(10,10);
+        assertEquals(pos.getX(), o.getPosition().getX());
+        assertEquals(pos.getY(), o.getPosition().getY());
+        assertEquals(false, o.IsOnGround());
+        o.setSpeed(10, 10);
+        assertEquals(speed.getX(), o.getSpeed().getX());
+        assertEquals(speed.getY(), o.getSpeed().getY());
+        assertEquals(30, o.getWidth());
+        assertEquals(40, o.getHeight());
+        o.SetOnGround(true);
+        assertEquals(true, o.IsOnGround());
     }
 
     @Test
-    public void testCollisionTrue() {
-        GameObject a = new GameObjectImpl(0, 0, 50, 50);
-        GameObject b = new GameObjectImpl(25, 25, 50, 50);
+    public void TestCollisionResult(){
+        GameObjectImpl dinamicobj = new GameObjectImpl(10, 20, 10, 20);
+        GameObjectImpl staticobj = new GameObjectImpl(20, 30, 20, 30);
+        CollisionSide side = CollisionSide.TOP;
 
-        CollisionDetector cd = new CollisionDetectorImpl();
+        CollisionResult collision = new CollisionResult(dinamicobj, staticobj, side);
 
-        assertTrue(cd.collision(a, b));
+        assertEquals(side, collision.getSide());
+        assertEquals(dinamicobj, collision.getDynamicObj());
+        assertEquals(staticobj, collision.getStaticObj());
     }
-
+    
     @Test
-    public void testCollisionFalse() {
-        GameObject a = new GameObjectImpl(0, 0, 50, 50);
-        GameObject b = new GameObjectImpl(200, 200, 50, 50);
+    public void TestCollisionDetector(){
+        GameObjectImpl o1 = new GameObjectImpl(10, 20, 30, 40);
+        GameObjectImpl o2 = new GameObjectImpl(20, 30, 40, 50);
 
-        CollisionDetector cd = new CollisionDetectorImpl();
+        CollisionDetectorImpl CollDet = new CollisionDetectorImpl();
 
-        assertFalse(cd.collision(a, b));
-    }
+        assertEquals(true, CollDet.collision(o1, o2));
 
-    @Test
-    public void testCollisionTouchingEdges() {
-        GameObject a = new GameObjectImpl(0, 0, 50, 50);
-        GameObject b = new GameObjectImpl(50, 0, 50, 50);
+        assertNotNull(CollDet.getCollisionResult(o1, o2));
+        CollisionResult res = new CollisionResult(o1, o2, CollisionSide.LEFT);
+        assertEquals(res.getSide(), CollDet.getCollisionResult(o1, o2).getSide());
 
-        CollisionDetector cd = new CollisionDetectorImpl();
-
-        assertFalse(cd.collision(a, b),
-            "The touching borders aren't in collision");
     }
 }

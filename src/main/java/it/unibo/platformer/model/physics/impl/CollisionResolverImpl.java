@@ -30,17 +30,18 @@ public class CollisionResolverImpl implements CollisionResolver{
             case TOP:
                 a.getPosition().setY(b.getPosition().getY() - a.getHeight());
                 a.getSpeed().setY(0);
+                a.SetOnGround(true);
                 break;
             case BOTTOM:
                 a.getPosition().setY(b.getPosition().getY() + b.getHeight());
                 a.getSpeed().setY(0);
                 break;
             case LEFT:
-                a.getPosition().setX(b.getPosition().getX() - b.getWidth());
+                a.getPosition().setX(b.getPosition().getX() + b.getWidth());
                 a.getSpeed().setX(0);
                 break;
             case RIGHT:
-                a.getPosition().setX(b.getPosition().getX() + b.getWidth());
+                a.getPosition().setX(b.getPosition().getX() - a.getWidth());
                 a.getSpeed().setX(0);
                 break;
             case NONE:

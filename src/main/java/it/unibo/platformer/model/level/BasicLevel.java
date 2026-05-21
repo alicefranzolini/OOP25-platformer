@@ -13,6 +13,7 @@ import it.unibo.platformer.model.physics.api.CollisionResolver;
 import it.unibo.platformer.model.physics.impl.CollisionDetectorImpl;
 import it.unibo.platformer.model.physics.impl.CollisionResolverImpl;
 import it.unibo.platformer.model.physics.impl.CollisionResult;
+import it.unibo.platformer.model.physics.impl.CollisionSide;
 import it.unibo.platformer.model.physics.impl.GameObjectImpl;
 import javafx.scene.canvas.GraphicsContext;
 
@@ -131,6 +132,9 @@ public class BasicLevel implements Level {
                 continue;
             }
 
+            final DynamicEntity movingEntity = (DynamicEntity) dynamicEntity;
+            movingEntity.setOnGround(false);
+
             for (final Entity staticEntity : this.entities) {
                 if (!(staticEntity instanceof StaticEntity)) {
                     continue;
@@ -144,13 +148,16 @@ public class BasicLevel implements Level {
                 );
 
                 final CollisionResult result = detector.getCollisionResult(
-                    ((DynamicEntity) dynamicEntity).getGameObject(),
+                    movingEntity.getGameObject(),
                     staticObj
                 );
 
                 if (result != null) {
                     try {
                         resolver.ResolveOne(result);
+                        if (result.getSide() == CollisionSide.TOP) {
+                            movingEntity.setOnGround(true);
+                        }
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
