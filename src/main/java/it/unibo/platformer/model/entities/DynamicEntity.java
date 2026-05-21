@@ -80,6 +80,7 @@ public abstract class DynamicEntity extends Entity {
      */
     public void setOnGround(boolean onGround) {
         this.onGround = onGround;
+        this.gameObject.SetOnGround(onGround);
         if (onGround) {
             // Azzera la velocità Y quando tocca terra
             gameObject.getSpeed().setY(0);
