@@ -4,6 +4,7 @@ import it.unibo.platformer.model.entities.DynamicEntity;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 import it.unibo.platformer.view.AnimationManager;
 import javafx.scene.canvas.GraphicsContext;
+import java.util.Optional;
 
 
 public abstract class EnemyImpl extends DynamicEntity implements Enemy {
@@ -36,7 +37,7 @@ public abstract class EnemyImpl extends DynamicEntity implements Enemy {
     protected boolean facingLeft = true;
 
     /** The active state handler; drives update() and render(). */
-    private EnemyStateHandler handler;
+    private Optional<EnemyStateHandler> handler = Optional.empty();
 
     // -------------------------------------------------------------------------
     // Constructors
@@ -65,13 +66,13 @@ public abstract class EnemyImpl extends DynamicEntity implements Enemy {
 
     @Override
     public final void update(double deltaTime) {
-        if (handler != null) handler.update(this, deltaTime);
+        handler.ifPresent(h -> h.update(this, deltaTime));
     }
 
     @Override
     public final void render(GraphicsContext gc) {
-        if (!isActive() || handler == null) return;
-        handler.render(this, gc);
+        if (!isActive()) return;
+        handler.ifPresent(h -> h.render(this, gc));
     }
 
     // -------------------------------------------------------------------------
@@ -83,7 +84,7 @@ public abstract class EnemyImpl extends DynamicEntity implements Enemy {
      * Subclasses call this from their own transition methods (e.g. squish(), stomp()).
      */
     protected void transitionTo(EnemyStateHandler newHandler) {
-        this.handler = newHandler;
+        this.handler = Optional.of(newHandler);
     }
 
     // -------------------------------------------------------------------------
@@ -100,14 +101,16 @@ public abstract class EnemyImpl extends DynamicEntity implements Enemy {
     // -------------------------------------------------------------------------
 
     /** Returns true if this enemy can currently hurt the player on contact. */
+    @Override
     public boolean hitsPlayer() {
-        return handler != null && handler.hitsPlayer();
+        return handler.map(EnemyStateHandler::hitsPlayer).orElse(false);
     }
 
-   
+    @Override
     public boolean isWalking() {
-        return handler instanceof WalkingHandler;
+        return handler.map(h -> h instanceof WalkingHandler).orElse(false);
     }
+
     public void setHeight(double height) {
     this.height = height; // Ensure 'height' is the correct name of the field in your base class
 }
