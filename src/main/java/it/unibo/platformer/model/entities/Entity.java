@@ -1,6 +1,8 @@
 package it.unibo.platformer.model.entities;
 
 import javafx.scene.canvas.GraphicsContext;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class Entity {
 
@@ -49,7 +51,7 @@ public abstract class Entity {
         public double getWidth()  { return width; }
         public double getHeight() { return height; }
  
-        /** Returns true if this box overlaps with {@code other}. */
+      
         public boolean overlaps(BoundingBox other) {
             return x < other.x + other.width
                 && x + width  > other.x
@@ -88,5 +90,11 @@ public abstract class Entity {
     //Drimuove l'entità al prossimo frame
     public void destroy() {
         this.active = false;
+    }
+    
+    public static List<Entity> filterActive(List<Entity> entities) {
+        return entities.stream()
+                .filter(Entity::isActive)
+                .collect(Collectors.toList());
     }
 }
