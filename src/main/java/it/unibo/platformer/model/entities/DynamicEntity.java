@@ -4,6 +4,7 @@ package it.unibo.platformer.model.entities;
 import it.unibo.platformer.model.physics.impl.GameObjectImpl;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 
+//It represents an entity capable of movement and subject to physical forces.
 public abstract class DynamicEntity extends Entity {
 
 
@@ -38,16 +39,16 @@ public abstract class DynamicEntity extends Entity {
    @Override
     public void update( final double deltaTime) {
         if (affectedByGravity && !onGround) {
-            // Full physics step: gravity accumulation + position integration
+            // Use the physics engine to calculate fall and friction.
             physics.UpdatePosition(gameObject, deltaTime);
         } else if (!affectedByGravity) {
-            // Gravity-free movement (e.g. moving shell): integrate X and Y manually
+            // Gravity-free movement (for example moving shell): integrate X and Y manually
             final float dx = gameObject.getSpeed().getX() * (float) deltaTime;
             final float dy = gameObject.getSpeed().getY() * (float) deltaTime;
             gameObject.getPosition().setX(gameObject.getPosition().getX() + dx);
             gameObject.getPosition().setY(gameObject.getPosition().getY() + dy);
         }
-        // else: on ground with gravity — position managed by collision resolver
+        // else:position managed by collision resolver
     }
 
     //for velocity 
@@ -73,16 +74,12 @@ public abstract class DynamicEntity extends Entity {
     public boolean isOnGround()          { return onGround; }
  
     public void setAffectedByGravity(boolean g) { this.affectedByGravity = g; }
- 
- /**
-     * Sets whether the entity is resting on the ground.
-     * Zeroes vertical velocity when landing to prevent bouncing artefacts.
-     */
+    
+    // Avoid the bounce effect by resetting the vertical speed to zero upon landing.
     public void setOnGround(boolean onGround) {
         this.onGround = onGround;
         this.gameObject.SetOnGround(onGround);
         if (onGround) {
-            // Azzera la velocità Y quando tocca terra
             gameObject.getSpeed().setY(0);
         }
     }
