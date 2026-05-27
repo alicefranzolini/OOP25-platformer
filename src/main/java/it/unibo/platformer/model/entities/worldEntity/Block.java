@@ -18,7 +18,7 @@ public class Block extends StaticEntity {
     private boolean hit;
     private boolean hasContent;
 
-    // Sprites (singoli, non spritesheet)
+    // Sprites 
     private Image spriteNormal;
     private Image spriteBrick;
     private Image spriteBrickUsed;
@@ -28,10 +28,12 @@ public class Block extends StaticEntity {
         super(x, y, 32, 32);
         this.type = type;
         this.hit = false;
-        this.hasContent = (type == BlockType.QUESTION);
+        this.hasContent = (type == BlockType.QUESTION); // Only QUESTION blocks are created with default content 
         loadSprites();
     }
 
+    //Creates a normal block at the specified position.
+    
     public Block(double x, double y) {
         this(x, y, BlockType.NORMAL);
     }
@@ -45,7 +47,7 @@ public class Block extends StaticEntity {
 
     @Override
     public void update(double deltaTime) {
-        // statico, niente da aggiornare
+        // static, nothing to update
     }
 
     @Override
@@ -59,7 +61,7 @@ public class Block extends StaticEntity {
         if (sprite != null) {
             gc.drawImage(sprite, x, y, width, height);
         } else {
-            // fallback colori se lo sprite manca
+            // if the sprite fails to load, fallback to a simple colored block
             switch (type) {
                 case BRICK    -> gc.setFill(hit ? Color.GRAY : Color.SADDLEBROWN);
                 case QUESTION -> gc.setFill(hit ? Color.GRAY : Color.GOLD);
@@ -75,7 +77,7 @@ public class Block extends StaticEntity {
             }
         }
     }
-
+//Method called when a Player hits the block from below.
     public boolean onHit() {
         if (hit) return false;
         if (hasContent) {
