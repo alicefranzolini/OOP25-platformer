@@ -10,23 +10,11 @@ import javafx.scene.paint.Color;
 
 public class Koopa extends EnemyImpl {
 
-    // -------------------------------------------------------------------------
-    // Constants
-    // -------------------------------------------------------------------------
-
     private static final double WALK_SPEED  = 50.0;
     private static final double SHELL_SPEED = 300.0;
 
-    // -------------------------------------------------------------------------
-    // Public state enum
-    // -------------------------------------------------------------------------
-
     public enum KoopaState { WALK, SHELL, SHELL_MOVING }
-
-    // -------------------------------------------------------------------------
-    // Private state handlers
-    // -------------------------------------------------------------------------
-
+    // Walk handler: Manages the sprite's direction and physics.
     private static final class WalkHandler implements EnemyImpl.WalkingHandler {
         @Override
         public void update(EnemyImpl e, double deltaTime) {
@@ -52,6 +40,7 @@ public class Koopa extends EnemyImpl {
         public boolean hitsPlayer() { return true; }
     }
 
+    // Handler for the shell state: Manages the shell's appearance and non-lethal nature.
     private static final class ShellHandler implements EnemyImpl.EnemyStateHandler {
         @Override
         public void update(EnemyImpl e, double deltaTime) {
@@ -72,7 +61,7 @@ public class Koopa extends EnemyImpl {
         @Override
         public boolean hitsPlayer() { return false; }
     }
-
+// Handler for the shell moving state: Manages the shell's movement and lethal nature.
     private static final class ShellMovingHandler implements EnemyImpl.EnemyStateHandler {
         @Override
         public void update(EnemyImpl e, double deltaTime) {
@@ -98,15 +87,7 @@ public class Koopa extends EnemyImpl {
         public boolean hitsPlayer() { return true; }
     }
 
-    // -------------------------------------------------------------------------
-    // State tracking
-    // -------------------------------------------------------------------------
-
     private KoopaState state;
-
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
 
     public Koopa(double x, double y, BasicPhysics physics) {
         super(x, y, 32, 48, physics);
@@ -118,10 +99,6 @@ public class Koopa extends EnemyImpl {
         setVelocityX(-WALK_SPEED);
         anim.play("walk");
     }
-
-    // -------------------------------------------------------------------------
-    // Template Method implementation
-    // -------------------------------------------------------------------------
 
     @Override
     protected void loadAnimations() {
@@ -142,10 +119,6 @@ public class Koopa extends EnemyImpl {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // State transition
-    // -------------------------------------------------------------------------
-
     private void transitionTo(KoopaState newState) {
         this.state = newState;
         EnemyStateHandler h = switch (newState) {
@@ -155,10 +128,6 @@ public class Koopa extends EnemyImpl {
         };
         transitionTo(h);
     }
-
-    // -------------------------------------------------------------------------
-    // Public API
-    // -------------------------------------------------------------------------
 
     public void stomp() {
         if (state != KoopaState.WALK) return;
