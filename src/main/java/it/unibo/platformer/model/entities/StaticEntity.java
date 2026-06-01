@@ -1,11 +1,12 @@
 package it.unibo.platformer.model.entities;
 
 import javafx.scene.canvas.GraphicsContext;
+//It represents an entity that does not possess its own physical dynamics (no speed or gravity).
 
 public abstract class StaticEntity extends Entity {
     
     
-    protected boolean solid;//indicates whether the entity should block movement.(if the players collides with it or can pass through)
+    protected boolean solid;//indicates whether the entity should block movement.(if the players collides with it or can pass through) solid default to true
 
     public StaticEntity(double x, double y, double width, double height) {
         super(x, y, width, height);

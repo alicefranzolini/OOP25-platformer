@@ -4,44 +4,31 @@ import it.unibo.platformer.model.entities.DynamicEntity;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 import it.unibo.platformer.view.AnimationManager;
 import javafx.scene.canvas.GraphicsContext;
+import java.util.Optional;
 
-
+//Basic implementation that centralizes physics, animations, and state management.
 public abstract class EnemyImpl extends DynamicEntity implements Enemy {
 
-   
+   //interface for different enemy states, each state has its own update/render logic and player interaction rules
     public interface EnemyStateHandler {
-        /** Called every frame while the enemy is in this state. */
+        
         void update(EnemyImpl e, double deltaTime);
-        /** Draws the enemy for this state. */
+        
         void render(EnemyImpl e, GraphicsContext gc);
-        /** Returns true if touching the player hurts or kills them. */
+        
         boolean hitsPlayer();
     }
-
-    // -------------------------------------------------------------------------
-    // Marker interface: WalkingHandler
-    // -------------------------------------------------------------------------
-
-    
+    //** Marker interface to group all walking states. */
     public interface WalkingHandler extends EnemyStateHandler {}
 
-    // -------------------------------------------------------------------------
-    // Shared fields
-    // -------------------------------------------------------------------------
-
-    /** Animation controller — shared by all enemies. */
+    
     protected final AnimationManager anim = new AnimationManager();
-
-    /** True when the enemy sprite should be mirrored horizontally. */
     protected boolean facingLeft = true;
 
-    /** The active state handler; drives update() and render(). */
-    private EnemyStateHandler handler;
+    // The active state handler; drives update() and render(). 
+    private Optional<EnemyStateHandler> handler = Optional.empty();
 
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
-
+   
     
     protected EnemyImpl(double x, double y, double width, double height, BasicPhysics physics) {
         super(x, y, width, height, physics);
@@ -49,65 +36,47 @@ public abstract class EnemyImpl extends DynamicEntity implements Enemy {
     }
 
 
-    // -------------------------------------------------------------------------
-    // Template Method — subclasses register their own sprites
-    // -------------------------------------------------------------------------
-
-    /**
-     * Called once during construction.
-     * Subclasses register their animations via {@link #anim}.
-     */
+    
+    // subclasses register their own sprites
     protected abstract void loadAnimations();
 
-    // -------------------------------------------------------------------------
-    // Game loop — final: subclasses must not override these
-    // -------------------------------------------------------------------------
-
+    
+    // subclasses must not override these
+    
     @Override
     public final void update(double deltaTime) {
-        if (handler != null) handler.update(this, deltaTime);
+        handler.ifPresent(h -> h.update(this, deltaTime));
     }
 
     @Override
     public final void render(GraphicsContext gc) {
-        if (!isActive() || handler == null) return;
-        handler.render(this, gc);
+        if (!isActive()) return;
+        handler.ifPresent(h -> h.render(this, gc));
     }
 
-    // -------------------------------------------------------------------------
-    // State transition
-    // -------------------------------------------------------------------------
-
-    /**
-     * Switches the active state handler.
-     * Subclasses call this from their own transition methods (e.g. squish(), stomp()).
-     */
+   
     protected void transitionTo(EnemyStateHandler newHandler) {
-        this.handler = newHandler;
+        this.handler = Optional.of(newHandler);
     }
 
-    // -------------------------------------------------------------------------
-    // Physics helper — called by WalkingHandler implementations
-    // -------------------------------------------------------------------------
 
-    
+    //Utility method to advance basic physics; can be called by state handlers as needed.
     protected void physicsTick(double deltaTime) {
         super.update(deltaTime);
     }
 
-    // -------------------------------------------------------------------------
-    // Shared queries — work for every enemy via the handler/marker interface
-    // -------------------------------------------------------------------------
-
-    /** Returns true if this enemy can currently hurt the player on contact. */
+    
+    
+    @Override
     public boolean hitsPlayer() {
-        return handler != null && handler.hitsPlayer();
+        return handler.map(EnemyStateHandler::hitsPlayer).orElse(false);
     }
 
-   
+    @Override
     public boolean isWalking() {
-        return handler instanceof WalkingHandler;
+        return handler.map(h -> h instanceof WalkingHandler).orElse(false);
     }
+
     public void setHeight(double height) {
     this.height = height; // Ensure 'height' is the correct name of the field in your base class
 }

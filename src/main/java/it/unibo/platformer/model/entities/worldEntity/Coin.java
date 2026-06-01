@@ -9,21 +9,19 @@ import javafx.scene.paint.Color;
 
 public class Coin extends DynamicEntity {
 
-    // Animazione rotazione: 4 frame simulati scalando la larghezza
+    // rotation animation: changing width to simulate rotation
     private double animTimer;
     private int animFrame;
     private static final double FRAME_DURATION = 0.15;
     private static final int TOTAL_FRAMES = 4;
 
-    // Fattori di scala X per simulare la rotazione della moneta
-    // frame 0: piena, frame 1: stretta, frame 2: sottilissima, frame 3: stretta
     private static final double[] FRAME_SCALE_X = { 1.0, 0.6, 0.15, 0.6 };
 
     private boolean isPopping;
     private double popStartY;
     private static final double POP_VELOCITY = -300.0;
 
-    // Sprite singolo della moneta
+
     private Image coinSprite;
 
     public Coin(double x, double y, BasicPhysics physics) {
@@ -39,6 +37,7 @@ public class Coin extends DynamicEntity {
         coinSprite = AnimationManager.loadImage("/sprites/coin.png");
     }
 
+    //Factory method to create a coin that pops out of a block.
     public static Coin createPopping(double x, double y, BasicPhysics physics) {
         Coin coin = new Coin(x, y, physics );
         coin.isPopping = true;
@@ -50,14 +49,14 @@ public class Coin extends DynamicEntity {
 
     @Override
     public void update(double deltaTime) {
-        // aggiorna frame animazione rotazione
+        
         animTimer += deltaTime;
         if (animTimer >= FRAME_DURATION) {
             animTimer = 0;
             animFrame = (animFrame + 1) % TOTAL_FRAMES;
         }
 
-        // movimento pop con gravità manuale
+        
         if (isPopping) {
             setY(getY() + getVelocityY() * deltaTime);
             setVelocityY(getVelocityY() + 600 * deltaTime);
@@ -78,7 +77,7 @@ public class Coin extends DynamicEntity {
         if (coinSprite != null) {
             gc.drawImage(coinSprite, x + offsetX, y, drawW, height);
         } else {
-            // fallback ovale giallo
+            // if the sprite fails to load, fallback to a simple golden oval
             gc.setFill(Color.GOLD);
             gc.fillOval(x + offsetX, y, drawW, height);
             gc.setStroke(Color.DARKORANGE);

@@ -10,24 +10,15 @@ import javafx.scene.paint.Color;
 
 public class Goomba extends EnemyImpl {
  
-    // -------------------------------------------------------------------------
-    // Constants
-    // -------------------------------------------------------------------------
- 
+    
     private static final double WALK_SPEED     = 60.0;
     private static final double SQUISH_TIME    = 0.4;
     private static final double FRAME_DURATION = 0.2;
  
-    // -------------------------------------------------------------------------
-    // Public state enum
-    // -------------------------------------------------------------------------
- 
+    
     public enum GoombaState { WALK, SQUISHED }
  
-    // -------------------------------------------------------------------------
-    // Private state handlers
-    // -------------------------------------------------------------------------
- 
+    // Walk handler: Manages the sprite's direction and physics.
     private static final class WalkHandler implements EnemyImpl.WalkingHandler {
         @Override
         public void update(EnemyImpl e, double deltaTime) {
@@ -62,7 +53,7 @@ public class Goomba extends EnemyImpl {
         @Override
         public boolean hitsPlayer() { return true; }
     }
- 
+ //handler for the squished state: Manages the squish animation and eventual removal of the Goomba.
     private static final class SquishHandler implements EnemyImpl.EnemyStateHandler {
         private double squishTimer = 0;
  
@@ -91,15 +82,8 @@ public class Goomba extends EnemyImpl {
         public boolean hitsPlayer() { return false; }
     }
  
-    // -------------------------------------------------------------------------
-    // State tracking
-    // -------------------------------------------------------------------------
- 
+    
     private GoombaState state;
- 
-    // -------------------------------------------------------------------------
-    // Constructors
-    // -------------------------------------------------------------------------
  
     public Goomba(double x, double y, BasicPhysics physics) {
         super(x, y, 32, 32, physics);
@@ -112,11 +96,7 @@ public class Goomba extends EnemyImpl {
         setVelocityX(-WALK_SPEED);
         anim.play("walk");
     }
- 
-    // -------------------------------------------------------------------------
-    // Template Method implementation
-    // -------------------------------------------------------------------------
- 
+
     @Override
     protected void loadAnimations() {
         Image frame1 = AnimationManager.loadImage("/sprites/enemies/goomba1.png");
@@ -135,20 +115,13 @@ public class Goomba extends EnemyImpl {
         }
     }
  
-    // -------------------------------------------------------------------------
-    // State transition
-    // -------------------------------------------------------------------------
- 
+   
     private void transitionTo(GoombaState newState) {
         this.state = newState;
         transitionTo(newState == GoombaState.WALK
             ? new WalkHandler()
             : new SquishHandler());
     }
- 
-    // -------------------------------------------------------------------------
-    // Public API
-    // -------------------------------------------------------------------------
  
     public void squish() {
         if (state != GoombaState.WALK) return;
