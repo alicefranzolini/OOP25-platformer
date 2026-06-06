@@ -1,4 +1,4 @@
-package it.unibo.platformer.model.entities.worldEntity;
+package it.unibo.platformer.model.entities.world;
  
 import it.unibo.platformer.model.entities.StaticEntity;
 import javafx.scene.canvas.GraphicsContext;

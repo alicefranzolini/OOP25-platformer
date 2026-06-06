@@ -2,7 +2,7 @@ package it.unibo.platformer.entity;
 
 import org.junit.jupiter.api.Test;
 
-import it.unibo.platformer.model.entities.worldEntity.Coin;
+import it.unibo.platformer.model.entities.world.Coin;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 
 import static org.junit.jupiter.api.Assertions.*;
