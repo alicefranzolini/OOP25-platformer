@@ -11,7 +11,7 @@ public class Block extends StaticEntity {
     public enum BlockType {
         NORMAL,
         BRICK,
-        QUESTION,
+        QUESTION
     }
 
     private BlockType type;
@@ -52,6 +52,11 @@ public class Block extends StaticEntity {
 
     @Override
     public void render(GraphicsContext gc) {
+        final double bx = getX();
+        final double by = getY();
+        final double bwidth = getWidth();
+        final double bheight = getHeight();
+
         Image sprite = switch (type) {
             case BRICK    -> hit ? spriteBrickUsed : spriteBrick;
             case QUESTION -> hit ? spriteBrickUsed : spriteQuestion;
@@ -59,7 +64,7 @@ public class Block extends StaticEntity {
         };
 
         if (sprite != null) {
-            gc.drawImage(sprite, x, y, width, height);
+            gc.drawImage(sprite, bx, by, bwidth, bheight);
         } else {
             // if the sprite fails to load, fallback to a simple colored block
             switch (type) {
@@ -67,13 +72,13 @@ public class Block extends StaticEntity {
                 case QUESTION -> gc.setFill(hit ? Color.GRAY : Color.GOLD);
                 default       -> gc.setFill(Color.DARKGRAY);
             }
-            gc.fillRect(x, y, width, height);
+            gc.fillRect(bx, by, bwidth, bheight);
             gc.setStroke(Color.BLACK);
-            gc.strokeRect(x, y, width, height);
+            gc.strokeRect(bx, by, bwidth, bheight);
 
             if (type == BlockType.QUESTION && !hit) {
                 gc.setFill(Color.BLACK);
-                gc.fillText("?", x + 10, y + 22);
+                gc.fillText("?", bx + 10, by + 22);
             }
         }
     }

@@ -19,13 +19,13 @@ public class Pole extends StaticEntity {
     public void render(GraphicsContext gc) {
         // Pole
         gc.setFill(POLE_COLOR);
-        gc.fillRect(x, y, POLE_WIDTH, height);
+        gc.fillRect(getX(), getY(), POLE_WIDTH, getHeight());
  
         // Golden ball on top
         gc.setFill(BALL_COLOR);
         gc.fillOval(
-            x + POLE_WIDTH / 2.0 - BALL_RADIUS,
-            y - BALL_RADIUS,
+            getX() + POLE_WIDTH / 2.0 - BALL_RADIUS,
+            getY() - BALL_RADIUS,
             BALL_RADIUS * 2,
             BALL_RADIUS * 2
         );

@@ -135,7 +135,7 @@ public class Koopa extends EnemyImpl {
         setVelocityX(0);
         setHeight(32);
         setY(getY() + 16);
-        affectedByGravity = true;
+        setAffectedByGravity(true);
     }
 
     public void kick(boolean kickRight) {

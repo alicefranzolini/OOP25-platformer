@@ -10,80 +10,80 @@ import javafx.scene.paint.Color;
 public class Coin extends DynamicEntity {
 
     // rotation animation: changing width to simulate rotation
-    private double animTimer;
-    private int animFrame;
-    private static final double FRAME_DURATION = 0.15;
-    private static final int TOTAL_FRAMES = 4;
-
+   private static final double FRAME_DURATION = 0.15;
+    private static final int    TOTAL_FRAMES   = 4;
+    private static final double POP_VELOCITY   = -300.0;
+    private static final double POP_GRAVITY    = 600.0;
+ 
+    /** Horizontal scale per frame, simulating a rotation effect. */
     private static final double[] FRAME_SCALE_X = { 1.0, 0.6, 0.15, 0.6 };
-
+ 
+    private double animTimer;
+    private int    animFrame;
+ 
     private boolean isPopping;
-    private double popStartY;
-    private static final double POP_VELOCITY = -300.0;
-
-
+    private double  popStartY;
+ 
     private Image coinSprite;
-
+ 
     public Coin(double x, double y, BasicPhysics physics) {
         super(x, y, 16, 16, physics);
-        this.affectedByGravity = false;
-        this.animTimer = 0;
-        this.animFrame = 0;
-        this.isPopping = false;
+        setAffectedByGravity(false);
+        this.animTimer  = 0;
+        this.animFrame  = 0;
+        this.isPopping  = false;
         loadSprite();
     }
-
+ 
     private void loadSprite() {
         coinSprite = AnimationManager.loadImage("/sprites/coin.png");
     }
-
-    //Factory method to create a coin that pops out of a block.
+ 
     public static Coin createPopping(double x, double y, BasicPhysics physics) {
-        Coin coin = new Coin(x, y, physics );
-        coin.isPopping = true;
-        coin.popStartY = y;
+        final Coin coin = new Coin(x, y, physics);
+        coin.isPopping        = true;
+        coin.popStartY        = y;
+        coin.setAffectedByGravity(false);
         coin.setVelocityY(POP_VELOCITY);
-        coin.affectedByGravity = false;
         return coin;
     }
-
+ 
     @Override
-    public void update(double deltaTime) {
-        
+    public void update(final double deltaTime) {
         animTimer += deltaTime;
         if (animTimer >= FRAME_DURATION) {
             animTimer = 0;
             animFrame = (animFrame + 1) % TOTAL_FRAMES;
         }
-
-        
+ 
         if (isPopping) {
             setY(getY() + getVelocityY() * deltaTime);
-            setVelocityY(getVelocityY() + 600 * deltaTime);
+            setVelocityY(getVelocityY() + POP_GRAVITY * deltaTime);
             if (getY() >= popStartY) {
                 destroy();
             }
         }
     }
-
+ 
     @Override
-    public void render(GraphicsContext gc) {
-        if (!active) return;
-
-        double scale = FRAME_SCALE_X[animFrame];
-        double drawW = width * scale;
-        double offsetX = (width - drawW) / 2.0;
-
+    public void render(final GraphicsContext gc) {
+        if (!isActive()) return;
+ 
+        final double scale   = FRAME_SCALE_X[animFrame];
+        final double drawW   = getWidth() * scale;
+        final double offsetX = (getWidth() - drawW) / 2.0;
+        final double cx      = getX() + offsetX;
+        final double cy      = getY();
+ 
         if (coinSprite != null) {
-            gc.drawImage(coinSprite, x + offsetX, y, drawW, height);
+            gc.drawImage(coinSprite, cx, cy, drawW, getHeight());
         } else {
-            // if the sprite fails to load, fallback to a simple golden oval
             gc.setFill(Color.GOLD);
-            gc.fillOval(x + offsetX, y, drawW, height);
+            gc.fillOval(cx, cy, drawW, getHeight());
             gc.setStroke(Color.DARKORANGE);
-            gc.strokeOval(x + offsetX, y, drawW, height);
+            gc.strokeOval(cx, cy, drawW, getHeight());
         }
     }
-
+ 
     public boolean isPopping() { return isPopping; }
 }

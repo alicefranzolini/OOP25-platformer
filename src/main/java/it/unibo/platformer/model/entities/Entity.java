@@ -4,19 +4,16 @@ import javafx.scene.canvas.GraphicsContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//Defines the position and size of any object in the game world.
+/**Defines the position and size of any object in the game world. */
 public abstract class Entity {
-
-        
-    protected double x;
-    protected double y;
-
-           
-    protected double width;
-    protected double height;
-
-    protected boolean active; //if the entity is alive or not, if false it will be removed from the game world
-   
+  
+    private double x;
+    private double y;
+    private double width;
+    private double height;
+ 
+    /**True while the entity is alive; false means it will be removed next frame. */
+    private boolean active;
    
     public Entity(double x, double y, double width, double height) {
         this.x = x;
@@ -26,7 +23,7 @@ public abstract class Entity {
         this.active = true;
     }
 
- //Internal BoundingBox to handle AABB collisions. Simplifies the calculation of overlap between rectangles.
+    /**Internal BoundingBox to handle AABB collisions. Simplifies the calculation of overlap between rectangles. */
     public static final class BoundingBox {
  
         private final double x;
@@ -46,7 +43,7 @@ public abstract class Entity {
         public double getWidth()  { return width; }
         public double getHeight() { return height; }
  
-      // Core method for detecting collisions between entities.
+      /**Core method for detecting collisions between entities.*/
         public boolean overlaps(BoundingBox other) {
             return x < other.x + other.width
                 && x + width  > other.x
@@ -55,43 +52,32 @@ public abstract class Entity {
         }
     }
  
-    // Returns the bounding box of this entity for collision detection. 
+    /** Returns the bounding box of this entity for collision detection. */
     public BoundingBox getBoundingBox() {
         return new BoundingBox(x, y, width, height);
     }
 
-    // Methods to implement in subclasses: one for logic, one for drawing.
+    /** Methods to implement in subclasses: one for logic, one for drawing. */
     public abstract void update(double deltaTime);//handles logic
     public abstract void render(GraphicsContext gc);//draws the entity 
 
-   
-
-    public double getX() { 
-        return x; }
-    public double getY() { 
-        return y; }
-    public double getWidth() { 
-        return width; }
-    public double getHeight() { 
-        return height; }
-    public boolean isActive() { 
-        return active; }
-
-    public void setX(double x) { 
-        this.x = x; }
-    public void setY(double y) { 
-        this.y = y; }
-    public void setActive(boolean active) { 
-        this.active = active; }
-
-    //Drimuove l'entità al prossimo frame
+    public double getX()      { return x; }
+    public double getY()      { return y; }
+    public double getWidth()  { return width; }
+    public double getHeight() { return height; }
+    public boolean isActive() { return active; }
+ 
+    public void setX(double x)            { this.x = x; }
+    public void setY(double y)            { this.y = y; }
+    public void setWidth(double width)    { this.width = width; }
+    public void setHeight(double height)  { this.height = height; }
+    public void setActive(boolean active) { this.active = active; }
+    /**remove the entity at the next frame*/
     public void destroy() {
         this.active = false;
     }
     
-    //Utility method for clearing the entity list. Filters the passed list, keeping only the objects that are still active.
-    //Uses Java's Stream API for efficient and readable processing.
-
+    /**Utility method for clearing the entity list. Filters the passed list, keeping only the objects that are still active.*/
     public static List<Entity> filterActive(List<Entity> entities) {
         return entities.stream()
                 .filter(Entity::isActive)

@@ -18,7 +18,7 @@ public class Goomba extends EnemyImpl {
     
     public enum GoombaState { WALK, SQUISHED }
  
-    // Walk handler: Manages the sprite's direction and physics.
+    /** Walk handler: Manages the sprite's direction and physics. */
     private static final class WalkHandler implements EnemyImpl.WalkingHandler {
         @Override
         public void update(EnemyImpl e, double deltaTime) {
@@ -127,7 +127,7 @@ public class Goomba extends EnemyImpl {
         if (state != GoombaState.WALK) return;
         transitionTo(GoombaState.SQUISHED);
         setVelocityX(0);
-        affectedByGravity = false;
+        setAffectedByGravity(false);
     }
  
     public GoombaState getState() { return state; }

@@ -78,6 +78,6 @@ public abstract class EnemyImpl extends DynamicEntity implements Enemy {
     }
 
     public void setHeight(double height) {
-    this.height = height; // Ensure 'height' is the correct name of the field in your base class
+    setHeight(height); // Ensure 'height' is the correct name of the field in your base class
 }
 }
