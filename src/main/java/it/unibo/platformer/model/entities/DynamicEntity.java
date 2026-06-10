@@ -38,7 +38,7 @@ public abstract class DynamicEntity extends Entity {
     public void update( final double deltaTime) {
         if (affectedByGravity && !onGround) {
             /**  Use the physics engine to calculate fall and friction.*/
-            physics.UpdatePosition(gameObject, deltaTime);
+            physics.updateposition(gameObject, deltaTime);
         } else if (!affectedByGravity) {
             /**  Gravity-free movement (for example moving shell): integrate X and Y manually*/
             final float dx = gameObject.getSpeed().getX() * (float) deltaTime;
@@ -76,7 +76,7 @@ public abstract class DynamicEntity extends Entity {
     /** Avoid the bounce effect by resetting the vertical speed to zero upon landing. */
     public void setOnGround(boolean onGround) {
         this.onGround = onGround;
-        this.gameObject.SetOnGround(onGround);
+        this.gameObject.setonground(onGround);
         if (onGround) {
             gameObject.getSpeed().setY(0);
         }

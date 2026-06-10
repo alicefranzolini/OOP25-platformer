@@ -6,10 +6,10 @@ import it.unibo.platformer.view.AnimationManager;
 import javafx.scene.canvas.GraphicsContext;
 import java.util.Optional;
 
-//Basic implementation that centralizes physics, animations, and state management.
+/**Basic implementation that centralizes physics, animations, and state management. */
 public abstract class EnemyImpl extends DynamicEntity implements Enemy {
 
-   //interface for different enemy states, each state has its own update/render logic and player interaction rules
+   /**interface for different enemy states, each state has its own update/render logic and player interaction rules */
     public interface EnemyStateHandler {
         
         void update(EnemyImpl e, double deltaTime);
@@ -18,14 +18,23 @@ public abstract class EnemyImpl extends DynamicEntity implements Enemy {
         
         boolean hitsPlayer();
     }
-    //** Marker interface to group all walking states. */
+    /** Marker interface to group all walking states. */
     public interface WalkingHandler extends EnemyStateHandler {}
 
     
     protected final AnimationManager anim = new AnimationManager();
     protected boolean facingLeft = true;
 
-    // The active state handler; drives update() and render(). 
+    /** Returns the animation manager for this enemy. */
+    protected AnimationManager getAnim() { return anim; }
+ 
+    /** Returns true if the sprite is facing left. */
+    protected boolean isFacingLeft() { return facingLeft; }
+ 
+    /** Sets the direction the sprite is facing. */
+    protected void setFacingLeft(boolean facingLeft) { this.facingLeft = facingLeft; }
+
+    /** The active state handler; drives update() and render(). */
     private Optional<EnemyStateHandler> handler = Optional.empty();
 
    
@@ -37,11 +46,11 @@ public abstract class EnemyImpl extends DynamicEntity implements Enemy {
 
 
     
-    // subclasses register their own sprites
+    /** subclasses register their own sprites */
     protected abstract void loadAnimations();
 
     
-    // subclasses must not override these
+    /**  subclasses must not override these*/
     
     @Override
     public final void update(double deltaTime) {
@@ -60,7 +69,7 @@ public abstract class EnemyImpl extends DynamicEntity implements Enemy {
     }
 
 
-    //Utility method to advance basic physics; can be called by state handlers as needed.
+    /** Utility method to advance basic physics; can be called by state handlers as needed. */
     protected void physicsTick(double deltaTime) {
         super.update(deltaTime);
     }

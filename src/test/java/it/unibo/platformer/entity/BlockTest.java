@@ -1,7 +1,7 @@
 package it.unibo.platformer.entity;
 import org.junit.jupiter.api.Test;
 
-import it.unibo.platformer.model.entities.worldEntity.Block;
+import it.unibo.platformer.model.entities.world.Block;
 
 import static org.junit.jupiter.api.Assertions.*;
 

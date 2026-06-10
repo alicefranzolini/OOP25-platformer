@@ -23,17 +23,17 @@ public class Goomba extends EnemyImpl {
         @Override
         public void update(EnemyImpl e, double deltaTime) {
             double vx = e.getVelocityX();
-            if (vx < 0) e.facingLeft = true;
-            else if (vx > 0) e.facingLeft = false;
-            e.anim.play("walk");
-            e.anim.update(deltaTime);
+            if (vx < 0) e.setFacingLeft(true);
+            else if (vx > 0) e.setFacingLeft(false);
+            e.getAnim().play("walk");
+            e.getAnim().update(deltaTime);
             e.physicsTick(deltaTime);
         }
  
         @Override
         public void render(EnemyImpl e, GraphicsContext gc) {
-            if (e.anim.hasAnimation("walk")) {
-                e.anim.render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.facingLeft);
+            if (e.getAnim().hasAnimation("walk")) {
+                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.isFacingLeft());
             } else {
                 renderFallback(e, gc);
             }
@@ -59,8 +59,8 @@ public class Goomba extends EnemyImpl {
  
         @Override
         public void update(EnemyImpl e, double deltaTime) {
-            e.anim.play("squished");
-            e.anim.update(deltaTime);
+            e.getAnim().play("squished");
+            e.getAnim().update(deltaTime);
             squishTimer += deltaTime;
             if (squishTimer >= SQUISH_TIME) {
                 e.destroy();
@@ -70,8 +70,8 @@ public class Goomba extends EnemyImpl {
         @Override
         public void render(EnemyImpl e, GraphicsContext gc) {
             double halfH = e.getHeight() / 2.0;
-            if (e.anim.hasAnimation("squished")) {
-                e.anim.render(gc, e.getX(), e.getY() + halfH, e.getWidth(), halfH, e.facingLeft);
+            if (e.getAnim().hasAnimation("squished")) {
+                e.getAnim().render(gc, e.getX(), e.getY() + halfH, e.getWidth(), halfH, e.isFacingLeft());
             } else {
                 gc.setFill(Color.SADDLEBROWN);
                 gc.fillRect(e.getX(), e.getY() + halfH, e.getWidth(), halfH);
@@ -94,7 +94,7 @@ public class Goomba extends EnemyImpl {
     private void init() {
         transitionTo(GoombaState.WALK);
         setVelocityX(-WALK_SPEED);
-        anim.play("walk");
+        getAnim().play("walk");
     }
 
     @Override
@@ -104,12 +104,12 @@ public class Goomba extends EnemyImpl {
         Image dead   = AnimationManager.loadImage("/sprites/enemies/goomba_dead.png");
  
         if (frame1 != null && frame2 != null) {
-            anim.register("walk", new Animation(new Image[]{frame1, frame2}, FRAME_DURATION, true));
+            getAnim().register("walk", new Animation(new Image[]{frame1, frame2}, FRAME_DURATION, true));
         } else {
             System.err.println("[Goomba] Walk sprites not found – using fallback.");
         }
         if (dead != null) {
-            anim.register("squished", new Animation(new Image[]{dead}, SQUISH_TIME, false));
+            getAnim().register("squished", new Animation(new Image[]{dead}, SQUISH_TIME, false));
         } else {
             System.err.println("[Goomba] Squish sprite not found – using fallback.");
         }

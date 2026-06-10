@@ -19,17 +19,17 @@ public class Koopa extends EnemyImpl {
         @Override
         public void update(EnemyImpl e, double deltaTime) {
             double vx = e.getVelocityX();
-            if (vx < 0) e.facingLeft = false;
-            else if (vx > 0) e.facingLeft = true;
-            e.anim.play("walk");
-            e.anim.update(deltaTime);
+            if (vx < 0) e.setFacingLeft(false);
+            else if (vx > 0) e.setFacingLeft(true);
+            e.getAnim().play("walk");
+            e.getAnim().update(deltaTime);
             e.physicsTick(deltaTime);
         }
 
         @Override
         public void render(EnemyImpl e, GraphicsContext gc) {
-            if (e.anim.hasAnimation("walk")) {
-                e.anim.render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.facingLeft);
+            if (e.getAnim().hasAnimation("walk")) {
+                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.isFacingLeft());
             } else {
                 gc.setFill(Color.GREEN);
                 gc.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
@@ -44,14 +44,14 @@ public class Koopa extends EnemyImpl {
     private static final class ShellHandler implements EnemyImpl.EnemyStateHandler {
         @Override
         public void update(EnemyImpl e, double deltaTime) {
-            e.anim.play("shell");
-            e.anim.update(deltaTime);
+            e.getAnim().play("shell");
+            e.getAnim().update(deltaTime);
         }
 
         @Override
         public void render(EnemyImpl e, GraphicsContext gc) {
-            if (e.anim.hasAnimation("shell")) {
-                e.anim.render(gc, e.getX(), e.getY(), e.getWidth(), 32, e.facingLeft);
+            if (e.getAnim().hasAnimation("shell")) {
+                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), 32, e.isFacingLeft());
             } else {
                 gc.setFill(Color.DARKGREEN);
                 gc.fillRect(e.getX(), e.getY(), e.getWidth(), 32);
@@ -66,17 +66,17 @@ public class Koopa extends EnemyImpl {
         @Override
         public void update(EnemyImpl e, double deltaTime) {
             double vx = e.getVelocityX();
-            if (vx < 0) e.facingLeft = true;
-            else if (vx > 0) e.facingLeft = false;
-            e.anim.play("shell_moving");
-            e.anim.update(deltaTime);
+            if (vx < 0) e.setFacingLeft(true);
+            else if (vx > 0) e.setFacingLeft(false);
+            e.getAnim().play("shell_moving");
+            e.getAnim().update(deltaTime);
             e.physicsTick(deltaTime);
         }
 
         @Override
         public void render(EnemyImpl e, GraphicsContext gc) {
-            if (e.anim.hasAnimation("shell_moving")) {
-                e.anim.render(gc, e.getX(), e.getY(), e.getWidth(), 32, e.facingLeft);
+            if (e.getAnim().hasAnimation("shell_moving")) {
+                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), 32, e.isFacingLeft());
             } else {
                 gc.setFill(Color.YELLOWGREEN);
                 gc.fillRect(e.getX(), e.getY(), e.getWidth(), 32);
@@ -97,7 +97,7 @@ public class Koopa extends EnemyImpl {
     private void init() {
         transitionTo(KoopaState.WALK);
         setVelocityX(-WALK_SPEED);
-        anim.play("walk");
+        getAnim().play("walk");
     }
 
     @Override
@@ -107,13 +107,13 @@ public class Koopa extends EnemyImpl {
         Image shellSprite = AnimationManager.loadImage("/sprites/enemies/koopa_shell.png");
 
         if (walkFrame1 != null && walkFrame2 != null) {
-            anim.register("walk", new Animation(new Image[]{walkFrame1, walkFrame2}, 0.15, true));
+            getAnim().register("walk", new Animation(new Image[]{walkFrame1, walkFrame2}, 0.15, true));
         } else {
             System.err.println("[Koopa] Walk sprites not found – using fallback.");
         }
         if (shellSprite != null) {
-            anim.register("shell",        new Animation(new Image[]{shellSprite}, 1.0,  false));
-            anim.register("shell_moving", new Animation(new Image[]{shellSprite}, 0.08, true));
+            getAnim().register("shell",        new Animation(new Image[]{shellSprite}, 1.0,  false));
+            getAnim().register("shell_moving", new Animation(new Image[]{shellSprite}, 0.08, true));
         } else {
             System.err.println("[Koopa] Shell sprite not found – using fallback.");
         }
