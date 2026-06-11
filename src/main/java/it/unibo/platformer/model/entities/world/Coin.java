@@ -7,47 +7,61 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 
+/**
+ * A collectible coin that can either sit in place or pop out of a block.
+ */
 public class Coin extends DynamicEntity {
 
-    // rotation animation: changing width to simulate rotation
-   private static final double FRAME_DURATION = 0.15;
-    private static final int    TOTAL_FRAMES   = 4;
-    private static final double POP_VELOCITY   = -300.0;
-    private static final double POP_GRAVITY    = 600.0;
- 
+    private static final double FRAME_DURATION = 0.15;
+    private static final int TOTAL_FRAMES = 4;
+    private static final double POP_VELOCITY = -300.0;
+    private static final double POP_GRAVITY = 600.0;
+
     /** Horizontal scale per frame, simulating a rotation effect. */
-    private static final double[] FRAME_SCALE_X = { 1.0, 0.6, 0.15, 0.6 };
- 
+    private static final double[] FRAME_SCALE_X = {1.0, 0.6, 0.15, 0.6};
+
     private double animTimer;
-    private int    animFrame;
- 
+    private int animFrame;
+
     private boolean isPopping;
-    private double  popStartY;
- 
+    private double popStartY;
+
     private Image coinSprite;
- 
-    public Coin(double x, double y, BasicPhysics physics) {
+
+    /**
+     * Constructs a stationary coin at the given position.
+     *
+     * @param x       the initial x coordinate
+     * @param y       the initial y coordinate
+     * @param physics the physics engine to use
+     */
+    public Coin(final double x, final double y, final BasicPhysics physics) {
         super(x, y, 16, 16, physics);
         setAffectedByGravity(false);
-        this.animTimer  = 0;
-        this.animFrame  = 0;
-        this.isPopping  = false;
         loadSprite();
     }
- 
+
     private void loadSprite() {
         coinSprite = AnimationManager.loadImage("/sprites/coin.png");
     }
- 
-    public static Coin createPopping(double x, double y, BasicPhysics physics) {
+
+    /**
+     * Factory method that creates a coin popping upward out of a block.
+     *
+     * @param x       the initial x coordinate
+     * @param y       the initial y coordinate
+     * @param physics the physics engine to use
+     * @return a new popping {@link Coin}
+     */
+    public static Coin createPopping(final double x, final double y, final BasicPhysics physics) {
         final Coin coin = new Coin(x, y, physics);
-        coin.isPopping        = true;
-        coin.popStartY        = y;
+        coin.isPopping = true;
+        coin.popStartY = y;
         coin.setAffectedByGravity(false);
         coin.setVelocityY(POP_VELOCITY);
         return coin;
     }
- 
+
     @Override
     public void update(final double deltaTime) {
         animTimer += deltaTime;
@@ -55,7 +69,7 @@ public class Coin extends DynamicEntity {
             animTimer = 0;
             animFrame = (animFrame + 1) % TOTAL_FRAMES;
         }
- 
+
         if (isPopping) {
             setY(getY() + getVelocityY() * deltaTime);
             setVelocityY(getVelocityY() + POP_GRAVITY * deltaTime);
@@ -64,17 +78,19 @@ public class Coin extends DynamicEntity {
             }
         }
     }
- 
+
     @Override
     public void render(final GraphicsContext gc) {
-        if (!isActive()) return;
- 
-        final double scale   = FRAME_SCALE_X[animFrame];
-        final double drawW   = getWidth() * scale;
+        if (!isActive()) {
+            return;
+        }
+
+        final double scale = FRAME_SCALE_X[animFrame];
+        final double drawW = getWidth() * scale;
         final double offsetX = (getWidth() - drawW) / 2.0;
-        final double cx      = getX() + offsetX;
-        final double cy      = getY();
- 
+        final double cx = getX() + offsetX;
+        final double cy = getY();
+
         if (coinSprite != null) {
             gc.drawImage(coinSprite, cx, cy, drawW, getHeight());
         } else {
@@ -84,6 +100,13 @@ public class Coin extends DynamicEntity {
             gc.strokeOval(cx, cy, drawW, getHeight());
         }
     }
- 
-    public boolean isPopping() { return isPopping; }
+
+    /**
+     * Returns whether this coin is currently in its popping animation.
+     *
+     * @return {@code true} if the coin is popping
+     */
+    public boolean isPopping() {
+        return isPopping;
+    }
 }
