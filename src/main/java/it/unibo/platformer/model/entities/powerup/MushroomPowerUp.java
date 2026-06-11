@@ -10,7 +10,7 @@ import javafx.scene.image.Image;
 /**
  * Mushroom power-up that makes the player big.
  */
-public class MushroomPowerUp extends PowerUpImpl {
+public class MushroomPowerUp extends AbstractPowerUp {
 
     private static final double SIZE = 32.0;
     private static final double FRAME_DURATION = 1.0;

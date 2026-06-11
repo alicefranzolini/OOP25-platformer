@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
 /**
  * Star power-up that makes the player temporarily invincible.
  */
-public final class StarPowerUp extends PowerUpImpl {
+public final class StarPowerUp extends AbstractPowerUp {
 
     private static final double SIZE = 32.0;
     private static final double BOUNCE_VELOCITY = -400.0;
