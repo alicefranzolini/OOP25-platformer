@@ -1,134 +1,170 @@
 package it.unibo.platformer.model.entities.enemies;
- 
+
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 import it.unibo.platformer.view.AnimationManager;
 import it.unibo.platformer.view.AnimationManager.Animation;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
- 
 
+/**
+ * A Goomba enemy that walks until squished by the player.
+ */
 public class Goomba extends EnemyImpl {
- 
-    
-    private static final double WALK_SPEED     = 60.0;
-    private static final double SQUISH_TIME    = 0.4;
+
+    private static final double WALK_SPEED = 60.0;
+    private static final double SQUISH_TIME = 0.4;
     private static final double FRAME_DURATION = 0.2;
- 
-    
-    public enum GoombaState { WALK, SQUISHED }
- 
-    // Walk handler: Manages the sprite's direction and physics.
+
+    /** Possible states for a Goomba. */
+    public enum GoombaState {
+        /** Goomba is walking. */
+        WALK,
+        /** Goomba has been squished. */
+        SQUISHED
+    }
+
+    /** Walk handler: manages the sprite's direction and physics. */
     private static final class WalkHandler implements EnemyImpl.WalkingHandler {
+
         @Override
-        public void update(EnemyImpl e, double deltaTime) {
-            double vx = e.getVelocityX();
-            if (vx < 0) e.facingLeft = true;
-            else if (vx > 0) e.facingLeft = false;
-            e.anim.play("walk");
-            e.anim.update(deltaTime);
+        public void update(final EnemyImpl e, final double deltaTime) {
+            final double vx = e.getVelocityX();
+            if (vx < 0) {
+                e.setFacingLeft(true);
+            } else if (vx > 0) {
+                e.setFacingLeft(false);
+            }
+            e.getAnim().play("walk");
+            e.getAnim().update(deltaTime);
             e.physicsTick(deltaTime);
         }
- 
+
         @Override
-        public void render(EnemyImpl e, GraphicsContext gc) {
-            if (e.anim.hasAnimation("walk")) {
-                e.anim.render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.facingLeft);
+        public void render(final EnemyImpl e, final GraphicsContext gc) {
+            if (e.getAnim().hasAnimation("walk")) {
+                e.getAnim().render(gc, e.getX(), e.getY(),
+                        e.getWidth(), e.getHeight(), e.isFacingLeft());
             } else {
                 renderFallback(e, gc);
             }
         }
- 
-        private void renderFallback(EnemyImpl e, GraphicsContext gc) {
+
+        private void renderFallback(final EnemyImpl e, final GraphicsContext gc) {
             gc.setFill(Color.SADDLEBROWN);
             gc.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
             gc.setFill(Color.WHITE);
-            gc.fillOval(e.getX() + 4,  e.getY() + 8, 8, 8);
+            gc.fillOval(e.getX() + 4, e.getY() + 8, 8, 8);
             gc.fillOval(e.getX() + 20, e.getY() + 8, 8, 8);
             gc.setFill(Color.BLACK);
-            gc.fillOval(e.getX() + 6,  e.getY() + 10, 4, 4);
+            gc.fillOval(e.getX() + 6, e.getY() + 10, 4, 4);
             gc.fillOval(e.getX() + 22, e.getY() + 10, 4, 4);
         }
- 
+
         @Override
-        public boolean hitsPlayer() { return true; }
+        public boolean hitsPlayer() {
+            return true;
+        }
     }
- //handler for the squished state: Manages the squish animation and eventual removal of the Goomba.
+
+    /** Handler for the squished state: manages the squish animation and eventual removal. */
     private static final class SquishHandler implements EnemyImpl.EnemyStateHandler {
-        private double squishTimer = 0;
- 
+
+        private double squishTimer;
+
         @Override
-        public void update(EnemyImpl e, double deltaTime) {
-            e.anim.play("squished");
-            e.anim.update(deltaTime);
+        public void update(final EnemyImpl e, final double deltaTime) {
+            e.getAnim().play("squished");
+            e.getAnim().update(deltaTime);
             squishTimer += deltaTime;
             if (squishTimer >= SQUISH_TIME) {
                 e.destroy();
             }
         }
- 
+
         @Override
-        public void render(EnemyImpl e, GraphicsContext gc) {
-            double halfH = e.getHeight() / 2.0;
-            if (e.anim.hasAnimation("squished")) {
-                e.anim.render(gc, e.getX(), e.getY() + halfH, e.getWidth(), halfH, e.facingLeft);
+        public void render(final EnemyImpl e, final GraphicsContext gc) {
+            final double halfH = e.getHeight() / 2.0;
+            if (e.getAnim().hasAnimation("squished")) {
+                e.getAnim().render(gc, e.getX(), e.getY() + halfH,
+                        e.getWidth(), halfH, e.isFacingLeft());
             } else {
                 gc.setFill(Color.SADDLEBROWN);
                 gc.fillRect(e.getX(), e.getY() + halfH, e.getWidth(), halfH);
             }
         }
- 
+
         @Override
-        public boolean hitsPlayer() { return false; }
+        public boolean hitsPlayer() {
+            return false;
+        }
     }
- 
-    
+
     private GoombaState state;
- 
-    public Goomba(double x, double y, BasicPhysics physics) {
+
+    /**
+     * Constructs a Goomba at the given position.
+     *
+     * @param x       the initial x coordinate
+     * @param y       the initial y coordinate
+     * @param physics the physics engine to use
+     */
+    public Goomba(final double x, final double y, final BasicPhysics physics) {
         super(x, y, 32, 32, physics);
         init();
     }
- 
-    
+
     private void init() {
         transitionTo(GoombaState.WALK);
         setVelocityX(-WALK_SPEED);
-        anim.play("walk");
+        getAnim().play("walk");
     }
 
     @Override
     protected void loadAnimations() {
-        Image frame1 = AnimationManager.loadImage("/sprites/enemies/goomba1.png");
-        Image frame2 = AnimationManager.loadImage("/sprites/enemies/goomba2.png");
-        Image dead   = AnimationManager.loadImage("/sprites/enemies/goomba_dead.png");
- 
+        final Image frame1 = AnimationManager.loadImage("/sprites/enemies/goomba1.png");
+        final Image frame2 = AnimationManager.loadImage("/sprites/enemies/goomba2.png");
+        final Image dead = AnimationManager.loadImage("/sprites/enemies/goomba_dead.png");
+
         if (frame1 != null && frame2 != null) {
-            anim.register("walk", new Animation(new Image[]{frame1, frame2}, FRAME_DURATION, true));
+            getAnim().register("walk",
+                    new Animation(new Image[]{frame1, frame2}, FRAME_DURATION, true));
         } else {
             System.err.println("[Goomba] Walk sprites not found – using fallback.");
         }
         if (dead != null) {
-            anim.register("squished", new Animation(new Image[]{dead}, SQUISH_TIME, false));
+            getAnim().register("squished",
+                    new Animation(new Image[]{dead}, SQUISH_TIME, false));
         } else {
             System.err.println("[Goomba] Squish sprite not found – using fallback.");
         }
     }
- 
-   
-    private void transitionTo(GoombaState newState) {
+
+    private void transitionTo(final GoombaState newState) {
         this.state = newState;
         transitionTo(newState == GoombaState.WALK
-            ? new WalkHandler()
-            : new SquishHandler());
+                ? new WalkHandler()
+                : new SquishHandler());
     }
- 
+
+    /**
+     * Squishes this Goomba, transitioning it to the squished state.
+     */
     public void squish() {
-        if (state != GoombaState.WALK) return;
+        if (state != GoombaState.WALK) {
+            return;
+        }
         transitionTo(GoombaState.SQUISHED);
         setVelocityX(0);
-        affectedByGravity = false;
+        setAffectedByGravity(false);
     }
- 
-    public GoombaState getState() { return state; }
+
+    /**
+     * Returns the current state of this Goomba.
+     *
+     * @return the current {@link GoombaState}
+     */
+    public GoombaState getState() {
+        return state;
+    }
 }
