@@ -7,84 +7,55 @@ import it.unibo.platformer.view.AnimationManager.Animation;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 
-
 /**
- *  Class purpose: a mushroom power-up that makes the player BIG. 
- *  that bounces and grants temporary invincibility.
+ * Mushroom power-up that makes the player big.
  */
 public class MushroomPowerUp extends PowerUpImpl {
 
-    // Class purpose: a mushroom that makes the player BIG.
+    private static final double SIZE = 32.0;
+    private static final double FRAME_DURATION = 1.0;
+    private static final String ANIMATION_NAME = "mushroom";
+    private static final String SPRITE_PATH = "/sprites/powerup/red_mushroom.png";
+    private static final String MISSING_SPRITE_MESSAGE =
+            "[MushroomPowerUp] Sprite red_mushroom non trovato - uso fallback.";
 
     private final AnimationManager anim = new AnimationManager();
 
-    public MushroomPowerUp(double x, double y, BasicPhysics physics) {
-        super(x, y, 32, 32, physics);
+    /**
+     * Creates a mushroom power-up.
+     *
+     * @param x the initial x coordinate
+     * @param y the initial y coordinate
+     * @param physics the physics engine used to update the power-up
+     */
+    public MushroomPowerUp(final double x, final double y, final BasicPhysics physics) {
+        super(x, y, SIZE, SIZE, physics);
         loadSprite();
-        anim.play("mushroom");
+        anim.play(ANIMATION_NAME);
     }
 
-    /**
-     * Loads the mushroom sprite.
-     * Expected resource:
-     *   /sprites/powerup/red_mushroom.png
-     */
     private void loadSprite() {
-        Image img = AnimationManager.loadImage("/sprites/powerup/red_mushroom.png");
+        final Image img = AnimationManager.loadImage(SPRITE_PATH);
         if (img != null) {
-            anim.register("mushroom", new Animation(new Image[]{img}, 1.0, false));
+            final Animation animation = new Animation(new Image[] { img }, FRAME_DURATION, false);
+            anim.register(ANIMATION_NAME, animation);
         } else {
-            System.err.println("[MushroomPowerUp] Sprite red_mushroom non trovato – uso fallback.");
+            System.err.println(MISSING_SPRITE_MESSAGE);
         }
     }
 
-/*
     @Override
-    public void applyEffect(Object playerObj) {
-    // If the collector is a Player, set its state to BIG
-    // Player must update hitbox, sprite, and collision behavior when BIG
-        if (!(playerObj instanceof Player)) return;
-        Player player = (Player) playerObj;
-        player.setState(Player.PlayerState.BIG);
-    }
-*/
-    @Override
-    public void applyEffect(Player player) {
-        if (player == null) return;
-        player.setState(Player.PlayerState.BIG);
+    public void applyEffect(final Player player) {
+        if (player != null) {
+            player.setState(Player.PlayerState.BIG);
+        }
     }
 
-/*
     @Override
-    public void render(GraphicsContext gc) {
-    // Draw a simple red mushroom: cap (oval), stem (rect), white spots (small ovals)
-    // Use sprites if available for consistent visuals
-        if (!active) return;
-        gc.setFill(Color.RED);  //cap
-        gc.fillOval(x, y, width, height * 0.6);
-        gc.setFill(Color.WHITE);    //stem
-        gc.fillRect(x + 8, y + (int)(height * 0.5), width - 16, (int)(height * 0.5));
-        gc.setFill(Color.WHITE);    //white spots
-        gc.fillOval(x + 6,  y + 4, 6, 6);
-        gc.fillOval(x + 20, y + 4, 6, 6);
+    public void render(final GraphicsContext gc) {
+        if (!isActive()) {
+            return;
+        }
+        anim.render(gc, getX(), getY(), getWidth(), getHeight(), false);
     }
 }
-*/
-    @Override
-    public void render(GraphicsContext gc) {
-        if (!active) return;
-        double px = getX();
-        double py = getY();
-        double pw = getWidth();
-        double ph = getHeight();
-
-        // Try sprite first
-        anim.render(gc, px, py, pw, ph, false);
-
-        // If the animation manager did not render anything, no fallback is available here.
-        // The animation is expected to handle missing sprite cases internally.
-    }
-}
-
-// When player becomes BIG, adjust player's collision box and position
-// to avoid getting stuck in tiles; consider a small upward shift if needed.
