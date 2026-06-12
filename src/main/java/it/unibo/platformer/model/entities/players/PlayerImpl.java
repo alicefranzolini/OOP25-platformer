@@ -270,6 +270,7 @@ public final class PlayerImpl extends DynamicEntity implements Player {
             case BIG:
                 if (playerState == PlayerState.SMALL) {
                     playerState = PlayerState.BIG;
+                    visible = true;
                     setHeight(BIG_H);
                     setY(getY() - (BIG_H - SMALL_H));
                 }
@@ -277,9 +278,12 @@ public final class PlayerImpl extends DynamicEntity implements Player {
             case INVINCIBLE:
                 playerState = PlayerState.INVINCIBLE;
                 invincibleTimer = INVINCIBLE_DURATION;
+                blinkTimer = 0.0;
+                visible = true;
                 break;
             case SMALL:
                 playerState = PlayerState.SMALL;
+                visible = true;
                 setHeight(SMALL_H);
                 break;
         }
