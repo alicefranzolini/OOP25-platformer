@@ -10,95 +10,19 @@ import javafx.scene.paint.Color;
 /**
  * A Goomba enemy that walks until squished by the player.
  */
-public class Goomba extends EnemyImpl {
+public final class Goomba extends EnemyImpl {
 
     private static final double WALK_SPEED = 60.0;
     private static final double SQUISH_TIME = 0.4;
     private static final double FRAME_DURATION = 0.2;
 
-    /** Possible states for a Goomba. */
-    public enum GoombaState {
-        /** Goomba is walking. */
-        WALK,
-        /** Goomba has been squished. */
-        SQUISHED
-    }
+    private static final String WALK_ANIMATION = "walk";
+    private static final String SQUISHED_ANIMATION = "squished";
 
-    /** Walk handler: manages the sprite's direction and physics. */
-    private static final class WalkHandler implements EnemyImpl.WalkingHandler {
-
-        @Override
-        public void update(final EnemyImpl e, final double deltaTime) {
-            final double vx = e.getVelocityX();
-            if (vx < 0) {
-                e.setFacingLeft(true);
-            } else if (vx > 0) {
-                e.setFacingLeft(false);
-            }
-            e.getAnim().play("walk");
-            e.getAnim().update(deltaTime);
-            e.physicsTick(deltaTime);
-        }
-
-        @Override
-        public void render(final EnemyImpl e, final GraphicsContext gc) {
-            if (e.getAnim().hasAnimation("walk")) {
-                e.getAnim().render(gc, e.getX(), e.getY(),
-                        e.getWidth(), e.getHeight(), e.isFacingLeft());
-            } else {
-                renderFallback(e, gc);
-            }
-        }
-
-        private void renderFallback(final EnemyImpl e, final GraphicsContext gc) {
-            gc.setFill(Color.SADDLEBROWN);
-            gc.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-            gc.setFill(Color.WHITE);
-            gc.fillOval(e.getX() + 4, e.getY() + 8, 8, 8);
-            gc.fillOval(e.getX() + 20, e.getY() + 8, 8, 8);
-            gc.setFill(Color.BLACK);
-            gc.fillOval(e.getX() + 6, e.getY() + 10, 4, 4);
-            gc.fillOval(e.getX() + 22, e.getY() + 10, 4, 4);
-        }
-
-        @Override
-        public boolean hitsPlayer() {
-            return true;
-        }
-    }
-
-    /** Handler for the squished state: manages the squish animation and eventual removal. */
-    private static final class SquishHandler implements EnemyImpl.EnemyStateHandler {
-
-        private double squishTimer;
-
-        @Override
-        public void update(final EnemyImpl e, final double deltaTime) {
-            e.getAnim().play("squished");
-            e.getAnim().update(deltaTime);
-            squishTimer += deltaTime;
-            if (squishTimer >= SQUISH_TIME) {
-                e.destroy();
-            }
-        }
-
-        @Override
-        public void render(final EnemyImpl e, final GraphicsContext gc) {
-            final double halfH = e.getHeight() / 2.0;
-            if (e.getAnim().hasAnimation("squished")) {
-                e.getAnim().render(gc, e.getX(), e.getY() + halfH,
-                        e.getWidth(), halfH, e.isFacingLeft());
-            } else {
-                gc.setFill(Color.SADDLEBROWN);
-                gc.fillRect(e.getX(), e.getY() + halfH, e.getWidth(), halfH);
-            }
-        }
-
-        @Override
-        public boolean hitsPlayer() {
-            return false;
-        }
-    }
+    private static final double FALLBACK_X_OFFSET_1 = 4.0;
+    private static final double FALLBACK_X_OFFSET_2 = 20.0;
+    private static final double FALLBACK_X_EYE_1 = 6.0;
+    private static final double FALLBACK_X_EYE_2 = 22.0;
 
     private GoombaState state;
 
@@ -111,13 +35,9 @@ public class Goomba extends EnemyImpl {
      */
     public Goomba(final double x, final double y, final BasicPhysics physics) {
         super(x, y, 32, 32, physics);
-        init();
-    }
-
-    private void init() {
+        this.state = GoombaState.WALK;
         transitionTo(GoombaState.WALK);
         setVelocityX(-WALK_SPEED);
-        getAnim().play("walk");
     }
 
     @Override
@@ -167,4 +87,95 @@ public class Goomba extends EnemyImpl {
     public GoombaState getState() {
         return state;
     }
+
+    /** Possible states for a Goomba. */
+    public enum GoombaState {
+        /** Goomba is walking. */
+        WALK,
+        /** Goomba has been squished. */
+        SQUISHED
+    }
+
+    /** Walk handler: manages the sprite's direction and physics. */
+    private static final class WalkHandler implements EnemyImpl.WalkingHandler {
+
+        @Override
+        public void update(final EnemyImpl e, final double deltaTime) {
+            final double vx = e.getVelocityX();
+            if (vx < 0) {
+                e.setFacingLeft(true);
+            } else if (vx > 0) {
+                e.setFacingLeft(false);
+            }
+            e.getAnim().play(WALK_ANIMATION);
+            e.getAnim().update(deltaTime);
+            e.physicsTick(deltaTime);
+        }
+
+        @Override
+        public void render(final EnemyImpl e, final GraphicsContext gc) {
+           if (e.getAnim().hasAnimation(WALK_ANIMATION)) {
+                e.getAnim().render(gc, e.getX(), e.getY(),
+                        e.getWidth(), e.getHeight(), e.isFacingLeft());
+            } else {
+                renderFallback(e, gc);
+            }
+        }
+
+        private void renderFallback(final EnemyImpl e, final GraphicsContext gc) {
+            gc.setFill(Color.SADDLEBROWN);
+            gc.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+            gc.setFill(Color.WHITE);
+            gc.fillOval(e.getX() + FALLBACK_X_OFFSET_1, e.getY() + 8, 8, 8);
+            gc.fillOval(e.getX() + FALLBACK_X_OFFSET_2, e.getY() + 8, 8, 8);
+            gc.setFill(Color.BLACK);
+            gc.fillOval(e.getX() + FALLBACK_X_EYE_1, e.getY() + 10, 4, 4);
+            gc.fillOval(e.getX() + FALLBACK_X_EYE_2, e.getY() + 10, 4, 4);
+        }
+
+        @Override
+        public boolean hitsPlayer() {
+            return true;
+        }
+    }
+
+    /** Handler for the squished state: manages the squish animation and eventual removal. */
+    private static final class SquishHandler implements EnemyImpl.EnemyStateHandler {
+
+        private double squishTimer;
+
+        @Override
+        public void update(final EnemyImpl e, final double deltaTime) {
+            e.getAnim().play(SQUISHED_ANIMATION);
+            e.getAnim().update(deltaTime);
+            squishTimer += deltaTime;
+            if (squishTimer >= SQUISH_TIME) {
+                e.destroy();
+            }
+        }
+
+        @Override
+        public void render(final EnemyImpl e, final GraphicsContext gc) {
+            final double halfH = e.getHeight() / 2.0;
+            final double drawY = e.getY() + halfH;
+           if (e.getAnim().hasAnimation(SQUISHED_ANIMATION)) {
+                e.getAnim().render(gc, e.getX(), drawY,
+                        e.getWidth(), halfH, e.isFacingLeft());
+            } else {
+                gc.setFill(Color.SADDLEBROWN);
+                gc.fillRect(e.getX(), drawY, e.getWidth(), halfH);
+            }
+        }
+
+        @Override
+        public boolean hitsPlayer() {
+            return false;
+        }
+    }
+
+    
+
+   
+    
+    
 }

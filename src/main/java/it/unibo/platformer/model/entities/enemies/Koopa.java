@@ -13,114 +13,13 @@ import javafx.scene.paint.Color;
 public class Koopa extends EnemyImpl {
 
     private static final double WALK_SPEED = 50.0;
-    private static final double SHELL_SPEED = 300.0;
+    private static final double WALK_FRAME_DURATION = 0.15;
+    private static final double SHELL_FRAME_DURATION = 0.08;
 
-    /** Possible states for a Koopa. */
-    public enum KoopaState {
-        /** Koopa is walking. */
-        WALK,
-        /** Koopa is inside its shell, stationary. */
-        SHELL,
-        /** Koopa's shell is sliding at high speed. */
-        SHELL_MOVING
-    }
-
-    /** Walk handler: manages the sprite's direction and physics. */
-    private static final class WalkHandler implements EnemyImpl.WalkingHandler {
-
-        @Override
-        public void update(final EnemyImpl e, final double deltaTime) {
-            final double vx = e.getVelocityX();
-            if (vx < 0) {
-                e.setFacingLeft(false);
-            } else if (vx > 0) {
-                e.setFacingLeft(true);
-            }
-            e.getAnim().play("walk");
-            e.getAnim().update(deltaTime);
-            e.physicsTick(deltaTime);
-        }
-
-        @Override
-        public void render(final EnemyImpl e, final GraphicsContext gc) {
-            if (e.getAnim().hasAnimation("walk")) {
-                e.getAnim().render(gc, e.getX(), e.getY(),
-                        e.getWidth(), e.getHeight(), e.isFacingLeft());
-            } else {
-                gc.setFill(Color.GREEN);
-                gc.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
-            }
-        }
-
-        @Override
-        public boolean hitsPlayer() {
-            return true;
-        }
-    }
-
-    /** Handler for the shell state: manages the shell's appearance and non-lethal nature. */
-    private static final class ShellHandler implements EnemyImpl.EnemyStateHandler {
-
-        private static final int SHELL_HEIGHT = 32;
-
-        @Override
-        public void update(final EnemyImpl e, final double deltaTime) {
-            e.getAnim().play("shell");
-            e.getAnim().update(deltaTime);
-        }
-
-        @Override
-        public void render(final EnemyImpl e, final GraphicsContext gc) {
-            if (e.getAnim().hasAnimation("shell")) {
-                e.getAnim().render(gc, e.getX(), e.getY(),
-                        e.getWidth(), SHELL_HEIGHT, e.isFacingLeft());
-            } else {
-                gc.setFill(Color.DARKGREEN);
-                gc.fillRect(e.getX(), e.getY(), e.getWidth(), SHELL_HEIGHT);
-            }
-        }
-
-        @Override
-        public boolean hitsPlayer() {
-            return false;
-        }
-    }
-
-    /** Handler for the shell moving state: manages the shell's movement and lethal nature. */
-    private static final class ShellMovingHandler implements EnemyImpl.EnemyStateHandler {
-
-        private static final int SHELL_HEIGHT = 32;
-
-        @Override
-        public void update(final EnemyImpl e, final double deltaTime) {
-            final double vx = e.getVelocityX();
-            if (vx < 0) {
-                e.setFacingLeft(true);
-            } else if (vx > 0) {
-                e.setFacingLeft(false);
-            }
-            e.getAnim().play("shell_moving");
-            e.getAnim().update(deltaTime);
-            e.physicsTick(deltaTime);
-        }
-
-        @Override
-        public void render(final EnemyImpl e, final GraphicsContext gc) {
-            if (e.getAnim().hasAnimation("shell_moving")) {
-                e.getAnim().render(gc, e.getX(), e.getY(),
-                        e.getWidth(), SHELL_HEIGHT, e.isFacingLeft());
-            } else {
-                gc.setFill(Color.YELLOWGREEN);
-                gc.fillRect(e.getX(), e.getY(), e.getWidth(), SHELL_HEIGHT);
-            }
-        }
-
-        @Override
-        public boolean hitsPlayer() {
-            return true;
-        }
-    }
-
+    private static final String WALK_ANIMATION = "walk";
+    private static final String SHELL_ANIMATION = "shell";
+    private static final String SHELL_MOVING_ANIMATION = "shell_moving";
+    
     private KoopaState state;
 
     /**
@@ -132,72 +31,36 @@ public class Koopa extends EnemyImpl {
      */
     public Koopa(final double x, final double y, final BasicPhysics physics) {
         super(x, y, 32, 48, physics);
-        init();
-    }
-
-    private void init() {
+        this.state = KoopaState.WALK;
         transitionTo(KoopaState.WALK);
         setVelocityX(-WALK_SPEED);
-        getAnim().play("walk");
     }
 
     @Override
     protected void loadAnimations() {
-        final Image walkFrame1 = AnimationManager.loadImage("/sprites/enemies/koopa1.png");
-        final Image walkFrame2 = AnimationManager.loadImage("/sprites/enemies/koopa2.png");
-        final Image shellSprite = AnimationManager.loadImage("/sprites/enemies/koopa_shell.png");
+        final Image walk1 = AnimationManager.loadImage("/sprites/enemies/koopa1.png");
+        final Image walk2 = AnimationManager.loadImage("/sprites/enemies/koopa2.png");
+        final Image shell = AnimationManager.loadImage("/sprites/enemies/koopa_shell.png");
 
-        if (walkFrame1 != null && walkFrame2 != null) {
-            getAnim().register("walk",
-                    new Animation(new Image[]{walkFrame1, walkFrame2}, 0.15, true));
-        } else {
-            System.err.println("[Koopa] Walk sprites not found – using fallback.");
+       if (walk1 != null && walk2 != null) {
+            getAnim().register(WALK_ANIMATION,
+                    new Animation(new Image[]{walk1, walk2}, WALK_FRAME_DURATION, true));
         }
-        if (shellSprite != null) {
-            getAnim().register("shell",
-                    new Animation(new Image[]{shellSprite}, 1.0, false));
-            getAnim().register("shell_moving",
-                    new Animation(new Image[]{shellSprite}, 0.08, true));
-        } else {
-            System.err.println("[Koopa] Shell sprite not found – using fallback.");
+        if (shell != null) {
+            getAnim().register(SHELL_ANIMATION,
+                    new Animation(new Image[]{shell}, 1.0, false));
+            getAnim().register(SHELL_MOVING_ANIMATION,
+                    new Animation(new Image[]{shell}, SHELL_FRAME_DURATION, true));
         }
     }
 
     private void transitionTo(final KoopaState newState) {
         this.state = newState;
-        final EnemyStateHandler handler = switch (newState) {
-            case WALK -> new WalkHandler();
-            case SHELL -> new ShellHandler();
-            case SHELL_MOVING -> new ShellMovingHandler();
-        };
-        transitionTo(handler);
-    }
-
-    /**
-     * Stomps this Koopa, retracting it into its shell.
-     */
-    public void stomp() {
-        if (state != KoopaState.WALK) {
-            return;
+        switch (newState) {
+            case WALK -> transitionTo(new WalkHandler());
+            case SHELL -> transitionTo(new ShellHandler());
+            case SHELL_MOVING -> transitionTo(new ShellMovingHandler());
         }
-        transitionTo(KoopaState.SHELL);
-        setVelocityX(0);
-        setHeight(32);
-        setY(getY() + 16);
-        setAffectedByGravity(true);
-    }
-
-    /**
-     * Kicks the shell, sending it sliding in the given direction.
-     *
-     * @param kickRight {@code true} to kick right, {@code false} to kick left
-     */
-    public void kick(final boolean kickRight) {
-        if (state != KoopaState.SHELL) {
-            return;
-        }
-        transitionTo(KoopaState.SHELL_MOVING);
-        setVelocityX(kickRight ? SHELL_SPEED : -SHELL_SPEED);
     }
 
     /**
@@ -210,20 +73,89 @@ public class Koopa extends EnemyImpl {
     }
 
     /**
-     * Returns whether this Koopa's shell can kill other enemies.
-     *
-     * @return {@code true} if the shell is moving
+     * Possible states for a Koopa.
      */
-    public boolean canKillEnemies() {
-        return state == KoopaState.SHELL_MOVING;
+    public enum KoopaState {
+        /** Koopa is walking. */
+        WALK,
+        /** Koopa is inside its shell, stationary. */
+        SHELL,
+        /** Koopa's shell is moving fast after being kicked. */
+        SHELL_MOVING
     }
 
-    /**
-     * Returns whether this Koopa is currently inside its shell.
-     *
-     * @return {@code true} if in shell or shell-moving state
-     */
-    public boolean isInShell() {
-        return state == KoopaState.SHELL || state == KoopaState.SHELL_MOVING;
+    /** Walk handler. */
+    private static final class WalkHandler implements EnemyImpl.WalkingHandler {
+        @Override
+        public void update(final EnemyImpl e, final double deltaTime) {
+            final double vx = e.getVelocityX();
+            if (vx < 0) {
+                e.setFacingLeft(true);
+            } else if (vx > 0) {
+                e.setFacingLeft(false);
+            }
+            e.getAnim().play(WALK_ANIMATION);
+            e.getAnim().update(deltaTime);
+            e.physicsTick(deltaTime);
+        }
+
+        @Override
+        public void render(final EnemyImpl e, final GraphicsContext gc) {
+            if (e.getAnim().hasAnimation(WALK_ANIMATION)) {
+                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.isFacingLeft());
+            } else {
+                gc.setFill(Color.GREEN);
+                gc.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
+            }
+        }
+
+        @Override
+        public boolean hitsPlayer() {
+            return true;
+        }
+    }
+
+    /** Shell handler. */
+    private static final class ShellHandler implements EnemyImpl.EnemyStateHandler {
+        @Override
+        public void update(final EnemyImpl e, final double deltaTime) {
+            e.getAnim().play(SHELL_ANIMATION);
+            e.getAnim().update(deltaTime);
+            e.physicsTick(deltaTime);
+        }
+
+        @Override
+        public void render(final EnemyImpl e, final GraphicsContext gc) {
+            if (e.getAnim().hasAnimation(SHELL_ANIMATION)) {
+                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.isFacingLeft());
+            }
+        }
+
+        @Override
+        public boolean hitsPlayer() {
+            return false;
+        }
+    }
+
+    /** Shell moving handler. */
+    private static final class ShellMovingHandler implements EnemyImpl.EnemyStateHandler {
+        @Override
+        public void update(final EnemyImpl e, final double deltaTime) {
+            e.getAnim().play(SHELL_MOVING_ANIMATION);
+            e.getAnim().update(deltaTime);
+            e.physicsTick(deltaTime);
+        }
+
+        @Override
+        public void render(final EnemyImpl e, final GraphicsContext gc) {
+            if (e.getAnim().hasAnimation(SHELL_MOVING_ANIMATION)) {
+                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.isFacingLeft());
+            }
+        }
+
+        @Override
+        public boolean hitsPlayer() {
+            return true;
+        }
     }
 }
