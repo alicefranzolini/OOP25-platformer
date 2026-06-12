@@ -23,7 +23,7 @@ public abstract class Entity {
      * @param width  the width of the entity
      * @param height the height of the entity
      */
-    public Entity(double x, double y, double width, double height) {
+    public Entity(final double x, final double y, final double width, final double height) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -58,16 +58,24 @@ public abstract class Entity {
         }
 
         /** @return the horizontal position of this box */
-        public double getX()      { return x; }
+        public double getX() { 
+            return x; 
+        }
 
         /** @return the vertical position of this box */
-        public double getY()      { return y; }
+        public double getY() { 
+            return y; 
+        }
 
         /** @return the width of this box */
-        public double getWidth()  { return width; }
+        public double getWidth() { 
+            return width; 
+        }
 
         /** @return the height of this box */
-        public double getHeight() { return height; }
+        public double getHeight() { 
+            return height; 
+        }
 
         /**
          * Core method for detecting collisions between entities.
@@ -107,34 +115,54 @@ public abstract class Entity {
     public abstract void render(GraphicsContext gc);
 
     /** @return the horizontal position of this entity */
-    public double getX()      { return x; }
+    public double getX() { 
+        return x; 
+    }
 
     /** @return the vertical position of this entity */
-    public double getY()      { return y; }
+    public double getY() { 
+        return y; 
+    }
 
     /** @return the width of this entity */
-    public double getWidth()  { return width; }
+    public double getWidth() { 
+        return width; 
+    }
 
     /** @return the height of this entity */
-    public double getHeight() { return height; }
+    public double getHeight() { 
+        return height; 
+    }
 
     /** @return true if this entity is still active */
-    public boolean isActive() { return active; }
+    public boolean isActive() { 
+        return active; 
+    }
 
     /** @param x the new horizontal position */
-    public void setX(double x)            { this.x = x; }
+    public void setX(double x) { 
+        this.x = x; 
+    }
 
     /** @param y the new vertical position */
-    public void setY(double y)            { this.y = y; }
+    public void setY(double y) { 
+        this.y = y; 
+    }
 
     /** @param width the new width */
-    public void setWidth(double width)    { this.width = width; }
+    public void setWidth(double width) { 
+        this.width = width; 
+    }
 
     /** @param height the new height */
-    public void setHeight(double height)  { this.height = height; }
+    public void setHeight(double height)  { 
+        this.height = height; 
+    }
 
     /** @param active the new active state */
-    public void setActive(boolean active) { this.active = active; }
+    public void setActive(boolean active) { 
+        this.active = active; 
+    }
 
     /** Marks this entity for removal; it will be filtered out on the next frame. */
     public void destroy() {
