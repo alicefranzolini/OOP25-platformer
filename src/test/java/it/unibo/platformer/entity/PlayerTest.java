@@ -1,4 +1,4 @@
-package it.unibo.platformer;
+package it.unibo.platformer.entity;
 
 import it.unibo.platformer.model.entities.players.PlayerImpl;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests for player movement, state transitions and damage handling.
  */
-public final class TestPlayer {
+public final class PlayerTest {
 
     private static final double DELTA = 0.01;
     private static final double UPDATE_TIME = 0.016;

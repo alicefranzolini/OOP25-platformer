@@ -1,4 +1,4 @@
-package it.unibo.platformer;
+package it.unibo.platformer.entity;
 
 import it.unibo.platformer.model.entities.powerup.StarPowerUp;
 import it.unibo.platformer.model.entities.players.PlayerImpl;
