@@ -2,18 +2,38 @@ package it.unibo.platformer;
 
 import it.unibo.platformer.model.entities.players.PlayerImpl;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
+import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestPlayer {
+/**
+ * Tests for player movement, state transitions and damage handling.
+ */
+public final class TestPlayer {
+
+    private static final double DELTA = 0.01;
+    private static final double UPDATE_TIME = 0.016;
+    private static final double LEFT_SPEED = -180.0;
+    private static final double JUMP_SPEED = -420.0;
+    private static final double JUMP_UPPER_BOUND = -419.0;
+    private static final double JUMP_LOWER_BOUND = -421.0;
+    private static final int BIG_HEIGHT = 48;
+    private static final int INVINCIBILITY_SECONDS = 11;
+    private static final int FPS = 60;
+    private static final double FRAME_TIME = 1.0 / FPS;
+
     private BasicPhysics physics;
     private PlayerImpl player;
 
     @BeforeEach
     void setup() {
+        physics = new BasicPhysicsImpl();
         player = new PlayerImpl(100, 100, physics);
     }
 
@@ -24,20 +44,20 @@ public class TestPlayer {
     @Test
     void testMoveRight() {
         player.moveRight();
-        assertEquals(180.0, player.getVelocityX(), 0.01);
+        assertEquals(180.0, player.getVelocityX(), DELTA);
     }
 
     @Test
     void testMoveLeft() {
         player.moveLeft();
-        assertEquals(-180.0, player.getVelocityX(), 0.01);
+        assertEquals(LEFT_SPEED, player.getVelocityX(), DELTA);
     }
 
     @Test
     void testStopX() {
         player.moveRight();
         player.stopX();
-        assertEquals(0.0, player.getVelocityX(), 0.01);
+        assertEquals(0.0, player.getVelocityX(), DELTA);
     }
 
     // ------------------------------------------------------------
@@ -49,9 +69,9 @@ public class TestPlayer {
         player.setOnGround(true);
         player.setJumpRequested(true);
 
-        player.update(0.016);
+        player.update(UPDATE_TIME);
 
-        assertTrue(player.getVelocityY() < -419 && player.getVelocityY() > -421);
+        assertTrue(player.getVelocityY() < JUMP_UPPER_BOUND && player.getVelocityY() > JUMP_LOWER_BOUND);
         assertFalse(player.isOnGround());
     }
 
@@ -60,9 +80,9 @@ public class TestPlayer {
         player.setOnGround(false);
         player.setJumpRequested(true);
 
-        player.update(0.016);
+        player.update(UPDATE_TIME);
 
-        assertNotEquals(-420.0, player.getVelocityY(), 0.01);
+        assertNotEquals(JUMP_SPEED, player.getVelocityY(), DELTA);
     }
 
     // ------------------------------------------------------------
@@ -73,7 +93,7 @@ public class TestPlayer {
     void testPowerUpSmallToBig() {
         player.setState(PlayerImpl.PlayerState.BIG);
         assertEquals(PlayerImpl.PlayerState.BIG, player.getPlayerState());
-        assertEquals(48, player.getHeight());
+        assertEquals(BIG_HEIGHT, player.getHeight());
     }
 
     @Test
@@ -90,8 +110,8 @@ public class TestPlayer {
         player.setState(PlayerImpl.PlayerState.INVINCIBLE);
 
         // Simulate 11 seconds (60 FPS)
-        for (int i = 0; i < 11 * 60; i++) {
-            player.update(1.0 / 60.0);
+        for (int i = 0; i < INVINCIBILITY_SECONDS * FPS; i++) {
+            player.update(FRAME_TIME);
         }
 
         assertEquals(PlayerImpl.PlayerState.BIG, player.getPlayerState());
@@ -103,26 +123,25 @@ public class TestPlayer {
 
     @Test
     void testDamageWhenSmallDies() {
-        boolean dead = player.takeDamage();
+        final boolean dead = player.takeDamage();
         assertTrue(dead);
     }
 
     @Test
-        void testDamageWhenBigBecomesSmall() {
+    void testDamageWhenBigBecomesSmall() {
         player.setState(PlayerImpl.PlayerState.BIG);
 
-        boolean dead = player.takeDamage();
+        final boolean dead = player.takeDamage();
 
         assertFalse(dead);
-        assertEquals(PlayerImpl.PlayerState.SMALL, player.getPlayerState()); 
+        assertEquals(PlayerImpl.PlayerState.SMALL, player.getPlayerState());
     }
-
 
     @Test
     void testDamageWhenInvincibleNoEffect() {
         player.setState(PlayerImpl.PlayerState.INVINCIBLE);
 
-        boolean dead = player.takeDamage();
+        final boolean dead = player.takeDamage();
 
         assertFalse(dead);
         assertEquals(PlayerImpl.PlayerState.INVINCIBLE, player.getPlayerState());
@@ -136,7 +155,7 @@ public class TestPlayer {
     void testSpriteIdle() {
         player.stopX();
         player.setOnGround(true);
-        player.update(0.016);
+        player.update(UPDATE_TIME);
 
         assertEquals(PlayerImpl.SpriteState.IDLE, player.getSpriteState());
     }
@@ -145,7 +164,7 @@ public class TestPlayer {
     void testSpriteWalk() {
         player.moveRight();
         player.setOnGround(true);
-        player.update(0.016);
+        player.update(UPDATE_TIME);
 
         assertEquals(PlayerImpl.SpriteState.WALK, player.getSpriteState());
     }
@@ -153,7 +172,7 @@ public class TestPlayer {
     @Test
     void testSpriteJump() {
         player.setOnGround(false);
-        player.update(0.016);
+        player.update(UPDATE_TIME);
 
         assertEquals(PlayerImpl.SpriteState.JUMP, player.getSpriteState());
     }
