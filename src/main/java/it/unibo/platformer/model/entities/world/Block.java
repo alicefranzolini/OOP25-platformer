@@ -11,16 +11,6 @@ import javafx.scene.paint.Color;
  */
 public final class Block extends StaticEntity {
 
-    /** The visual and behavioural type of this block. */
-    public enum BlockType {
-        /** A plain decorative block. */
-        NORMAL,
-        /** A brick block that can be broken. */
-        BRICK,
-        /** A question block that yields a reward when hit. */
-        QUESTION
-    }
-
     private static final int QUESTION_MARK_OFFSET_X = 10;
     private static final int QUESTION_MARK_OFFSET_Y = 22;
 
@@ -121,5 +111,15 @@ public final class Block extends StaticEntity {
             return true;
         }
         return false;
+    }
+
+    /** The visual and behavioural type of this block. */
+    public enum BlockType {
+        /** A plain decorative block. */
+        NORMAL,
+        /** A brick block that can be broken. */
+        BRICK,
+        /** A question block that yields a reward when hit. */
+        QUESTION
     }
 }
