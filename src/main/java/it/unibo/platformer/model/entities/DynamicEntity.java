@@ -1,92 +1,169 @@
 package it.unibo.platformer.model.entities;
 
-
 import it.unibo.platformer.model.physics.impl.GameObjectImpl;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 
+/** Represents an entity capable of movement and subject to physical forces.*/
 public abstract class DynamicEntity extends Entity {
 
+    /** Stores position, size and velocity of this entity. */
+    private final GameObjectImpl gameObject;
 
-    protected final GameObjectImpl gameObject;//stores position size and velocity
-    private  final BasicPhysics physics ;//applies gravity and movement
- 
-    protected boolean affectedByGravity; //if true the entity falls
-    protected boolean onGround;//if on the ground the gravity stops
-    public DynamicEntity(double x, double y, double width, double height , BasicPhysics physics){
+    /** Applies gravity and movement to this entity. */
+    private final BasicPhysics physics;
+
+    /** If true, this entity is subject to gravity and will fall. */
+    private boolean affectedByGravity;
+
+    /** If true, the entity is resting on the ground and gravity is suspended. */
+    private boolean onGround;
+
+    /**
+     * Constructs a DynamicEntity with the given position, dimensions and physics engine.
+     * Gravity is enabled and the entity starts airborne by default.
+     *
+     * @param x       the horizontal position
+     * @param y       the vertical position
+     * @param width   the width of the entity
+     * @param height  the height of the entity
+     * @param physics the {@link BasicPhysics} engine to use for movement
+     */
+    public DynamicEntity(final double x, final double y, final double width, final double height, final BasicPhysics physics) {
         super(x, y, width, height);
-        this.gameObject       = new GameObjectImpl((float) x, (float) y, (float) width, (float) height);
+        this.gameObject = new GameObjectImpl((float) x, (float) y, (float) width, (float) height);
         this.affectedByGravity = true;
-        this.onGround          = false;
+        this.onGround = false;
         this.physics = physics;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public double getX() { 
+        return gameObject.getPosition().getX(); 
+    }
 
+    /** {@inheritDoc} */
     @Override
-    public double getX() { return gameObject.getPosition().getX(); }
- 
-    @Override
-    public double getY() { return gameObject.getPosition().getY(); }
- 
-    @Override
-    public void setX(double x) { gameObject.getPosition().setX((float) x); }
- 
-    @Override
-    public void setY(double y) { gameObject.getPosition().setY((float) y); }
- 
+    public double getY() { 
+        return gameObject.getPosition().getY(); 
+    }
 
+    /** {@inheritDoc} */
+    @Override
+    public double getWidth() {
+        return gameObject.getWidth(); // Supponendo che GameObjectImpl esponga questo metodo
+    }
 
-   @Override
-    public void update( final double deltaTime) {
+    /** {@inheritDoc} */
+    @Override
+    public double getHeight() {
+        return gameObject.getHeight(); // Supponendo che GameObjectImpl esponga questo metodo
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setX(double x) { 
+        gameObject.getPosition().setX((float) x);
+     }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setY(double y) { 
+        gameObject.getPosition().setY((float) y); 
+    }
+
+    /**
+     * Updates the entity's position based on its velocity and gravity state.
+     * If affected by gravity and airborne, delegates to the physics engine.
+     * If gravity-free, integrates position manually from the current speed.
+     * If on the ground, position is managed by the collision resolver.
+     *
+     * @param deltaTime the time elapsed since the last frame, in seconds
+     */
+    @Override
+    public void update(final double deltaTime) {
         if (affectedByGravity && !onGround) {
-            // Full physics step: gravity accumulation + position integration
             physics.UpdatePosition(gameObject, deltaTime);
         } else if (!affectedByGravity) {
-            // Gravity-free movement (e.g. moving shell): integrate X and Y manually
             final float dx = gameObject.getSpeed().getX() * (float) deltaTime;
             final float dy = gameObject.getSpeed().getY() * (float) deltaTime;
             gameObject.getPosition().setX(gameObject.getPosition().getX() + dx);
             gameObject.getPosition().setY(gameObject.getPosition().getY() + dy);
         }
-        // else: on ground with gravity — position managed by collision resolver
     }
 
-    //for velocity 
+    /**
+     * @return the horizontal velocity of this entity
+     */
     public double getVelocityX() {
         return gameObject.getSpeed().getX();
     }
- 
+
+    /**
+     * @return the vertical velocity of this entity
+     */
     public double getVelocityY() {
         return gameObject.getSpeed().getY();
     }
- 
-    public void setVelocityX(double vx) {
+
+    /**
+     * @param vx the new horizontal velocity
+     */
+    public void setVelocityX(final double vx) {
         gameObject.getSpeed().setX((float) vx);
     }
- 
-    public void setVelocityY(double vy) {
+
+    /**
+     * @param vy the new vertical velocity
+     */
+    public void setVelocityY(final double vy) {
         gameObject.getSpeed().setY((float) vy);
     }
- 
- 
-   
-    public boolean isAffectedByGravity() { return affectedByGravity; }
-    public boolean isOnGround()          { return onGround; }
- 
-    public void setAffectedByGravity(boolean g) { this.affectedByGravity = g; }
- 
- /**
-     * Sets whether the entity is resting on the ground.
-     * Zeroes vertical velocity when landing to prevent bouncing artefacts.
+
+    /**
+     * @return true if this entity is subject to gravity
      */
-    public void setOnGround(boolean onGround) {
+    public boolean isAffectedByGravity() { 
+        return affectedByGravity; 
+    }
+
+    /**
+     * @return true if this entity is currently on the ground
+     */
+    public boolean isOnGround() { 
+        return onGround; 
+    }
+
+    /**
+     * @param g true to enable gravity for this entity, false to disable it
+     */
+    public void setAffectedByGravity(final boolean g) { 
+        this.affectedByGravity = g; 
+    }
+
+    /**
+     * Sets whether the entity is on the ground.
+     * Resets vertical velocity to zero on landing to avoid a bounce effect.
+     *
+     * @param onGround true if the entity has landed, false if airborne
+     */
+    public void setOnGround(final boolean onGround) {
         this.onGround = onGround;
         this.gameObject.SetOnGround(onGround);
         if (onGround) {
-            // Azzera la velocità Y quando tocca terra
             gameObject.getSpeed().setY(0);
         }
     }
- 
-    
-    public GameObjectImpl getGameObject() { return gameObject; }
+
+    /** {@inheritDoc} */
+    @Override
+    public BoundingBox getBoundingBox() {
+        return new BoundingBox(getX(), getY(), getWidth(), getHeight());
+    }
+    /**
+     * @return the underlying {@link GameObjectImpl} used by the physics engine
+     */
+    public GameObjectImpl getGameObject() { 
+        return gameObject; 
+    }
 }

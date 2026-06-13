@@ -4,31 +4,74 @@ import it.unibo.platformer.model.entities.players.Player;
 
 /**
  * Contract for all power-up entities.
- * Defines emergence behaviour, effect application, and collection.
- * Concrete power-ups (Mushroom, Star) implement applyEffect differently
- * — this is the polymorphism entry point.
  */
 public interface PowerUp {
 
-    // Called every frame
+    /**
+     * Updates the power-up state.
+     *
+     * @param deltaTime the elapsed time since the previous update
+     */
     void update(double deltaTime);
 
-    // Applies the specific effect to the player (polymorphic)
+    /**
+     * Applies the specific effect to the player.
+     *
+     * @param player the player collecting the power-up
+     */
     void applyEffect(Player player);
 
-    // Collects the power-up: applies effect and destroys it
+    /**
+     * Collects the power-up, applies its effect, and destroys it.
+     *
+     * @param player the player collecting the power-up
+     */
     void collect(Player player);
 
-    // Flips horizontal direction when hitting a wall
+    /**
+     * Reverses the horizontal movement direction.
+     */
     void reverseDirection();
 
-    // True while still emerging from the block (not yet collectible)
+    /**
+     * Checks whether the power-up is still emerging from its spawn block.
+     *
+     * @return true if the power-up is emerging
+     */
     boolean isEmerging();
 
-    // Position and size
+    /**
+     * Gets the x coordinate.
+     *
+     * @return the x coordinate
+     */
     double getX();
+
+    /**
+     * Gets the y coordinate.
+     *
+     * @return the y coordinate
+     */
     double getY();
+
+    /**
+     * Gets the entity width.
+     *
+     * @return the width
+     */
     double getWidth();
+
+    /**
+     * Gets the entity height.
+     *
+     * @return the height
+     */
     double getHeight();
+
+    /**
+     * Checks whether the power-up is active.
+     *
+     * @return true if the power-up is active
+     */
     boolean isActive();
 }

@@ -1,6 +1,6 @@
 package it.unibo.platformer;
 
-import it.unibo.platformer.model.entities.powerup.PowerUpImpl;
+import it.unibo.platformer.model.entities.powerup.AbstractPowerUp;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 //import it.unibo.platformer.model.entities.players.PlayerImpl;
 import javafx.scene.canvas.GraphicsContext;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TestPowerUps {
     private BasicPhysics physics;
 
-    private static class TestPowerUp extends PowerUpImpl {
+    private static class TestPowerUp extends AbstractPowerUp {
         boolean effectApplied = false;
         boolean destroyedFlag = false;
 
