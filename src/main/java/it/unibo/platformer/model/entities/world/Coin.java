@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 /**
  * A collectible coin that can either sit in place or pop out of a block.
  */
-public class Coin extends DynamicEntity {
+public final class Coin extends DynamicEntity {
 
     private static final double FRAME_DURATION = 0.15;
     private static final int TOTAL_FRAMES = 4;

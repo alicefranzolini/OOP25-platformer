@@ -8,10 +8,10 @@ import javafx.scene.paint.Color;
  * Represents the flag at the top of the goal pole.
  * When Mario touches the pole, the flag lowers to the bottom.
  */
-public class Flag extends StaticEntity {
+public final class Flag extends StaticEntity {
 
-    private static final Color FLAG_COLOR   = Color.GREEN;
-    private static final double FLAG_WIDTH  = 48.0;
+    private static final Color FLAG_COLOR = Color.GREEN;
+    private static final double FLAG_WIDTH = 48.0;
     private static final double FLAG_HEIGHT = 32.0;
     private static final double LOWER_SPEED = 80.0; // pixels per second
 

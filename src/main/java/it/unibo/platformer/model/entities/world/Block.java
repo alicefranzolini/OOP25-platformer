@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 /**
  * A static block in the world, which may be normal, brick, or a question block.
  */
-public class Block extends StaticEntity {
+public final class Block extends StaticEntity {
 
     /** The visual and behavioural type of this block. */
     public enum BlockType {
