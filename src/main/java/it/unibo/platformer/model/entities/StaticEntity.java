@@ -12,7 +12,7 @@ public abstract class StaticEntity extends Entity {
      * Indicates whether this entity blocks movement.
      * If true, other entities cannot pass through it; defaults to true.
      */
-    protected boolean solid;
+    private boolean solid;
 
     /**
      * Constructs a StaticEntity with the given position and dimensions.
@@ -23,7 +23,7 @@ public abstract class StaticEntity extends Entity {
      * @param width  the width of the entity
      * @param height the height of the entity
      */
-    public StaticEntity(double x, double y, double width, double height) {
+    public StaticEntity(final double x, final double y, final double width, final double height) {
         super(x, y, width, height);
         this.solid = true;
     }
@@ -34,7 +34,7 @@ public abstract class StaticEntity extends Entity {
      * @param deltaTime the time elapsed since the last frame, in seconds
      */
     @Override
-    public void update(double deltaTime) {
+    public void update(final double deltaTime) {
     }
 
     /**
@@ -47,7 +47,7 @@ public abstract class StaticEntity extends Entity {
     /**
      * @param solid true to make this entity block movement, false to allow passing through
      */
-    public void setSolid(boolean solid) {
+    public void setSolid(final boolean solid) {
         this.solid = solid;
     }
 
@@ -58,6 +58,6 @@ public abstract class StaticEntity extends Entity {
      * @param gc the {@link GraphicsContext} to render onto
      */
     @Override
-    public void render(GraphicsContext gc) {
+    public void render(final GraphicsContext gc) {
     }
 }

@@ -8,12 +8,12 @@ import javafx.scene.paint.Color;
  * Represents the goal pole at the end of a level.
  * It is rendered as a silver vertical pole with a golden ball on top.
  */
-public class Pole extends StaticEntity {
+public final class Pole extends StaticEntity {
 
-    private static final Color  POLE_COLOR   = Color.SILVER;
-    private static final Color  BALL_COLOR   = Color.GOLD;
-    private static final double POLE_WIDTH   = 6.0;
-    private static final double BALL_RADIUS  = 8.0;
+    private static final Color POLE_COLOR = Color.SILVER;
+    private static final Color BALL_COLOR = Color.GOLD;
+    private static final double POLE_WIDTH = 6.0;
+    private static final double BALL_RADIUS = 8.0;
     private static final double BALL_DIAMETER = BALL_RADIUS * 2;
 
     /**
@@ -26,10 +26,11 @@ public class Pole extends StaticEntity {
     public Pole(final double x, final double y, final double height) {
         super(x, y, POLE_WIDTH, height);
     }
-
+    
+ /** Draw the pole */
     @Override
     public void render(final GraphicsContext gc) {
-        /** Draw the pole */
+       
         gc.setFill(POLE_COLOR);
         gc.fillRect(getX(), getY(), POLE_WIDTH, getHeight());
 
