@@ -34,7 +34,6 @@ public final class Pole extends AbstractStaticEntity {
         gc.setFill(POLE_COLOR);
         gc.fillRect(getX(), getY(), POLE_WIDTH, getHeight());
 
-        /** Draw the golden ball on top */
         gc.setFill(BALL_COLOR);
         gc.fillOval(
             getX() + POLE_WIDTH / 2.0 - BALL_RADIUS,

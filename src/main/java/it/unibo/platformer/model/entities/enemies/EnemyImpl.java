@@ -44,22 +44,22 @@ public abstract class EnemyImpl extends AbstractDynamicEntity implements Enemy {
     /**
      * @return the animation manager for this enemy
      */
-    protected AnimationManager getAnim() { 
-        return anim; 
+    protected AnimationManager getAnim() {
+        return anim;
     }
 
     /**
      * @return true if the sprite is currently facing left
      */
-    public boolean isFacingLeft() { 
-        return facingLeft; 
+    public boolean isFacingLeft() {
+        return facingLeft;
     }
 
     /**
      * @param facingLeft true to face left, false to face right
      */
-    public void setFacingLeft(final boolean facingLeft) { 
-        this.facingLeft = facingLeft; 
+    public void setFacingLeft(final boolean facingLeft) {
+        this.facingLeft = facingLeft;
     }
 
     /**
@@ -149,7 +149,6 @@ public abstract class EnemyImpl extends AbstractDynamicEntity implements Enemy {
 
     /** Marker interface to group all walking states. */
     public interface WalkingHandler extends EnemyStateHandler {
-        
     }
 
 }

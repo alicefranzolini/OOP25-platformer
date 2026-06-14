@@ -56,7 +56,6 @@ public final class Block extends AbstractStaticEntity {
 
     @Override
     public void update(final double deltaTime) {
-        // static block — nothing to update
     }
 
     @Override

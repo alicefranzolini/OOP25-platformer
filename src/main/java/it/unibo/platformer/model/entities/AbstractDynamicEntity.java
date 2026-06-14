@@ -39,37 +39,37 @@ public abstract class AbstractDynamicEntity extends AbstractEntity {
     /** {@inheritDoc} */
     @Override
     public double getX() { 
-        return gameObject.getPosition().getX(); 
+        return gameObject.getPosition().getX();
     }
 
     /** {@inheritDoc} */
     @Override
     public double getY() { 
-        return gameObject.getPosition().getY(); 
+        return gameObject.getPosition().getY();
     }
 
     /** {@inheritDoc} */
     @Override
     public double getWidth() {
-        return gameObject.getWidth(); // Supponendo che GameObjectImpl esponga questo metodo
+        return gameObject.getWidth();
     }
 
     /** {@inheritDoc} */
     @Override
     public double getHeight() {
-        return gameObject.getHeight(); // Supponendo che GameObjectImpl esponga questo metodo
+        return gameObject.getHeight();
     }
-
+    
     /** {@inheritDoc} */
     @Override
-    public void setX(double x) { 
+    public void setX(final double x) {
         gameObject.getPosition().setX((float) x);
      }
 
     /** {@inheritDoc} */
     @Override
-    public void setY(double y) { 
-        gameObject.getPosition().setY((float) y); 
+    public void setY(final double y) {
+        gameObject.getPosition().setY((float) y);
     }
 
     /**
@@ -123,22 +123,22 @@ public abstract class AbstractDynamicEntity extends AbstractEntity {
     /**
      * @return true if this entity is subject to gravity
      */
-    public boolean isAffectedByGravity() { 
-        return affectedByGravity; 
+    public boolean isAffectedByGravity() {
+        return affectedByGravity;
     }
 
     /**
      * @return true if this entity is currently on the ground
      */
-    public boolean isOnGround() { 
-        return onGround; 
+    public boolean isOnGround() {
+        return onGround;
     }
 
     /**
      * @param g true to enable gravity for this entity, false to disable it
      */
-    public void setAffectedByGravity(final boolean g) { 
-        this.affectedByGravity = g; 
+    public void setAffectedByGravity(final boolean g) {
+        this.affectedByGravity = g;
     }
 
     /**
@@ -160,10 +160,11 @@ public abstract class AbstractDynamicEntity extends AbstractEntity {
     public BoundingBox getBoundingBox() {
         return new BoundingBox(getX(), getY(), getWidth(), getHeight());
     }
+
     /**
      * @return the underlying {@link GameObjectImpl} used by the physics engine
      */
-    public GameObjectImpl getGameObject() { 
-        return gameObject; 
+    public GameObjectImpl getGameObject() {
+        return gameObject;
     }
 }
