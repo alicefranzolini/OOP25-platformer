@@ -1,6 +1,6 @@
 package it.unibo.platformer.model.entities.world;
 
-import it.unibo.platformer.model.entities.StaticEntity;
+import it.unibo.platformer.model.entities.AbstractStaticEntity;
 import it.unibo.platformer.view.AnimationManager;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 /**
  * A static block in the world, which may be normal, brick, or a question block.
  */
-public final class Block extends StaticEntity {
+public final class Block extends AbstractStaticEntity {
 
     private static final int QUESTION_MARK_OFFSET_X = 10;
     private static final int QUESTION_MARK_OFFSET_Y = 22;

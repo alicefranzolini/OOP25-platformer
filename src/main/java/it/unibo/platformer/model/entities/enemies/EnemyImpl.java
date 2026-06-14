@@ -1,6 +1,6 @@
 package it.unibo.platformer.model.entities.enemies;
 
-import it.unibo.platformer.model.entities.DynamicEntity;
+import it.unibo.platformer.model.entities.AbstractDynamicEntity;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 import it.unibo.platformer.view.AnimationManager;
 import javafx.scene.canvas.GraphicsContext;
@@ -9,7 +9,7 @@ import java.util.Optional;
 /**
  * Basic implementation that centralizes physics, animations, and state management.
  */
-public abstract class EnemyImpl extends DynamicEntity implements Enemy {
+public abstract class EnemyImpl extends AbstractDynamicEntity implements Enemy {
 
     /** Animation manager shared by all enemy states. */
     private final AnimationManager anim = new AnimationManager();

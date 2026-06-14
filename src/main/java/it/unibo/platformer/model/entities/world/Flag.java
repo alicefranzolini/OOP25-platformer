@@ -1,6 +1,6 @@
 package it.unibo.platformer.model.entities.world;
 
-import it.unibo.platformer.model.entities.StaticEntity;
+import it.unibo.platformer.model.entities.AbstractStaticEntity;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
  * Represents the flag at the top of the goal pole.
  * When Mario touches the pole, the flag lowers to the bottom.
  */
-public final class Flag extends StaticEntity {
+public final class Flag extends AbstractStaticEntity {
 
     private static final Color FLAG_COLOR = Color.GREEN;
     private static final double FLAG_WIDTH = 48.0;

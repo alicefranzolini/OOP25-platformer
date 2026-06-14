@@ -4,7 +4,7 @@ import it.unibo.platformer.model.physics.impl.GameObjectImpl;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 
 /** Represents an entity capable of movement and subject to physical forces.*/
-public abstract class DynamicEntity extends Entity {
+public abstract class AbstractDynamicEntity extends AbstractEntity {
 
     /** Stores position, size and velocity of this entity. */
     private final GameObjectImpl gameObject;
@@ -28,7 +28,7 @@ public abstract class DynamicEntity extends Entity {
      * @param height  the height of the entity
      * @param physics the {@link BasicPhysics} engine to use for movement
      */
-    public DynamicEntity(final double x, final double y, final double width, final double height, final BasicPhysics physics) {
+    public AbstractDynamicEntity(final double x, final double y, final double width, final double height, final BasicPhysics physics) {
         super(x, y, width, height);
         this.gameObject = new GameObjectImpl((float) x, (float) y, (float) width, (float) height);
         this.affectedByGravity = true;
