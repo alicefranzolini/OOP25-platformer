@@ -1,6 +1,6 @@
 package it.unibo.platformer.model.entities.world;
 
-import it.unibo.platformer.model.entities.StaticEntity;
+import it.unibo.platformer.model.entities.AbstractStaticEntity;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
  * Represents the goal pole at the end of a level.
  * It is rendered as a silver vertical pole with a golden ball on top.
  */
-public final class Pole extends StaticEntity {
+public final class Pole extends AbstractStaticEntity {
 
     private static final Color POLE_COLOR = Color.SILVER;
     private static final Color BALL_COLOR = Color.GOLD;
@@ -34,7 +34,6 @@ public final class Pole extends StaticEntity {
         gc.setFill(POLE_COLOR);
         gc.fillRect(getX(), getY(), POLE_WIDTH, getHeight());
 
-        /** Draw the golden ball on top */
         gc.setFill(BALL_COLOR);
         gc.fillOval(
             getX() + POLE_WIDTH / 2.0 - BALL_RADIUS,
