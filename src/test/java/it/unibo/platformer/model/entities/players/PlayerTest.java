@@ -1,6 +1,5 @@
 package it.unibo.platformer.model.entities.players;
 
-import it.unibo.platformer.model.entities.players.PlayerImpl;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 
@@ -21,8 +20,6 @@ public final class PlayerTest {
     private static final double UPDATE_TIME = 0.016;
     private static final double LEFT_SPEED = -180.0;
     private static final double JUMP_SPEED = -420.0;
-    private static final double JUMP_UPPER_BOUND = -419.0;
-    private static final double JUMP_LOWER_BOUND = -421.0;
     private static final int BIG_HEIGHT = 48;
     private static final int INVINCIBILITY_SECONDS = 11;
     private static final int FPS = 60;

@@ -32,7 +32,7 @@ class GoombaTest {
          * @param deltaTime time elapsed since the last frame, in seconds
          */
         @Override
-        public void UpdatePosition(GameObject obj, double dt) { }
+        public void updatePosition(GameObject obj, double dt) { }
     }
 
     /** Initial X position of the Goomba under test. */
