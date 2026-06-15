@@ -31,6 +31,17 @@ class InputControllerTest {
     }
 
     @Test
+    void jumpCommandIsConsumedOnlyOnce() {
+        final InputController inputController = new InputController();
+
+        inputController.pressKey(KeyCode.SPACE);
+
+        assertTrue(inputController.consumeJumpPressed());
+        assertFalse(inputController.consumeJumpPressed());
+        assertTrue(inputController.isJumpPressed());
+    }
+
+    @Test
     void restartCommandIsAvailableAfterNewPress() {
         final InputController inputController = new InputController();
 

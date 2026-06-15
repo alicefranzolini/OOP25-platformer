@@ -2,8 +2,8 @@ package it.unibo.platformer.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import it.unibo.platformer.model.entities.Entity;
-import it.unibo.platformer.model.entities.worldEntity.Coin;
+import it.unibo.platformer.model.entities.AbstractEntity;
+import it.unibo.platformer.model.entities.world.Coin;
 import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Test;
@@ -62,7 +62,7 @@ class GameManagerTest {
     }
 
     @Test
-    void pauseKeyTogglesPauseOnlyOncePerPress() {
+    void pauseKeyPausesThenReturnsToMenu() {
         final GameManager gameManager = new GameManager();
 
         gameManager.startGame();
@@ -76,7 +76,7 @@ class GameManagerTest {
         gameManager.getInputController().pressKey(KeyCode.ESCAPE);
         gameManager.update();
 
-        assertEquals(GameManager.GameState.PLAYING, gameManager.getCurrentState());
+        assertEquals(GameManager.GameState.MENU, gameManager.getCurrentState());
     }
 
     @Test
@@ -117,12 +117,16 @@ class GameManagerTest {
     }
 
     @Test
-    void reachingEndOfLevelReturnsToMenu() {
+    void reachingEndOfLevelShowsVictoryThenReturnsToMenu() {
         final GameManager gameManager = new GameManager();
 
         gameManager.startGame();
-        ((Entity) gameManager.getCurrentLevel().getPlayer()).setX(gameManager.getCurrentLevel().getWidth());
+        ((AbstractEntity) gameManager.getCurrentLevel().getPlayer()).setX(gameManager.getCurrentLevel().getWidth());
         gameManager.update(0);
+
+        assertEquals(GameManager.GameState.VICTORY, gameManager.getCurrentState());
+
+        gameManager.update(3.0);
 
         assertEquals(GameManager.GameState.MENU, gameManager.getCurrentState());
     }
