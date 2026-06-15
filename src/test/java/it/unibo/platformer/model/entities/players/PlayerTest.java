@@ -1,4 +1,4 @@
-package it.unibo.platformer.entity;
+package it.unibo.platformer.model.entities.players;
 
 import it.unibo.platformer.model.entities.players.PlayerImpl;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
