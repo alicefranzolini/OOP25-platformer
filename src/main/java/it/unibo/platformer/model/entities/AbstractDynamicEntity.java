@@ -72,6 +72,18 @@ public abstract class AbstractDynamicEntity extends AbstractEntity {
         gameObject.getPosition().setY((float) y);
     }
 
+     /** {@inheritDoc} */
+    @Override
+    public void setWidth(final double width) {
+        gameObject.setWidth((float) width);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setHeight(final double height) {
+        gameObject.setHeight((float) height);
+    }
+
     /**
      * Updates the entity's position based on its velocity and gravity state.
      * If affected by gravity and airborne, delegates to the physics engine.
@@ -83,7 +95,7 @@ public abstract class AbstractDynamicEntity extends AbstractEntity {
     @Override
     public void update(final double deltaTime) {
         if (affectedByGravity && !onGround) {
-            physics.UpdatePosition(gameObject, deltaTime);
+            physics.updatePosition(gameObject, deltaTime);
         } else if (!affectedByGravity) {
             final float dx = gameObject.getSpeed().getX() * (float) deltaTime;
             final float dy = gameObject.getSpeed().getY() * (float) deltaTime;
@@ -149,7 +161,7 @@ public abstract class AbstractDynamicEntity extends AbstractEntity {
      */
     public void setOnGround(final boolean onGround) {
         this.onGround = onGround;
-        this.gameObject.SetOnGround(onGround);
+        this.gameObject.setOnGround(onGround);
         if (onGround) {
             gameObject.getSpeed().setY(0);
         }
