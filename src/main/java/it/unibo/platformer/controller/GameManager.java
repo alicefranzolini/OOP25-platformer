@@ -18,6 +18,7 @@ public final class GameManager {
     private static final double DEFAULT_VIEW_WIDTH = 1280;
     private static final double DEFAULT_VIEW_HEIGHT = 720;
     private static final double FIXED_DELTA_TIME = 0.016;
+    private static final double MAX_DELTA_TIME = 0.05;
     private static final double CAMERA_PLAYER_OFFSET = 400;
     private static final int COIN_SCORE = 100;
     private static final int ENEMY_SCORE = 200;
@@ -187,6 +188,8 @@ public final class GameManager {
      * @param deltaTime elapsed time in seconds
      */
     public void update(final double deltaTime) {
+        final double safeDeltaTime = Math.max(0, Math.min(deltaTime, MAX_DELTA_TIME));
+
         handleGameCommands();
         discardLevelSelectionOutsideMenu();
 
@@ -195,7 +198,7 @@ public final class GameManager {
                 updateMenu();
                 break;
             case PLAYING:
-                updateGame(deltaTime);
+                updateGame(safeDeltaTime);
                 break;
             case PAUSED:
                 updatePaused();
@@ -225,12 +228,24 @@ public final class GameManager {
         if (this.inputController.consumePausePressed()) {
             handlePauseCommand();
         }
+
+        if (this.inputController.consumeMenuPressed()) {
+            handleMenuCommand();
+        }
     }
 
     private void handlePauseCommand() {
         if (this.currentState == GameState.PLAYING) {
             pauseGame();
-        } else if (this.currentState == GameState.PAUSED
+        } else if (this.currentState == GameState.PAUSED) {
+            resumeGame();
+        } else if (this.currentState == GameState.GAME_OVER || this.currentState == GameState.VICTORY) {
+            backToMenu();
+        }
+    }
+
+    private void handleMenuCommand() {
+        if (this.currentState == GameState.PAUSED
             || this.currentState == GameState.GAME_OVER
             || this.currentState == GameState.VICTORY) {
             backToMenu();

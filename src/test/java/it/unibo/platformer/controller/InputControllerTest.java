@@ -31,6 +31,16 @@ class InputControllerTest {
     }
 
     @Test
+    void menuCommandIsConsumedOnlyOnce() {
+        final InputController inputController = new InputController();
+
+        inputController.pressKey(KeyCode.M);
+
+        assertTrue(inputController.consumeMenuPressed());
+        assertFalse(inputController.consumeMenuPressed());
+    }
+
+    @Test
     void jumpCommandIsConsumedOnlyOnce() {
         final InputController inputController = new InputController();
 

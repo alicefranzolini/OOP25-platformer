@@ -1,8 +1,10 @@
 package it.unibo.platformer.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import it.unibo.platformer.model.entities.AbstractEntity;
+import it.unibo.platformer.model.entities.enemies.Enemy;
 import it.unibo.platformer.model.entities.enemies.Goomba;
 import it.unibo.platformer.model.entities.players.Player;
 import it.unibo.platformer.model.entities.world.Coin;
@@ -64,7 +66,7 @@ class GameManagerTest {
     }
 
     @Test
-    void pauseKeyPausesThenReturnsToMenu() {
+    void pauseKeyPausesThenResumesGame() {
         final GameManager gameManager = new GameManager();
 
         gameManager.startGame();
@@ -76,6 +78,18 @@ class GameManagerTest {
 
         gameManager.getInputController().releaseKey(KeyCode.ESCAPE);
         gameManager.getInputController().pressKey(KeyCode.ESCAPE);
+        gameManager.update();
+
+        assertEquals(GameManager.GameState.PLAYING, gameManager.getCurrentState());
+    }
+
+    @Test
+    void menuKeyReturnsFromPauseToMenu() {
+        final GameManager gameManager = new GameManager();
+
+        gameManager.startGame();
+        gameManager.pauseGame();
+        gameManager.getInputController().pressKey(KeyCode.M);
         gameManager.update();
 
         assertEquals(GameManager.GameState.MENU, gameManager.getCurrentState());
@@ -160,6 +174,18 @@ class GameManagerTest {
         gameManager.update(0);
 
         assertEquals(200, gameManager.getScoreSystem().getScore());
+    }
+
+    @Test
+    void veryLargeFrameDoesNotMakeEnemiesFallThroughLevel() {
+        final GameManager gameManager = new GameManager();
+
+        gameManager.startGame();
+        gameManager.update(10.0);
+
+        assertTrue(gameManager.getCurrentLevel().getEntities().stream()
+            .filter(Enemy.class::isInstance)
+            .allMatch(entity -> entity.getY() < gameManager.getCurrentLevel().getHeight()));
     }
 
     @Test

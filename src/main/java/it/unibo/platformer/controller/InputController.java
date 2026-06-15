@@ -17,6 +17,7 @@ public final class InputController {
     private static final KeyCode KEY_JUMP = KeyCode.SPACE;
     private static final KeyCode KEY_RUN = KeyCode.SHIFT;
     private static final KeyCode KEY_PAUSE = KeyCode.ESCAPE;
+    private static final KeyCode KEY_MENU = KeyCode.M;
     private static final KeyCode KEY_RESTART = KeyCode.R;
     private static final KeyCode KEY_LEVEL_ONE = KeyCode.DIGIT1;
     private static final KeyCode KEY_LEVEL_TWO = KeyCode.DIGIT2;
@@ -132,6 +133,15 @@ public final class InputController {
      */
     public boolean consumePausePressed() {
         return this.keysToConsume.remove(KEY_PAUSE);
+    }
+
+    /**
+     * Consumes a pending menu action.
+     *
+     * @return true if menu was pressed since the previous consumption
+     */
+    public boolean consumeMenuPressed() {
+        return this.keysToConsume.remove(KEY_MENU);
     }
 
     /**

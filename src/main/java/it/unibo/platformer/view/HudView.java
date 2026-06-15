@@ -95,8 +95,9 @@ public final class HudView {
             gc.setFont(Font.font(TITLE_FONT_SIZE));
             gc.fillText("PAUSED", viewWidth / 2 - 80, viewHeight / 2 - 30);
             gc.setFont(Font.font(MENU_FONT_SIZE));
-            gc.fillText("ESC: menu", viewWidth / 2 - 80, viewHeight / 2 + 15);
-            gc.fillText("R: restart", viewWidth / 2 - 80, viewHeight / 2 + 45);
+            gc.fillText("ESC: resume", viewWidth / 2 - 80, viewHeight / 2 + 15);
+            gc.fillText("M: menu", viewWidth / 2 - 80, viewHeight / 2 + 45);
+            gc.fillText("R: restart", viewWidth / 2 - 80, viewHeight / 2 + 75);
         } else if (gameState == GameState.GAME_OVER) {
             renderCenteredMessage(gc, viewWidth, viewHeight, "GAME OVER", "Press R to restart");
         } else if (gameState == GameState.VICTORY) {
