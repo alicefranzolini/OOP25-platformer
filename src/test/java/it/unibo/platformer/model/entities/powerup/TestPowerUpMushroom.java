@@ -1,6 +1,5 @@
 package it.unibo.platformer.model.entities.powerup;
 
-import it.unibo.platformer.model.entities.powerup.MushroomPowerUp;
 import it.unibo.platformer.model.entities.players.PlayerImpl;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
