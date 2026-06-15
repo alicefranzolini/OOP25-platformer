@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 import it.unibo.platformer.model.physics.impl.CollisionDetectorImpl;
 import it.unibo.platformer.model.physics.impl.CollisionResult;
 import it.unibo.platformer.model.physics.impl.GameObjectImpl;
@@ -71,6 +70,10 @@ public class TestPhysics {
         assertEquals(speed.getY(), o.getSpeed().getY());
         assertEquals(30, o.getWidth());
         assertEquals(40, o.getHeight());
+        o.setHeight(10);
+        assertEquals(10, o.getHeight());
+        o.setWidth(10);
+        assertEquals(10, o.getWidth());
         o.setOnGround(true);
         assertEquals(true, o.IsOnGround());
     }
