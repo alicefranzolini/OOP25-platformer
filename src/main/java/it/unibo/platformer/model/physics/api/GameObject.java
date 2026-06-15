@@ -8,6 +8,10 @@ public interface GameObject {
 
     public void setSpeed(float x, float y);
 
+    public void setWidth(float width);
+
+    public void setHeight(float height);
+
     public float getWidth();
 
     public float getHeight();
@@ -18,5 +22,5 @@ public interface GameObject {
 
     public boolean IsOnGround();
 
-    public void SetOnGround(boolean onGround);
+    public void setOnGround(boolean onGround);
 }

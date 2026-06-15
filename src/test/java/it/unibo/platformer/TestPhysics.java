@@ -71,7 +71,7 @@ public class TestPhysics {
         assertEquals(speed.getY(), o.getSpeed().getY());
         assertEquals(30, o.getWidth());
         assertEquals(40, o.getHeight());
-        o.SetOnGround(true);
+        o.setOnGround(true);
         assertEquals(true, o.IsOnGround());
     }
 
