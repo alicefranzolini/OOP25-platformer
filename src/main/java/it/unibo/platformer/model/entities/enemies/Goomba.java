@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 /**
  * A Goomba enemy that walks until squished by the player.
  */
-public final class Goomba extends EnemyImpl {
+public final class Goomba extends  AbstractEnemyImpl {
 
     private static final double WALK_SPEED = 60.0;
     private static final double SQUISH_TIME = 0.4;
@@ -97,10 +97,10 @@ public final class Goomba extends EnemyImpl {
     }
 
     /** Walk handler: manages the sprite's direction and physics. */
-    private final class WalkHandler implements EnemyImpl.WalkingHandler {
+    private final class WalkHandler implements AbstractEnemyImpl.WalkingHandler {
 
         @Override
-        public void update(final EnemyImpl e, final double deltaTime) {
+        public void update(final AbstractEnemyImpl e, final double deltaTime) {
             final double vx = e.getVelocityX();
             if (vx < 0) {
                 e.setFacingLeft(true);
@@ -113,7 +113,7 @@ public final class Goomba extends EnemyImpl {
         }
 
         @Override
-        public void render(final EnemyImpl e, final GraphicsContext gc) {
+        public void render(final AbstractEnemyImpl e, final GraphicsContext gc) {
            if (e.getAnim().hasAnimation(WALK_ANIMATION)) {
                 e.getAnim().render(gc, e.getX(), e.getY(),
                         e.getWidth(), e.getHeight(), e.isFacingLeft());
@@ -122,7 +122,7 @@ public final class Goomba extends EnemyImpl {
             }
         }
 
-        private void renderFallback(final EnemyImpl e, final GraphicsContext gc) {
+        private void renderFallback(final AbstractEnemyImpl e, final GraphicsContext gc) {
             gc.setFill(Color.SADDLEBROWN);
             gc.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
             gc.setFill(Color.WHITE);
@@ -140,12 +140,12 @@ public final class Goomba extends EnemyImpl {
     }
 
     /** Handler for the squished state: manages the squish animation and eventual removal. */
-    private final class SquishHandler implements EnemyImpl.EnemyStateHandler {
+    private final class SquishHandler implements AbstractEnemyImpl.EnemyStateHandler {
 
         private double squishTimer;
 
         @Override
-        public void update(final EnemyImpl e, final double deltaTime) {
+        public void update(final AbstractEnemyImpl e, final double deltaTime) {
             e.getAnim().play(SQUISHED_ANIMATION);
             e.getAnim().update(deltaTime);
             squishTimer += deltaTime;
@@ -155,7 +155,7 @@ public final class Goomba extends EnemyImpl {
         }
 
         @Override
-        public void render(final EnemyImpl e, final GraphicsContext gc) {
+        public void render(final AbstractEnemyImpl e, final GraphicsContext gc) {
             final double halfH = e.getHeight() / 2.0;
             final double drawY = e.getY() + halfH;
            if (e.getAnim().hasAnimation(SQUISHED_ANIMATION)) {

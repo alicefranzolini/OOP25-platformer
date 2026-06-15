@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 /**
  * A Koopa enemy that walks, can be stomped into a shell, and kicked.
  */
-public final class Koopa extends EnemyImpl {
+public final class Koopa extends AbstractEnemyImpl {
 
     private static final double WALK_SPEED = 50.0;
     private static final double WALK_FRAME_DURATION = 0.15;
@@ -117,9 +117,9 @@ public final class Koopa extends EnemyImpl {
     }
 
     /** Walk handler. */
-    private final class WalkHandler implements EnemyImpl.WalkingHandler {
+    private final class WalkHandler implements AbstractEnemyImpl.WalkingHandler {
         @Override
-        public void update(final EnemyImpl e, final double deltaTime) {
+        public void update(final AbstractEnemyImpl e, final double deltaTime) {
             final double vx = e.getVelocityX();
             if (vx < 0) {
                 e.setFacingLeft(true);
@@ -132,7 +132,7 @@ public final class Koopa extends EnemyImpl {
         }
 
         @Override
-        public void render(final EnemyImpl e, final GraphicsContext gc) {
+        public void render(final AbstractEnemyImpl e, final GraphicsContext gc) {
             if (e.getAnim().hasAnimation(WALK_ANIMATION)) {
                 e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), !e.isFacingLeft());
             } else {
@@ -148,16 +148,16 @@ public final class Koopa extends EnemyImpl {
     }
 
     /** Shell handler. */
-    private final class ShellHandler implements EnemyImpl.EnemyStateHandler {
+    private final class ShellHandler implements AbstractEnemyImpl.EnemyStateHandler {
         @Override
-        public void update(final EnemyImpl e, final double deltaTime) {
+        public void update(final AbstractEnemyImpl e, final double deltaTime) {
             e.getAnim().play(SHELL_ANIMATION);
             e.getAnim().update(deltaTime);
             e.physicsTick(deltaTime);
         }
 
         @Override
-        public void render(final EnemyImpl e, final GraphicsContext gc) {
+        public void render(final AbstractEnemyImpl e, final GraphicsContext gc) {
             if (e.getAnim().hasAnimation(SHELL_ANIMATION)) {
                 e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), !e.isFacingLeft());
             }
@@ -170,16 +170,16 @@ public final class Koopa extends EnemyImpl {
     }
 
     /** Shell moving handler. */
-    private static final class ShellMovingHandler implements EnemyImpl.EnemyStateHandler {
+    private static final class ShellMovingHandler implements AbstractEnemyImpl.EnemyStateHandler {
         @Override
-        public void update(final EnemyImpl e, final double deltaTime) {
+        public void update(final AbstractEnemyImpl e, final double deltaTime) {
             e.getAnim().play(SHELL_MOVING_ANIMATION);
             e.getAnim().update(deltaTime);
             e.physicsTick(deltaTime);
         }
 
         @Override
-        public void render(final EnemyImpl e, final GraphicsContext gc) {
+        public void render(final AbstractEnemyImpl e, final GraphicsContext gc) {
             if (e.getAnim().hasAnimation(SHELL_MOVING_ANIMATION)) {
                 e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), !e.isFacingLeft());
             }
