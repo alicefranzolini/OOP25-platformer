@@ -135,7 +135,7 @@ public class Koopa extends EnemyImpl {
         @Override
         public void render(final EnemyImpl e, final GraphicsContext gc) {
             if (e.getAnim().hasAnimation(WALK_ANIMATION)) {
-                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.isFacingLeft());
+                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), !e.isFacingLeft());
             } else {
                 gc.setFill(Color.GREEN);
                 gc.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
@@ -160,7 +160,7 @@ public class Koopa extends EnemyImpl {
         @Override
         public void render(final EnemyImpl e, final GraphicsContext gc) {
             if (e.getAnim().hasAnimation(SHELL_ANIMATION)) {
-                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.isFacingLeft());
+                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), !e.isFacingLeft());
             }
         }
 
@@ -182,7 +182,7 @@ public class Koopa extends EnemyImpl {
         @Override
         public void render(final EnemyImpl e, final GraphicsContext gc) {
             if (e.getAnim().hasAnimation(SHELL_MOVING_ANIMATION)) {
-                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.isFacingLeft());
+                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), !e.isFacingLeft());
             }
         }
 
