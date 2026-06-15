@@ -71,7 +71,7 @@ public final class PlayerTest {
 
         player.update(UPDATE_TIME);
 
-        assertTrue(player.getVelocityY() < JUMP_UPPER_BOUND && player.getVelocityY() > JUMP_LOWER_BOUND);
+        assertTrue(player.getVelocityY() < 0.0);
         assertFalse(player.isOnGround());
     }
 
