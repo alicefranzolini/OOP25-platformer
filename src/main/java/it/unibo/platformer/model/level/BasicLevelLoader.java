@@ -6,6 +6,8 @@ import it.unibo.platformer.model.entities.players.PlayerImpl;
 import it.unibo.platformer.model.entities.world.Block;
 import it.unibo.platformer.model.entities.world.Block.BlockType;
 import it.unibo.platformer.model.entities.world.Coin;
+import it.unibo.platformer.model.entities.world.Flag;
+import it.unibo.platformer.model.entities.world.Pole;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 
@@ -22,6 +24,8 @@ public final class BasicLevelLoader implements LevelLoader {
     private static final double FLOOR_Y = 500;
     private static final double GOOMBA_Y = FLOOR_Y - 32;
     private static final double KOOPA_Y = FLOOR_Y - 48;
+    private static final double GOAL_DISTANCE_FROM_END = 96;
+    private static final double GOAL_POLE_HEIGHT = 220;
 
     @Override
     public Level loadLevel(final int levelNumber) {
@@ -74,7 +78,9 @@ public final class BasicLevelLoader implements LevelLoader {
         addEnemyPair(level, 1850);
         addEnemyGauntlet(level, 2860, 3);
         level.addEntity(createKoopa(3600));
-        level.addEntity(createGoomba(3720));
+        level.addEntity(createGoomba(3650));
+
+        addGoal(level);
 
         return level;
     }
@@ -125,6 +131,8 @@ public final class BasicLevelLoader implements LevelLoader {
         level.addEntity(createKoopa(4740));
         level.addEntity(createGoomba(4890));
         level.addEntity(createKoopa(5100));
+
+        addGoal(level);
 
         return level;
     }
@@ -181,6 +189,8 @@ public final class BasicLevelLoader implements LevelLoader {
         addEnemyGauntlet(level, 5600, 3);
         level.addEntity(createKoopa(6500));
         level.addEntity(createGoomba(6660));
+
+        addGoal(level);
 
         return level;
     }
@@ -323,6 +333,16 @@ public final class BasicLevelLoader implements LevelLoader {
 
     private Koopa createKoopa(final double x) {
         return new Koopa(x, KOOPA_Y, createPhysics());
+    }
+
+    private void addGoal(final BasicLevel level) {
+        final Pole pole = new Pole(
+            level.getWidth() - GOAL_DISTANCE_FROM_END,
+            FLOOR_Y - GOAL_POLE_HEIGHT,
+            GOAL_POLE_HEIGHT
+        );
+        level.addEntity(pole);
+        level.addEntity(new Flag(pole));
     }
 
     private BasicPhysics createPhysics() {

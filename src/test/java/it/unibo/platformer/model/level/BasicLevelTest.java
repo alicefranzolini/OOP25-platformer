@@ -12,6 +12,8 @@ import it.unibo.platformer.model.entities.powerup.StarPowerUp;
 import it.unibo.platformer.model.entities.world.Block;
 import it.unibo.platformer.model.entities.world.Block.BlockType;
 import it.unibo.platformer.model.entities.world.Coin;
+import it.unibo.platformer.model.entities.world.Flag;
+import it.unibo.platformer.model.entities.world.Pole;
 import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 import org.junit.jupiter.api.Test;
 
@@ -205,6 +207,40 @@ class BasicLevelTest {
 
         assertEquals(Goomba.GoombaState.SQUISHED, goomba.getState());
         assertFalse(player.isDying());
+    }
+
+    @Test
+    void defeatedEnemiesAreCountedAndCanBeReset() {
+        final BasicLevel level = new BasicLevel();
+        final PlayerImpl player = new PlayerImpl(100, 100, new BasicPhysicsImpl());
+        final Goomba goomba = new Goomba(105, 100, new BasicPhysicsImpl());
+
+        player.setState(PlayerImpl.PlayerState.INVINCIBLE);
+        level.setPlayer(player);
+        level.addEntity(goomba);
+
+        level.update(0);
+
+        assertEquals(1, level.getDefeatedEnemies());
+        level.resetDefeatedEnemies();
+        assertEquals(0, level.getDefeatedEnemies());
+    }
+
+    @Test
+    void touchingGoalPoleCompletesLevelAndLowersFlag() {
+        final BasicLevel level = new BasicLevel();
+        final PlayerImpl player = new PlayerImpl(100, 250, new BasicPhysicsImpl());
+        final Pole pole = new Pole(110, 100, 200);
+        final Flag flag = new Flag(pole);
+
+        level.setPlayer(player);
+        level.addEntity(pole);
+        level.addEntity(flag);
+
+        level.update(0);
+
+        assertTrue(level.isCompleted());
+        assertTrue(flag.isLowering());
     }
 
     private void hitQuestionBlock(final BasicLevel level, final PlayerImpl player, final Block block) {

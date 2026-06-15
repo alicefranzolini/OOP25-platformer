@@ -93,6 +93,25 @@ public interface Level {
     void resetCollectedCoins();
 
     /**
+     * Gets the enemies defeated during the latest update.
+     *
+     * @return the defeated enemy count
+     */
+    int getDefeatedEnemies();
+
+    /**
+     * Clears the defeated enemy counter after the score reads it.
+     */
+    void resetDefeatedEnemies();
+
+    /**
+     * Checks whether the level objective has been reached.
+     *
+     * @return true if the level has been completed
+     */
+    boolean isCompleted();
+
+    /**
      * Handles jump actions that are pressed once, like a wall jump.
      *
      * @param jumpPressed true if jump was just pressed

@@ -19,6 +19,8 @@ import it.unibo.platformer.model.entities.powerup.PowerUp;
 import it.unibo.platformer.model.entities.powerup.StarPowerUp;
 import it.unibo.platformer.model.entities.world.Block;
 import it.unibo.platformer.model.entities.world.Coin;
+import it.unibo.platformer.model.entities.world.Flag;
+import it.unibo.platformer.model.entities.world.Pole;
 import it.unibo.platformer.model.physics.api.CollisionDetector;
 import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 import it.unibo.platformer.model.physics.impl.CollisionDetectorImpl;
@@ -44,6 +46,7 @@ public final class BasicLevel implements Level {
     private static final double WALL_JUMP_TIME = 0.18;
     private static final double EDGE_CHECK_DISTANCE = 8.0;
     private static final double FALL_LIMIT_OFFSET = 160.0;
+    private static final double GOAL_DISTANCE_FROM_END = 96.0;
 
     private enum QuestionReward {
         COIN,
@@ -61,6 +64,8 @@ public final class BasicLevel implements Level {
     private final double spawnX;
     private final double spawnY;
     private int collectedCoins;
+    private int defeatedEnemies;
+    private boolean completed;
 
     private Player player;
     private int wallContactDirection;
@@ -101,6 +106,8 @@ public final class BasicLevel implements Level {
         this.spawnX = playerSpawnX;
         this.spawnY = playerSpawnY;
         this.collectedCoins = 0;
+        this.defeatedEnemies = 0;
+        this.completed = false;
         this.wallContactDirection = 0;
         this.wallContactTimer = 0;
         this.detector = new CollisionDetectorImpl();
@@ -173,6 +180,21 @@ public final class BasicLevel implements Level {
     }
 
     @Override
+    public int getDefeatedEnemies() {
+        return this.defeatedEnemies;
+    }
+
+    @Override
+    public void resetDefeatedEnemies() {
+        this.defeatedEnemies = 0;
+    }
+
+    @Override
+    public boolean isCompleted() {
+        return this.completed;
+    }
+
+    @Override
     public void update(final double deltaTime) {
         updateWallJumpTimer(deltaTime);
 
@@ -206,6 +228,9 @@ public final class BasicLevel implements Level {
                 if (!(staticEntity instanceof AbstractStaticEntity)) {
                     continue;
                 }
+                if (!((AbstractStaticEntity) staticEntity).isSolid()) {
+                    continue;
+                }
 
                 final GameObjectImpl dynamicObj = new GameObjectImpl(
                     (float) movingEntity.getX(),
@@ -230,6 +255,8 @@ public final class BasicLevel implements Level {
                 final double previousY = previousPosition == null ? movingEntity.getY() : previousPosition[1];
 
                 if (result != null) {
+                    handleGoalCollision(dynamicEntity, staticEntity);
+
                     final double speedXBeforeCollision = movingEntity.getVelocityX();
                     if (isBottomCollisionFromPlayer(movingEntity, staticEntity, result, previousY)) {
                         resolveBottomCollision(movingEntity, staticEntity);
@@ -257,6 +284,7 @@ public final class BasicLevel implements Level {
         handlePlayerEnemyCollisions();
         handlePlayerPowerUpCollisions();
         handlePlayerFallOut();
+        handleLevelEndByPosition();
 
         if (this.player != null) {
             for (final AbstractEntity entity : this.entities) {
@@ -354,6 +382,36 @@ public final class BasicLevel implements Level {
 
     private boolean isSideCollision(final CollisionResult result) {
         return result.getSide() == CollisionSide.LEFT || result.getSide() == CollisionSide.RIGHT;
+    }
+
+    private void handleGoalCollision(final AbstractEntity dynamicEntity, final AbstractEntity staticEntity) {
+        if (isPlayer(dynamicEntity) && staticEntity instanceof Pole) {
+            completeLevel();
+        }
+    }
+
+    private void handleLevelEndByPosition() {
+        if (this.player == null || this.completed) {
+            return;
+        }
+
+        final double playerEndX = this.player.getX() + this.player.getWidth();
+        if (playerEndX >= this.width - GOAL_DISTANCE_FROM_END) {
+            completeLevel();
+        }
+    }
+
+    private void completeLevel() {
+        if (this.completed) {
+            return;
+        }
+
+        this.completed = true;
+        for (final AbstractEntity entity : this.entities) {
+            if (entity instanceof Flag) {
+                ((Flag) entity).lower();
+            }
+        }
     }
 
     private void resolveSideCollision(
@@ -513,6 +571,7 @@ public final class BasicLevel implements Level {
     private boolean hasStaticBlockAt(final double x, final double y) {
         for (final AbstractEntity entity : this.entities) {
             if (entity instanceof AbstractStaticEntity
+                && ((AbstractStaticEntity) entity).isSolid()
                 && x >= entity.getX()
                 && x <= entity.getX() + entity.getWidth()
                 && y >= entity.getY()
@@ -606,7 +665,7 @@ public final class BasicLevel implements Level {
 
     private void stompEnemy(final AbstractEntity enemyEntity, final AbstractDynamicEntity playerEntity) {
         if (enemyEntity instanceof Goomba) {
-            ((Goomba) enemyEntity).squish();
+            defeatEnemy(enemyEntity);
         } else if (enemyEntity instanceof Koopa) {
             final Koopa koopa = (Koopa) enemyEntity;
             if (koopa.getState() == Koopa.KoopaState.SHELL) {
@@ -620,9 +679,14 @@ public final class BasicLevel implements Level {
 
     private void defeatEnemy(final AbstractEntity enemyEntity) {
         if (enemyEntity instanceof Goomba) {
-            ((Goomba) enemyEntity).squish();
+            final Goomba goomba = (Goomba) enemyEntity;
+            if (goomba.getState() != Goomba.GoombaState.SQUISHED) {
+                goomba.squish();
+                this.defeatedEnemies++;
+            }
         } else {
             enemyEntity.destroy();
+            this.defeatedEnemies++;
         }
     }
 

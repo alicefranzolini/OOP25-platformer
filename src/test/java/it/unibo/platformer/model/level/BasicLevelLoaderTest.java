@@ -8,6 +8,8 @@ import it.unibo.platformer.model.entities.AbstractEntity;
 import it.unibo.platformer.model.entities.AbstractStaticEntity;
 import it.unibo.platformer.model.entities.enemies.Enemy;
 import it.unibo.platformer.model.entities.world.Coin;
+import it.unibo.platformer.model.entities.world.Flag;
+import it.unibo.platformer.model.entities.world.Pole;
 import org.junit.jupiter.api.Test;
 
 class BasicLevelLoaderTest {
@@ -53,19 +55,29 @@ class BasicLevelLoaderTest {
     void enemiesStartOnSolidGround() {
         for (int levelNumber = 1; levelNumber <= 3; levelNumber++) {
             final Level level = loader.loadLevel(levelNumber);
-            for (final AbstractEntity AbstractEntity : level.getEntities()) {
-                if (AbstractEntity instanceof Enemy) {
+            for (final AbstractEntity entity : level.getEntities()) {
+                if (entity instanceof Enemy) {
                     assertTrue(
-                        hasSolidGroundBelow(level, AbstractEntity),
+                        hasSolidGroundBelow(level, entity),
                         "Enemy has no ground below in level "
                             + levelNumber
                             + " at x="
-                            + AbstractEntity.getX()
+                            + entity.getX()
                             + ", y="
-                            + AbstractEntity.getY()
+                            + entity.getY()
                     );
                 }
             }
+        }
+    }
+
+    @Test
+    void levelsContainGoalPoleAndFlag() {
+        for (int levelNumber = 1; levelNumber <= 3; levelNumber++) {
+            final Level level = loader.loadLevel(levelNumber);
+
+            assertTrue(level.getEntities().stream().anyMatch(Pole.class::isInstance));
+            assertTrue(level.getEntities().stream().anyMatch(Flag.class::isInstance));
         }
     }
 
@@ -79,7 +91,9 @@ class BasicLevelLoaderTest {
         final double enemyBottom = enemy.getY() + enemy.getHeight();
         return level.getEntities().stream()
             .filter(AbstractStaticEntity.class::isInstance)
-            .anyMatch(block -> Math.abs(block.getY() - enemyBottom) < 0.001
+            .map(AbstractStaticEntity.class::cast)
+            .anyMatch(block -> block.isSolid()
+                && Math.abs(block.getY() - enemyBottom) < 0.001
                 && horizontalOverlap(enemy, block) > 0);
     }
 

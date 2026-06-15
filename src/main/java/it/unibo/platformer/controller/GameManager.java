@@ -20,6 +20,7 @@ public final class GameManager {
     private static final double FIXED_DELTA_TIME = 0.016;
     private static final double CAMERA_PLAYER_OFFSET = 400;
     private static final int COIN_SCORE = 100;
+    private static final int ENEMY_SCORE = 200;
     private static final double LEVEL_END_DISTANCE = 64;
     private static final double VICTORY_MENU_DELAY = 2.5;
 
@@ -187,6 +188,7 @@ public final class GameManager {
      */
     public void update(final double deltaTime) {
         handleGameCommands();
+        discardLevelSelectionOutsideMenu();
 
         switch (currentState) {
             case MENU:
@@ -204,6 +206,12 @@ public final class GameManager {
             case VICTORY:
                 updateVictory(deltaTime);
                 break;
+        }
+    }
+
+    private void discardLevelSelectionOutsideMenu() {
+        if (this.currentState != GameState.MENU) {
+            this.inputController.consumeSelectedLevel();
         }
     }
 
@@ -241,7 +249,8 @@ public final class GameManager {
             try {
                 Thread.sleep(16);
             } catch (final InterruptedException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
+                this.running = false;
             }
         }
     }
@@ -249,6 +258,7 @@ public final class GameManager {
     private void updateMenu() {
         final int selectedLevel = this.inputController.consumeSelectedLevel();
         if (selectedLevel >= FIRST_LEVEL && selectedLevel <= LAST_LEVEL) {
+            this.scoreSystem.reset();
             loadLevel(selectedLevel);
             startGame();
         }
@@ -278,6 +288,13 @@ public final class GameManager {
         }
 
         this.currentLevel.resetCollectedCoins();
+
+        final int defeatedEnemies = this.currentLevel.getDefeatedEnemies();
+        for (int i = 0; i < defeatedEnemies; i++) {
+            this.scoreSystem.addScore(ENEMY_SCORE);
+        }
+
+        this.currentLevel.resetDefeatedEnemies();
     }
 
     private void checkLevelEnd() {
@@ -288,7 +305,8 @@ public final class GameManager {
         final double playerEndX = this.currentLevel.getPlayer().getX()
             + this.currentLevel.getPlayer().getWidth();
 
-        if (playerEndX >= this.currentLevel.getWidth() - LEVEL_END_DISTANCE) {
+        if (this.currentLevel.isCompleted()
+            || playerEndX >= this.currentLevel.getWidth() - LEVEL_END_DISTANCE) {
             completeLevel();
         }
     }
