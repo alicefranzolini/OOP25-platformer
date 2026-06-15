@@ -1,7 +1,6 @@
 package it.unibo.platformer.model.entities.powerup;
 
 import it.unibo.platformer.model.entities.players.Player;
-import it.unibo.platformer.model.entities.powerup.AbstractPowerUp;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 import javafx.scene.canvas.GraphicsContext;
