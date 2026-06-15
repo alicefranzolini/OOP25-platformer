@@ -90,6 +90,15 @@ public final class InputController {
     }
 
     /**
+     * Consumes a pending jump action.
+     *
+     * @return true if jump was pressed since the previous consumption
+     */
+    public boolean consumeJumpPressed() {
+        return this.keysToConsume.remove(KEY_JUMP);
+    }
+
+    /**
      * Checks whether the run key is currently pressed.
      *
      * @return true if run is pressed

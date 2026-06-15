@@ -2,8 +2,10 @@ package it.unibo.platformer.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import it.unibo.platformer.model.entities.Entity;
-import it.unibo.platformer.model.entities.worldEntity.Coin;
+import it.unibo.platformer.model.entities.AbstractEntity;
+import it.unibo.platformer.model.entities.enemies.Goomba;
+import it.unibo.platformer.model.entities.players.Player;
+import it.unibo.platformer.model.entities.world.Coin;
 import it.unibo.platformer.model.physics.impl.BasicPhysicsImpl;
 import javafx.scene.input.KeyCode;
 import org.junit.jupiter.api.Test;
@@ -62,7 +64,7 @@ class GameManagerTest {
     }
 
     @Test
-    void pauseKeyTogglesPauseOnlyOncePerPress() {
+    void pauseKeyPausesThenReturnsToMenu() {
         final GameManager gameManager = new GameManager();
 
         gameManager.startGame();
@@ -76,7 +78,7 @@ class GameManagerTest {
         gameManager.getInputController().pressKey(KeyCode.ESCAPE);
         gameManager.update();
 
-        assertEquals(GameManager.GameState.PLAYING, gameManager.getCurrentState());
+        assertEquals(GameManager.GameState.MENU, gameManager.getCurrentState());
     }
 
     @Test
@@ -117,12 +119,60 @@ class GameManagerTest {
     }
 
     @Test
-    void reachingEndOfLevelReturnsToMenu() {
+    void menuLevelSelectionStartsWithFreshScoreSystem() {
+        final GameManager gameManager = new GameManager();
+
+        gameManager.getScoreSystem().addScore(500);
+        gameManager.getScoreSystem().addCoin();
+        gameManager.getScoreSystem().loseLife();
+        gameManager.getInputController().pressKey(KeyCode.DIGIT2);
+        gameManager.update();
+
+        assertEquals(GameManager.GameState.PLAYING, gameManager.getCurrentState());
+        assertEquals(2, gameManager.getCurrentLevel().getLevelNumber());
+        assertEquals(0, gameManager.getScoreSystem().getScore());
+        assertEquals(0, gameManager.getScoreSystem().getCoins());
+        assertEquals(3, gameManager.getScoreSystem().getLives());
+    }
+
+    @Test
+    void levelSelectionPressedDuringGameplayIsIgnoredWhenReturningToMenu() {
         final GameManager gameManager = new GameManager();
 
         gameManager.startGame();
-        ((Entity) gameManager.getCurrentLevel().getPlayer()).setX(gameManager.getCurrentLevel().getWidth());
+        gameManager.getInputController().pressKey(KeyCode.DIGIT3);
+        gameManager.update();
+        gameManager.backToMenu();
+        gameManager.update();
+
+        assertEquals(GameManager.GameState.MENU, gameManager.getCurrentState());
+        assertEquals(1, gameManager.getCurrentLevel().getLevelNumber());
+    }
+
+    @Test
+    void defeatingEnemyUpdatesScoreSystem() {
+        final GameManager gameManager = new GameManager();
+        final Player player = gameManager.getCurrentLevel().getPlayer();
+
+        player.setState(Player.PlayerState.INVINCIBLE);
+        gameManager.getCurrentLevel().addEntity(new Goomba(player.getX(), player.getY(), new BasicPhysicsImpl()));
+        gameManager.startGame();
         gameManager.update(0);
+
+        assertEquals(200, gameManager.getScoreSystem().getScore());
+    }
+
+    @Test
+    void reachingEndOfLevelShowsVictoryThenReturnsToMenu() {
+        final GameManager gameManager = new GameManager();
+
+        gameManager.startGame();
+        ((AbstractEntity) gameManager.getCurrentLevel().getPlayer()).setX(gameManager.getCurrentLevel().getWidth());
+        gameManager.update(0);
+
+        assertEquals(GameManager.GameState.VICTORY, gameManager.getCurrentState());
+
+        gameManager.update(3.0);
 
         assertEquals(GameManager.GameState.MENU, gameManager.getCurrentState());
     }
