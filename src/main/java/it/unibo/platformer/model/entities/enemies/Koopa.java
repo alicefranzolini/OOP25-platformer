@@ -64,6 +64,39 @@ public class Koopa extends EnemyImpl {
     }
 
     /**
+     * Stomps on the Koopa, transitioning it into a stationary shell.
+     */
+    public void stomp() {
+        // Se vuoi evitare di pestarlo se è già un guscio in movimento (o fermo)
+        if (this.state != KoopaState.WALK) {
+            return;
+        }
+        transitionTo(KoopaState.SHELL);
+        setVelocityX(0); // Ferma il movimento orizzontale
+    }
+
+    /**
+     * Kicks the Koopa shell, sending it moving fast in a direction.
+     *
+     * @param toRight true to kick it right, false to kick it left
+     */
+    public void kick(final boolean toRight) {
+        transitionTo(KoopaState.SHELL_MOVING);
+        // Moltiplichiamo la velocità di camminata per farlo andare veloce come guscio
+        final double shellSpeed = WALK_SPEED * 3.0; 
+        setVelocityX(toRight ? shellSpeed : -shellSpeed);
+    }
+
+    /**
+     * Checks if the Koopa is currently in a state that can damage other enemies.
+     *
+     * @return true if it's a moving shell, false otherwise
+     */
+    public boolean canKillEnemies() {
+        return this.state == KoopaState.SHELL_MOVING;
+    }
+
+    /**
      * Returns the current state of this Koopa.
      *
      * @return the current {@link KoopaState}
@@ -85,7 +118,7 @@ public class Koopa extends EnemyImpl {
     }
 
     /** Walk handler. */
-    private static final class WalkHandler implements EnemyImpl.WalkingHandler {
+    private final class WalkHandler implements EnemyImpl.WalkingHandler {
         @Override
         public void update(final EnemyImpl e, final double deltaTime) {
             final double vx = e.getVelocityX();
@@ -116,7 +149,7 @@ public class Koopa extends EnemyImpl {
     }
 
     /** Shell handler. */
-    private static final class ShellHandler implements EnemyImpl.EnemyStateHandler {
+    private final class ShellHandler implements EnemyImpl.EnemyStateHandler {
         @Override
         public void update(final EnemyImpl e, final double deltaTime) {
             e.getAnim().play(SHELL_ANIMATION);

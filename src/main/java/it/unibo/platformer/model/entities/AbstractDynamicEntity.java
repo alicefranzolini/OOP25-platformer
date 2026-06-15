@@ -4,7 +4,7 @@ import it.unibo.platformer.model.physics.impl.GameObjectImpl;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 
 /** Represents an entity capable of movement and subject to physical forces.*/
-public abstract class DynamicEntity extends Entity {
+public abstract class AbstractDynamicEntity extends AbstractEntity {
 
     /** Stores position, size and velocity of this entity. */
     private final GameObjectImpl gameObject;
@@ -28,7 +28,7 @@ public abstract class DynamicEntity extends Entity {
      * @param height  the height of the entity
      * @param physics the {@link BasicPhysics} engine to use for movement
      */
-    public DynamicEntity(final double x, final double y, final double width, final double height, final BasicPhysics physics) {
+    public AbstractDynamicEntity(final double x, final double y, final double width, final double height, final BasicPhysics physics) {
         super(x, y, width, height);
         this.gameObject = new GameObjectImpl((float) x, (float) y, (float) width, (float) height);
         this.affectedByGravity = true;
@@ -39,37 +39,37 @@ public abstract class DynamicEntity extends Entity {
     /** {@inheritDoc} */
     @Override
     public double getX() { 
-        return gameObject.getPosition().getX(); 
+        return gameObject.getPosition().getX();
     }
 
     /** {@inheritDoc} */
     @Override
     public double getY() { 
-        return gameObject.getPosition().getY(); 
+        return gameObject.getPosition().getY();
     }
 
     /** {@inheritDoc} */
     @Override
     public double getWidth() {
-        return gameObject.getWidth(); // Supponendo che GameObjectImpl esponga questo metodo
+        return gameObject.getWidth();
     }
 
     /** {@inheritDoc} */
     @Override
     public double getHeight() {
-        return gameObject.getHeight(); // Supponendo che GameObjectImpl esponga questo metodo
+        return gameObject.getHeight();
     }
-
+    
     /** {@inheritDoc} */
     @Override
-    public void setX(double x) { 
+    public void setX(final double x) {
         gameObject.getPosition().setX((float) x);
      }
 
     /** {@inheritDoc} */
     @Override
-    public void setY(double y) { 
-        gameObject.getPosition().setY((float) y); 
+    public void setY(final double y) {
+        gameObject.getPosition().setY((float) y);
     }
 
     /**
@@ -123,22 +123,22 @@ public abstract class DynamicEntity extends Entity {
     /**
      * @return true if this entity is subject to gravity
      */
-    public boolean isAffectedByGravity() { 
-        return affectedByGravity; 
+    public boolean isAffectedByGravity() {
+        return affectedByGravity;
     }
 
     /**
      * @return true if this entity is currently on the ground
      */
-    public boolean isOnGround() { 
-        return onGround; 
+    public boolean isOnGround() {
+        return onGround;
     }
 
     /**
      * @param g true to enable gravity for this entity, false to disable it
      */
-    public void setAffectedByGravity(final boolean g) { 
-        this.affectedByGravity = g; 
+    public void setAffectedByGravity(final boolean g) {
+        this.affectedByGravity = g;
     }
 
     /**
@@ -160,10 +160,11 @@ public abstract class DynamicEntity extends Entity {
     public BoundingBox getBoundingBox() {
         return new BoundingBox(getX(), getY(), getWidth(), getHeight());
     }
+
     /**
      * @return the underlying {@link GameObjectImpl} used by the physics engine
      */
-    public GameObjectImpl getGameObject() { 
-        return gameObject; 
+    public GameObjectImpl getGameObject() {
+        return gameObject;
     }
 }

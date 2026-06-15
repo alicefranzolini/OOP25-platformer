@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /** Defines the position and size of any object in the game world. */
-public abstract class Entity {
+public abstract class AbstractEntity {
 
     private double x;
     private double y;
@@ -23,7 +23,7 @@ public abstract class Entity {
      * @param width  the width of the entity
      * @param height the height of the entity
      */
-    public Entity(final double x, final double y, final double width, final double height) {
+    public AbstractEntity(final double x, final double y, final double width, final double height) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -50,7 +50,7 @@ public abstract class Entity {
          * @param width  the width of the box
          * @param height the height of the box
          */
-        public BoundingBox(double x, double y, double width, double height) {
+        public BoundingBox(final double x, final double y, final double width, final double height) {
             this.x = x;
             this.y = y;
             this.width = width;
@@ -58,23 +58,23 @@ public abstract class Entity {
         }
 
         /** @return the horizontal position of this box */
-        public double getX() { 
-            return x; 
+        public double getX() {
+            return x;
         }
 
         /** @return the vertical position of this box */
-        public double getY() { 
-            return y; 
+        public double getY() {
+            return y;
         }
 
         /** @return the width of this box */
-        public double getWidth() { 
-            return width; 
+        public double getWidth() {
+            return width;
         }
 
         /** @return the height of this box */
-        public double getHeight() { 
-            return height; 
+        public double getHeight() {
+            return height;
         }
 
         /**
@@ -83,7 +83,7 @@ public abstract class Entity {
          * @param other the other BoundingBox to test against
          * @return true if this box overlaps with {@code other}
          */
-        public boolean overlaps(BoundingBox other) {
+        public boolean overlaps(final BoundingBox other) {
             return x < other.x + other.width
                 && x + width  > other.x
                 && y < other.y + other.height
@@ -105,63 +105,63 @@ public abstract class Entity {
      *
      * @param deltaTime the time elapsed since the last frame, in seconds
      */
-    public abstract void update(double deltaTime);
+    public abstract void update(final double deltaTime);
 
     /**
      * Draws this entity onto the given graphics context.
      *
      * @param gc the {@link GraphicsContext} to render onto
      */
-    public abstract void render(GraphicsContext gc);
+    public abstract void render(final GraphicsContext gc);
 
     /** @return the horizontal position of this entity */
-    public double getX() { 
-        return x; 
+    public double getX() {
+        return x;
     }
 
     /** @return the vertical position of this entity */
-    public double getY() { 
-        return y; 
+    public double getY() {
+        return y;
     }
 
     /** @return the width of this entity */
-    public double getWidth() { 
-        return width; 
+    public double getWidth() {
+        return width;
     }
 
     /** @return the height of this entity */
-    public double getHeight() { 
-        return height; 
+    public double getHeight() {
+        return height;
     }
 
     /** @return true if this entity is still active */
-    public boolean isActive() { 
-        return active; 
+    public boolean isActive() {
+        return active;
     }
 
     /** @param x the new horizontal position */
-    public void setX(double x) { 
-        this.x = x; 
+    public void setX(final double x) {
+        this.x = x;
     }
 
     /** @param y the new vertical position */
-    public void setY(double y) { 
-        this.y = y; 
+    public void setY(final double y) {
+        this.y = y;
     }
 
     /** @param width the new width */
-    public void setWidth(double width) { 
-        this.width = width; 
+    public void setWidth(final double width) {
+        this.width = width;
     }
 
     /** @param height the new height */
-    public void setHeight(double height)  { 
-        this.height = height; 
+    public void setHeight(final double height)  {
+        this.height = height;
     }
 
     /** @param active the new active state */
-    public void setActive(boolean active) { 
-        this.active = active; 
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
     /** Marks this entity for removal; it will be filtered out on the next frame. */
@@ -175,9 +175,9 @@ public abstract class Entity {
      * @param entities the list to filter
      * @return a new list containing only the active entities
      */
-    public static List<Entity> filterActive(List<Entity> entities) {
+    public static List<AbstractEntity> filterActive(final List<AbstractEntity> entities) {
         return entities.stream()
-                .filter(Entity::isActive)
+                .filter(AbstractEntity::isActive)
                 .collect(Collectors.toList());
     }
 }

@@ -6,7 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
  * Represents an entity that does not possess its own physical dynamics
  * (no speed or gravity).
  */
-public abstract class StaticEntity extends Entity {
+public abstract class AbstractStaticEntity extends AbstractEntity {
 
     /**
      * Indicates whether this entity blocks movement.
@@ -23,7 +23,7 @@ public abstract class StaticEntity extends Entity {
      * @param width  the width of the entity
      * @param height the height of the entity
      */
-    public StaticEntity(final double x, final double y, final double width, final double height) {
+    public AbstractStaticEntity(final double x, final double y, final double width, final double height) {
         super(x, y, width, height);
         this.solid = true;
     }

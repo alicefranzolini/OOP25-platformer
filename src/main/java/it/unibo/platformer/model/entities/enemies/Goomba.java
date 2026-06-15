@@ -41,7 +41,7 @@ public final class Goomba extends EnemyImpl {
     }
 
     @Override
-    protected void loadAnimations() {
+    protected final void loadAnimations() {
         final Image frame1 = AnimationManager.loadImage("/sprites/enemies/goomba1.png");
         final Image frame2 = AnimationManager.loadImage("/sprites/enemies/goomba2.png");
         final Image dead = AnimationManager.loadImage("/sprites/enemies/goomba_dead.png");
@@ -97,7 +97,7 @@ public final class Goomba extends EnemyImpl {
     }
 
     /** Walk handler: manages the sprite's direction and physics. */
-    private static final class WalkHandler implements EnemyImpl.WalkingHandler {
+    private final class WalkHandler implements EnemyImpl.WalkingHandler {
 
         @Override
         public void update(final EnemyImpl e, final double deltaTime) {
@@ -140,7 +140,7 @@ public final class Goomba extends EnemyImpl {
     }
 
     /** Handler for the squished state: manages the squish animation and eventual removal. */
-    private static final class SquishHandler implements EnemyImpl.EnemyStateHandler {
+    private final class SquishHandler implements EnemyImpl.EnemyStateHandler {
 
         private double squishTimer;
 
