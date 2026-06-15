@@ -17,22 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class CoinTest {
 
-    /**
-     * Minimal no-op {@link BasicPhysics} stub that allows entity instantiation
-     * without a real physics engine.
-     */
-    static final class NoOpPhysics implements BasicPhysics {
-
-        /**
-         * Does nothing – physics is not under test here.
-         *
-         * @param entity    the entity that would be updated
-         * @param deltaTime time elapsed since the last frame, in seconds
-         */
-        @Override
-        public void updatePosition(GameObject obj, double dt) { }
-
-    }
+    
 
     /** X coordinate used when creating test coins. */
     private static final double COIN_X = 10.0;
@@ -60,7 +45,7 @@ class CoinTest {
      * A freshly constructed stationary coin must be active.
      */
     @Test
-    void stationaryCoin_initialState_isActive() {
+    void stationaryCoininitialStateisActive() {
         final Coin coin = new Coin(COIN_X, COIN_Y, new NoOpPhysics());
         assertTrue(coin.isActive());
     }
@@ -69,7 +54,7 @@ class CoinTest {
      * A stationary coin must not report that it is popping.
      */
     @Test
-    void stationaryCoin_initialState_isNotPopping() {
+    void stationaryCoininitialStateisNotPopping() {
         final Coin coin = new Coin(COIN_X, COIN_Y, new NoOpPhysics());
         assertFalse(coin.isPopping());
     }
@@ -78,7 +63,7 @@ class CoinTest {
      * Verifies that the coin stores the correct position on construction.
      */
     @Test
-    void stationaryCoin_positionIsCorrect() {
+    void stationaryCoinpositionIsCorrect() {
         final Coin coin = new Coin(30, 40, new NoOpPhysics());
         assertTrue(coin.getX() == 30);
         assertTrue(coin.getY() == 40);
@@ -88,7 +73,7 @@ class CoinTest {
      * Verifies that the coin has the expected fixed dimensions.
      */
     @Test
-    void stationaryCoin_sizeIsCorrect() {
+    void stationaryCoinsizeIsCorrect() {
         final Coin coin = new Coin(COIN_X, COIN_Y, new NoOpPhysics());
         assertTrue(coin.getWidth() == COIN_SIZE);
         assertTrue(coin.getHeight() == COIN_SIZE);
@@ -98,7 +83,7 @@ class CoinTest {
      * Updating a stationary coin (even with a large delta) must not destroy it.
      */
     @Test
-    void stationaryCoin_update_doesNotDestroyCoin() {
+    void stationaryCoinupdatedoesNotDestroyCoin() {
         final Coin coin = new Coin(COIN_X, COIN_Y, new NoOpPhysics());
         coin.update(1.0);
         assertTrue(coin.isActive());
@@ -112,7 +97,7 @@ class CoinTest {
      * A coin created via {@code createPopping} must report that it is popping.
      */
     @Test
-    void poppingCoin_isPopping() {
+    void poppingCoinisPopping() {
         final Coin coin = Coin.createPopping(COIN_X, POP_Y, new NoOpPhysics());
         assertTrue(coin.isPopping());
     }
@@ -121,7 +106,7 @@ class CoinTest {
      * A popping coin must be active immediately after creation.
      */
     @Test
-    void poppingCoin_initialState_isActive() {
+    void poppingCoininitialStateisActive() {
         final Coin coin = Coin.createPopping(COIN_X, POP_Y, new NoOpPhysics());
         assertTrue(coin.isActive());
     }
@@ -130,7 +115,7 @@ class CoinTest {
      * A popping coin must have an upward (negative) initial velocity.
      */
     @Test
-    void poppingCoin_movesUpwardInitially() {
+    void poppingCoinmovesUpwardInitially() {
         final Coin coin = Coin.createPopping(COIN_X, POP_Y, new NoOpPhysics());
         assertTrue(coin.getVelocityY() < 0);
     }
@@ -140,7 +125,7 @@ class CoinTest {
      * must be destroyed.
      */
     @Test
-    void poppingCoin_afterReturnToStartY_isDestroyed() {
+    void poppingCoinafterReturnToStartYisDestroyed() {
         final Coin coin = Coin.createPopping(COIN_X, POP_Y, new NoOpPhysics());
         for (int i = 0; i < POP_MAX_STEPS; i++) {
             if (!coin.isActive()) {
@@ -149,5 +134,19 @@ class CoinTest {
             coin.update(POP_STEP);
         }
         assertFalse(coin.isActive());
+    }
+    
+    /**
+     * Minimal no-op {@link BasicPhysics} stub that allows entity instantiation
+     * without a real physics engine.
+     */
+    static final class NoOpPhysics implements BasicPhysics {
+
+        /**
+         * Does nothing – physics is not under test here.
+         */
+        @Override
+        public void updatePosition(final GameObject obj, final double dt) { }
+
     }
 }

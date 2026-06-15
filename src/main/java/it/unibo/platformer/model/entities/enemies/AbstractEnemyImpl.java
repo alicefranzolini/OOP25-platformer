@@ -9,12 +9,16 @@ import java.util.Optional;
 /**
  * Basic implementation that centralizes physics, animations, and state management.
  */
-public abstract class EnemyImpl extends AbstractDynamicEntity implements Enemy {
+public abstract class AbstractEnemyImpl extends AbstractDynamicEntity implements Enemy {
 
-    /** Animation manager shared by all enemy states. */
+    /** 
+     * Animation manager shared by all enemy states. 
+     */
     private final AnimationManager anim = new AnimationManager();
 
-    /** True if the sprite is currently facing left. */
+    /** 
+     * True if the sprite is currently facing left. 
+     */
     private boolean facingLeft = true;
 
     /** The active state handler; drives {@link #update} and {@link #render}. */
@@ -30,7 +34,7 @@ public abstract class EnemyImpl extends AbstractDynamicEntity implements Enemy {
      * @param height  the height of the entity
      * @param physics the {@link BasicPhysics} engine to use for movement
      */
-    protected EnemyImpl(final double x, final double y, final double width, final double height, final BasicPhysics physics) {
+    protected AbstractEnemyImpl(final double x, final double y, final double width, final double height, final BasicPhysics physics) {
         super(x, y, width, height, physics);
         loadAnimations();
     }
@@ -131,7 +135,7 @@ public abstract class EnemyImpl extends AbstractDynamicEntity implements Enemy {
          * @param e         the enemy to update
          * @param deltaTime the time elapsed since the last frame, in seconds
          */
-        void update(EnemyImpl e, double deltaTime);
+        void update(AbstractEnemyImpl e, double deltaTime);
 
         /**
          * Draws the enemy in its current state.
@@ -139,7 +143,7 @@ public abstract class EnemyImpl extends AbstractDynamicEntity implements Enemy {
          * @param e  the enemy to render
          * @param gc the {@link GraphicsContext} to render onto
          */
-        void render(EnemyImpl e, GraphicsContext gc);
+        void render(AbstractEnemyImpl e, GraphicsContext gc);
 
         /**
          * @return true if the enemy in this state can hurt or kill the player
