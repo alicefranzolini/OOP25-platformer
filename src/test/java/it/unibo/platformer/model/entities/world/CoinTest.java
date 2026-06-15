@@ -1,8 +1,8 @@
 package it.unibo.platformer.model.entities.world;
 
-import it.unibo.platformer.model.entities.AbstractDynamicEntity;
-import it.unibo.platformer.model.entities.world.Coin;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
+import it.unibo.platformer.model.physics.api.GameObject;
+
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -30,9 +30,8 @@ class CoinTest {
          * @param deltaTime time elapsed since the last frame, in seconds
          */
         @Override
-        public void update(final AbstractDynamicEntity entity, final double deltaTime) {
-            // intentionally empty
-        }
+        public void UpdatePosition(GameObject obj, double dt) { }
+
     }
 
     /** X coordinate used when creating test coins. */
