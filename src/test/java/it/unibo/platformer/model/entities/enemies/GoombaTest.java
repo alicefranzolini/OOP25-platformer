@@ -1,9 +1,9 @@
 package it.unibo.platformer.model.entities.enemies;
 
-import it.unibo.platformer.model.entities.AbstractDynamicEntity;
-import it.unibo.platformer.model.entities.enemies.Goomba;
 import it.unibo.platformer.model.entities.enemies.Goomba.GoombaState;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
+import it.unibo.platformer.model.physics.api.GameObject;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,9 +32,7 @@ class GoombaTest {
          * @param deltaTime time elapsed since the last frame, in seconds
          */
         @Override
-        public void update(final AbstractDynamicEntity entity, final double deltaTime) {
-            // intentionally empty
-        }
+        public void UpdatePosition(GameObject obj, double dt) { }
     }
 
     /** Initial X position of the Goomba under test. */
