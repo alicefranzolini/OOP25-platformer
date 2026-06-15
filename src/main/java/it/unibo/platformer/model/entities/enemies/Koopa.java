@@ -10,16 +10,15 @@ import javafx.scene.paint.Color;
 /**
  * A Koopa enemy that walks, can be stomped into a shell, and kicked.
  */
-public class Koopa extends EnemyImpl {
+public final class Koopa extends EnemyImpl {
 
     private static final double WALK_SPEED = 50.0;
     private static final double WALK_FRAME_DURATION = 0.15;
     private static final double SHELL_FRAME_DURATION = 0.08;
-
     private static final String WALK_ANIMATION = "walk";
     private static final String SHELL_ANIMATION = "shell";
     private static final String SHELL_MOVING_ANIMATION = "shell_moving";
-    
+    private static final int SPRITE_SIZE = 48;
     private KoopaState state;
 
     /**
@@ -30,7 +29,7 @@ public class Koopa extends EnemyImpl {
      * @param physics the physics engine to use
      */
     public Koopa(final double x, final double y, final BasicPhysics physics) {
-        super(x, y, 32, 48, physics);
+        super(x, y, 32, SPRITE_SIZE, physics);
         this.state = KoopaState.WALK;
         transitionTo(KoopaState.WALK);
         setVelocityX(-WALK_SPEED);

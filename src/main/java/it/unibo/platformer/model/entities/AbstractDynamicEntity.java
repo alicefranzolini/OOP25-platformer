@@ -28,7 +28,8 @@ public abstract class AbstractDynamicEntity extends AbstractEntity {
      * @param height  the height of the entity
      * @param physics the {@link BasicPhysics} engine to use for movement
      */
-    public AbstractDynamicEntity(final double x, final double y, final double width, final double height, final BasicPhysics physics) {
+    public AbstractDynamicEntity(final double x, final double y, final double width, 
+                                final double height, final BasicPhysics physics) {
         super(x, y, width, height);
         this.gameObject = new GameObjectImpl((float) x, (float) y, (float) width, (float) height);
         this.affectedByGravity = true;
@@ -59,7 +60,7 @@ public abstract class AbstractDynamicEntity extends AbstractEntity {
     public double getHeight() {
         return gameObject.getHeight();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void setX(final double x) {
@@ -72,7 +73,7 @@ public abstract class AbstractDynamicEntity extends AbstractEntity {
         gameObject.getPosition().setY((float) y);
     }
 
-     /** {@inheritDoc} */
+    /** {@inheritDoc} */
     @Override
     public void setWidth(final double width) {
         gameObject.setWidth((float) width);

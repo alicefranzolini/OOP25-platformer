@@ -41,7 +41,7 @@ public final class Goomba extends EnemyImpl {
     }
 
     @Override
-    protected final void loadAnimations() {
+    protected void loadAnimations() {
         final Image frame1 = AnimationManager.loadImage("/sprites/enemies/goomba1.png");
         final Image frame2 = AnimationManager.loadImage("/sprites/enemies/goomba2.png");
         final Image dead = AnimationManager.loadImage("/sprites/enemies/goomba_dead.png");
@@ -172,10 +172,4 @@ public final class Goomba extends EnemyImpl {
             return false;
         }
     }
-
-    
-
-   
-    
-    
 }
