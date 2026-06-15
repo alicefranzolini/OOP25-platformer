@@ -1,6 +1,6 @@
 package it.unibo.platformer.model.entities.players;
 
-import it.unibo.platformer.model.entities.DynamicEntity;
+import it.unibo.platformer.model.entities.AbstractDynamicEntity;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 import it.unibo.platformer.view.AnimationManager;
 import it.unibo.platformer.view.AnimationManager.Animation;
@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
 /**
  * Default implementation of the controllable player entity.
  */
-public final class PlayerImpl extends DynamicEntity implements Player {
+public final class PlayerImpl extends AbstractDynamicEntity implements Player {
 
     private static final double SMALL_W = 16.0;
     private static final double SMALL_H = 24.0;

@@ -1,13 +1,13 @@
 package it.unibo.platformer.model.entities.powerup;
 
-import it.unibo.platformer.model.entities.DynamicEntity;
+import it.unibo.platformer.model.entities.AbstractDynamicEntity;
 import it.unibo.platformer.model.entities.players.Player;
 import it.unibo.platformer.model.physics.api.BasicPhysics;
 
 /**
  * Base implementation shared by all power-ups.
  */
-public abstract class AbstractPowerUp extends DynamicEntity implements PowerUp {
+public abstract class AbstractPowerUp extends AbstractDynamicEntity implements PowerUp {
 
     /**
      * Horizontal speed used after the power-up has emerged.
