@@ -49,7 +49,7 @@ class GoombaTest {
      */
     private static final int SQUISH_STEPS = 30;
 
-     private static final double deltaTime = 0.016;
+     private static final double DELTA_TIME = 0.016;
 
     /** 
      * The Goomba instance shared across tests in this class. 
@@ -156,7 +156,7 @@ class GoombaTest {
      */
     @Test
     void updatewalkStatedoesNotThrow() {
-        assertDoesNotThrow(() -> goomba.update(deltaTime));
+        assertDoesNotThrow(() -> goomba.update(DELTA_TIME));
     }
 
     /**
@@ -190,10 +190,10 @@ class GoombaTest {
         /**
          * Does nothing – physics is not under test here.
          *
-         * @param entity    the entity that would be updated
-         * @param deltaTime time elapsed since the last frame, in seconds
+         * @param obj the object to update
+         * @param dt the time elapsed since the last frame, in seconds  
          */
         @Override
-        public void updatePosition(GameObject obj, double dt) { }
+        public void updatePosition(final GameObject obj, final double dt) { }
     }
 }
