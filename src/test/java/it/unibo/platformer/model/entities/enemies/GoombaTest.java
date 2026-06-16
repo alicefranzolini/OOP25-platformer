@@ -191,7 +191,7 @@ class GoombaTest {
          * Does nothing – physics is not under test here.
          *
          * @param obj the object to update
-         * @param dt the time elapsed since the last frame, in seconds  
+         * @param dt the time elapsed since the last frame, in seconds
          */
         @Override
         public void updatePosition(final GameObject obj, final double dt) { }
