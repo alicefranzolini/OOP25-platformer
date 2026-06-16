@@ -1,4 +1,4 @@
-package it.unibo.platformer;
+package it.unibo.platformer.model.physics;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
