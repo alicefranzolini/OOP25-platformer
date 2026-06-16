@@ -4,7 +4,7 @@ import it.unibo.platformer.model.physics.api.BasicPhysics;
 import it.unibo.platformer.model.physics.api.GameObject;
 
 public class BasicPhysicsImpl implements BasicPhysics{
-    /*This class create the basic physics of the game*/
+
     private static final float GRAVITY = 800.0f;
 
     @Override
