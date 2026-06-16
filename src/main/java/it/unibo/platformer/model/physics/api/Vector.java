@@ -2,20 +2,52 @@ package it.unibo.platformer.model.physics.api;
 
 import it.unibo.platformer.model.physics.impl.VectorImpl;
 
+/*
+ * Create the vectors for the physics
+*/
+
 public interface Vector {
 
-    public void setX(float x);
+    /*
+     * Set the x
+     * @param x
+    */
+    void setX(float x);
 
-    public void setY(float y);
+    /*
+     * Set the y
+     * @param y
+    */
+    void setY(float y);
 
-    public float getX();
+    /*
+     * get the x
+     * @return x
+    */
+    float getX();
 
-    public float getY();
+    /*
+     * get the y
+     * @return y
+    */
+    float getY();
 
-    public void add(VectorImpl v);
+    /*
+     * add a vector to an other vector
+     * @param v
+    */
+    void add(VectorImpl v);
 
-    public void sub(VectorImpl v);
+    /*
+     * sub a vector to an other vector
+     * @param v
+    */
+    void sub(VectorImpl v);
 
-    public void scale(float num);
+    /*
+     * multiply a vector for a number
+     * @param num
+    */
+    void scale(float num);
 
 }
