@@ -34,7 +34,8 @@ public abstract class AbstractEnemyImpl extends AbstractDynamicEntity implements
      * @param height  the height of the entity
      * @param physics the {@link BasicPhysics} engine to use for movement
      */
-    protected AbstractEnemyImpl(final double x, final double y, final double width, final double height, final BasicPhysics physics) {
+    protected AbstractEnemyImpl(final double x, final double y, final double width, final double height, 
+                                final BasicPhysics physics) {
         super(x, y, width, height, physics);
         loadAnimations();
     }

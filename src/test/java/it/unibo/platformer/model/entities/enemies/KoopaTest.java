@@ -39,7 +39,7 @@ class KoopaTest {
      */
     private static final double KOOPAHEIGHT = 48.0;
 
-    private static final double deltaTime = 0.016;
+    private static final double DELTA_TIME = 0.016;
 
     /** 
      * The Koopa instance shared across tests in this class. 
@@ -238,7 +238,7 @@ class KoopaTest {
      */
     @Test
     void updatewalkStatedoesNotThrow() {
-        assertDoesNotThrow(() -> koopa.update(deltaTime));
+        assertDoesNotThrow(() -> koopa.update(DELTA_TIME));
     }
 
     /**
@@ -247,7 +247,7 @@ class KoopaTest {
     @Test
     void updateshellStatedoesNotThrow() {
         koopa.stomp();
-        assertDoesNotThrow(() -> koopa.update(deltaTime));
+        assertDoesNotThrow(() -> koopa.update(DELTA_TIME));
     }
 
     /**
@@ -257,10 +257,10 @@ class KoopaTest {
     void updateshellMovingStatesdoesNotThrow() {
         koopa.stomp();
         koopa.kick(true);
-        assertDoesNotThrow(() -> koopa.update(deltaTime));
+        assertDoesNotThrow(() -> koopa.update(DELTA_TIME));
     }
 
-     /**
+    /**
      * Minimal no-op {@link BasicPhysics} stub that allows enemy instantiation
      * without a real physics engine.
      */
@@ -269,8 +269,8 @@ class KoopaTest {
         /**
          * Does nothing – physics is not under test here.
          *
-         * @param entity    the entity that would be updated
-         * @param deltaTime time elapsed since the last frame, in seconds
+         * @param obj the object to update
+         * @param dt the time elapsed since the last frame, in seconds
          */
         @Override
         public void updatePosition(final GameObject obj, final double dt) { }
