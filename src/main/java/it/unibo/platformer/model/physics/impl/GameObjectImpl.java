@@ -70,7 +70,7 @@ public class GameObjectImpl implements GameObject{
     }
 
     @Override
-    public boolean IsOnGround(){
+    public boolean isOnGround(){
         return this.onGround;
     }
 }

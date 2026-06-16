@@ -1,12 +1,14 @@
 package it.unibo.platformer.model.physics.impl;
 
 import java.awt.Rectangle;
-import java.lang.Math;
 
 import it.unibo.platformer.model.physics.api.CollisionDetector;
 import it.unibo.platformer.model.physics.api.GameObject;
 
-public class CollisionDetectorImpl implements CollisionDetector{
+/**
+ * Implementation of the collision detector.
+ */
+public final class CollisionDetectorImpl implements CollisionDetector{
 
     @Override
     public boolean collision(final GameObject a, final GameObject b){
