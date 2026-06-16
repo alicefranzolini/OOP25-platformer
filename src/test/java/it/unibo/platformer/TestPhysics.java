@@ -10,99 +10,135 @@ import it.unibo.platformer.model.physics.impl.GameObjectImpl;
 import it.unibo.platformer.model.physics.impl.VectorImpl;
 import it.unibo.platformer.model.physics.impl.CollisionSide;
 
+/**
+ * The test for physics.
+ */
 public class TestPhysics {
     
+    private static final double VAL_10 = 10.0;
+    private static final double VAL_20 = 20.0;
+    private static final double VAL_30 = 30.0;
+    private static final double VAL_40 = 40.0;
+    private static final double VAL_50 = 50.0;
+    private static final double VAL_10_NEG = -10.0;
+
+
+    /**
+     * The test for Vector creation.
+     */
     @Test
-    public void TestGetSetVector(){
-        VectorImpl v1 = new VectorImpl();
-        v1.setX(10);
-        v1.setY(20);
-        assertEquals(10, v1.getX());
-        assertEquals(20, v1.getY());
+    public void testGetSetVector() {
+        final VectorImpl v1 = new VectorImpl();
+        v1.setX((int) VAL_10);
+        v1.setY((int) VAL_20);
+        assertEquals(VAL_10, v1.getX());
+        assertEquals(VAL_20, v1.getY());
     }
 
+    /**
+     * Test for the addition of vectors.
+     */
     @Test
-    public void TestVectorAdd(){
-        VectorImpl v1 = new VectorImpl(10, 20);
-        VectorImpl v2 = new VectorImpl(10, 30);
+    public void testVectorAdd() {
+        final VectorImpl v1 = new VectorImpl((int) VAL_10, (int) VAL_20);
+        final VectorImpl v2 = new VectorImpl((int) VAL_20, (int) VAL_30);
         v1.add(v2);
-        assertEquals(20, v1.getX());
-        assertEquals(50, v1.getY());
+        assertEquals(VAL_30, v1.getX());
+        assertEquals(VAL_50, v1.getY());
     }
 
+    /**
+     * Test for the subtraction of vectors.
+     */
     @Test
-    public void TestVectorSub(){
-        VectorImpl v1 = new VectorImpl(10, 20);
-        VectorImpl v2 = new VectorImpl(20, 30);
+    public void testVectorSub() {
+        final VectorImpl v1 = new VectorImpl((int) VAL_10, (int) VAL_20);
+        final VectorImpl v2 = new VectorImpl((int) VAL_20, (int) VAL_30);
         v1.sub(v2);
-        assertEquals(-10, v1.getX());
-        assertEquals(-10, v1.getY());
+        assertEquals(VAL_10_NEG, v1.getX());
+        assertEquals(VAL_10_NEG, v1.getY());
     }
 
+    /**
+     * Test for the multiplication of vectors.
+     */
     @Test
-    public void TestScale(){
-        VectorImpl v1 = new VectorImpl(10, 20);
+    public void testScale() {
+        final VectorImpl v1 = new VectorImpl((int) VAL_10, (int) VAL_20);
         v1.scale(2);
-        assertEquals(20, v1.getX());
-        assertEquals(40, v1.getY());
+        assertEquals(VAL_20, v1.getX());
+        assertEquals(VAL_40, v1.getY());
     }
 
+    /**
+     * Test for the clonation of vectors.
+     */
     @Test
-    public void TestClone(){
-        VectorImpl v1 = new VectorImpl(10,20);
-        VectorImpl v2 = v1.clone();
+    public void testClone() {
+        final VectorImpl v1 = new VectorImpl((int) VAL_10, (int) VAL_20);
+        final VectorImpl v2 = v1.clone();
 
         assertEquals(v1.getClass(), v2.getClass());
         assertEquals(v1.getX(), v2.getX());
         assertEquals(v1.getY(), v2.getY());
     }
 
+    /**
+     * Test for GameObject.
+     */
     @Test
-    public void TestGameObject(){
-        GameObjectImpl o = new GameObjectImpl(10, 20, 30, 40);
-        VectorImpl pos = new VectorImpl(10, 20);
-        VectorImpl speed = new VectorImpl(10,10);
+    public void testGameObject() {
+        final GameObjectImpl o = new GameObjectImpl((int) VAL_10, (int) VAL_20, (int) VAL_30, (int) VAL_40);
+        final VectorImpl pos = new VectorImpl((int) VAL_10, (int) VAL_20);
+        final VectorImpl speed = new VectorImpl((int) VAL_10, (int) VAL_10);
         assertEquals(pos.getX(), o.getPosition().getX());
         assertEquals(pos.getY(), o.getPosition().getY());
         assertEquals(false, o.isOnGround());
-        o.setSpeed(10, 10);
+        o.setSpeed((int) VAL_10, (int) VAL_10);
         assertEquals(speed.getX(), o.getSpeed().getX());
         assertEquals(speed.getY(), o.getSpeed().getY());
-        assertEquals(30, o.getWidth());
-        assertEquals(40, o.getHeight());
-        o.setHeight(10);
-        assertEquals(10, o.getHeight());
-        o.setWidth(10);
-        assertEquals(10, o.getWidth());
+        assertEquals(VAL_30, o.getWidth());
+        assertEquals(VAL_40, o.getHeight());
+        o.setHeight((int) VAL_10);
+        assertEquals(VAL_10, o.getHeight());
+        o.setWidth((int) VAL_10);
+        assertEquals(VAL_10, o.getWidth());
         o.setOnGround(true);
         assertEquals(true, o.isOnGround());
     }
 
+    /**
+     * Test for collision result.
+     */
     @Test
-    public void TestCollisionResult(){
-        GameObjectImpl dinamicobj = new GameObjectImpl(10, 20, 10, 20);
-        GameObjectImpl staticobj = new GameObjectImpl(20, 30, 20, 30);
-        CollisionSide side = CollisionSide.TOP;
+    public void testCollisionResult() {
+        final GameObjectImpl dinamicobj = new GameObjectImpl((int) VAL_10, (int) VAL_20, (int) VAL_10, (int) VAL_20);
+        final GameObjectImpl staticobj = new GameObjectImpl((int) VAL_20, (int) VAL_30, (int) VAL_20, (int) VAL_30);
+        final CollisionSide side = CollisionSide.TOP;
 
-        CollisionResult collision = new CollisionResult(dinamicobj, staticobj, side);
+        final CollisionResult collision = new CollisionResult(dinamicobj, staticobj, side);
 
         assertEquals(side, collision.getSide());
         assertEquals(dinamicobj, collision.getDynamicObj());
         assertEquals(staticobj, collision.getStaticObj());
     }
-    
+
+    /**
+     * Test for collision.
+     */
     @Test
-    public void TestCollisionDetector(){
-        GameObjectImpl o1 = new GameObjectImpl(10, 20, 30, 40);
-        GameObjectImpl o2 = new GameObjectImpl(20, 30, 40, 50);
+    public void testCollisionDetector() {
+        final GameObjectImpl o1 = new GameObjectImpl((int) VAL_10, (int) VAL_20, (int) VAL_30, (int) VAL_40);
+        final GameObjectImpl o2 = new GameObjectImpl((int) VAL_20, (int) VAL_30, (int) VAL_40, (int) VAL_50);
 
-        CollisionDetectorImpl CollDet = new CollisionDetectorImpl();
+        final CollisionDetectorImpl collDet = new CollisionDetectorImpl();
 
-        assertEquals(true, CollDet.collision(o1, o2));
+        assertEquals(true, collDet.collision(o1, o2));
 
-        assertNotNull(CollDet.getCollisionResult(o1, o2));
-        CollisionResult res = new CollisionResult(o1, o2, CollisionSide.LEFT);
-        assertEquals(res.getSide(), CollDet.getCollisionResult(o1, o2).getSide());
+        assertNotNull(collDet.getCollisionResult(o1, o2));
+        final CollisionResult res = new CollisionResult(o1, o2, CollisionSide.LEFT);
+        assertEquals(res.getSide(), collDet.getCollisionResult(o1, o2).getSide());
 
     }
+
 }
