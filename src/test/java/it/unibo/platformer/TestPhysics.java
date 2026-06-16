@@ -1,6 +1,7 @@
 package it.unibo.platformer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ import it.unibo.platformer.model.physics.impl.CollisionSide;
  * The test for physics.
  */
 public class TestPhysics {
-    
+
     private static final double VAL_10 = 10.0;
     private static final double VAL_20 = 20.0;
     private static final double VAL_30 = 30.0;
