@@ -25,5 +25,5 @@ public interface CollisionResolver {
      * @throws NoSideException the exception for the side
      */
     void resolveOne(CollisionResult res) throws NoSideException;
-    
+
 }

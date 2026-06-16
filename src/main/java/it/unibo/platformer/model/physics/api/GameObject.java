@@ -71,11 +71,12 @@ public interface GameObject {
      * @return boolean 
      */
     boolean isOnGround();
-    
+
     /** 
      * set the object on ground.
      * 
      * @param onGround if the object is on ground
      */
     void setOnGround(boolean onGround);
+
 }
