@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 /**
  * A Goomba enemy that walks until squished by the player.
  */
-public final class Goomba extends  AbstractEnemyImpl {
+public final class Goomba extends AbstractEnemyImpl {
 
     private static final double WALK_SPEED = 60.0;
     private static final double SQUISH_TIME = 0.4;
