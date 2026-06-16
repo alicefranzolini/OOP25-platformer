@@ -17,11 +17,6 @@ public class CollisionDetectorImpl implements CollisionDetector{
         return r1.intersects(r2);
     }
 
-    /*The method check the side of the collision
-    @param DynamicEntity
-    @param StaticEntity
-    @return CollisionResult
-    */
     @Override
     public CollisionResult getCollisionResult(GameObjectImpl a, GameObjectImpl b){
         if(!collision(a, b)){
