@@ -19,30 +19,40 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class KoopaTest {
 
-    /** Initial X position of the Koopa under test. */
+    /** 
+     * Initial X position of the Koopa under test. 
+     */
     private static final double STARTX = 50.0;
 
-    /** Initial Y position of the Koopa under test. */
+    /** 
+     * Initial Y position of the Koopa under test. 
+     */
     private static final double STARTY = 100.0;
 
-    /** Expected width of a Koopa sprite, in pixels. */
+    /** 
+     * Expected width of a Koopa sprite, in pixels. 
+     */
     private static final double KOOPAWIDTH = 32.0;
 
-    /** Expected height of a Koopa sprite, in pixels. */
+    /** 
+     * Expected height of a Koopa sprite, in pixels. 
+     */
     private static final double KOOPAHEIGHT = 48.0;
 
-    /** The Koopa instance shared across tests in this class. */
+    private static final double deltaTime = 0.016;
+
+    /** 
+     * The Koopa instance shared across tests in this class. 
+     */
     private Koopa koopa;
 
-    /** Creates a fresh Koopa before each test. */
+    /** 
+     * Creates a fresh Koopa before each test. 
+     */
     @BeforeEach
     void setUp() {
         koopa = new Koopa(STARTX, STARTY, new NoOpPhysics());
     }
-
-    // -----------------------------------------------------------------------
-    // Initial state
-    // -----------------------------------------------------------------------
 
     /**
      * The Koopa must begin in the {@link KoopaState#WALK} state.
@@ -93,10 +103,6 @@ class KoopaTest {
         assertTrue(koopa.getHeight() == KOOPAHEIGHT);
     }
 
-    // -----------------------------------------------------------------------
-    // stomp()
-    // -----------------------------------------------------------------------
-
     /**
      * After {@code stomp()}, the state must change to {@link KoopaState#SHELL}.
      */
@@ -142,10 +148,6 @@ class KoopaTest {
         assertDoesNotThrow(() -> koopa.stomp());
         assertTrue(koopa.getState() == KoopaState.SHELL);
     }
-
-    // -----------------------------------------------------------------------
-    // kick()
-    // -----------------------------------------------------------------------
 
     /**
      * Kicking the shell to the right must set the state to
@@ -219,10 +221,6 @@ class KoopaTest {
         assertFalse(koopa.isWalking());
     }
 
-    // -----------------------------------------------------------------------
-    // State-machine guard
-    // -----------------------------------------------------------------------
-
     /**
      * Calling {@code stomp()} while the shell is already moving must be ignored;
      * the state must remain {@link KoopaState#SHELL_MOVING}.
@@ -235,16 +233,12 @@ class KoopaTest {
         assertTrue(koopa.getState() == KoopaState.SHELL_MOVING);
     }
 
-    // -----------------------------------------------------------------------
-    // update() – no-op physics: only verify no exceptions are thrown
-    // -----------------------------------------------------------------------
-
     /**
      * Calling {@code update()} while walking must not throw an exception.
      */
     @Test
     void updatewalkStatedoesNotThrow() {
-        assertDoesNotThrow(() -> koopa.update(0.016));
+        assertDoesNotThrow(() -> koopa.update(deltaTime));
     }
 
     /**
@@ -253,7 +247,7 @@ class KoopaTest {
     @Test
     void updateshellStatedoesNotThrow() {
         koopa.stomp();
-        assertDoesNotThrow(() -> koopa.update(0.016));
+        assertDoesNotThrow(() -> koopa.update(deltaTime));
     }
 
     /**
@@ -263,7 +257,7 @@ class KoopaTest {
     void updateshellMovingStatesdoesNotThrow() {
         koopa.stomp();
         koopa.kick(true);
-        assertDoesNotThrow(() -> koopa.update(0.016));
+        assertDoesNotThrow(() -> koopa.update(deltaTime));
     }
 
      /**
@@ -279,6 +273,6 @@ class KoopaTest {
          * @param deltaTime time elapsed since the last frame, in seconds
          */
         @Override
-       public void updatePosition(GameObject obj, double dt) { }
+        public void updatePosition(final GameObject obj, final double dt) { }
     }
 }

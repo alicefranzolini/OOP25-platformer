@@ -12,46 +12,68 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class FlagPoleTest {
 
-    /** X coordinate of the pole used in each test. */
+    /**
+     *  X coordinate of the pole used in each test. 
+     */
     private static final double POLE_X = 100.0;
 
-    /** Y coordinate of the pole used in each test. */
+    /**
+     *  Y coordinate of the pole used in each test. 
+     */
     private static final double POLE_Y = 50.0;
 
-    /** Height of the pole used in each test. */
+    /** 
+     * Height of the pole used in each test. 
+     */
     private static final double POLE_HEIGHT = 200.0;
 
-    /** Expected width of a pole, in pixels. */
+    /**
+     *  Expected width of a pole, in pixels. 
+     */
     private static final double EXPECTED_POLE_WIDTH = 6.0;
 
-    /** Expected width of a flag, in pixels. */
+    /** 
+     * Expected width of a flag, in pixels. 
+     */
     private static final double EXPECTED_FLAG_WIDTH = 48.0;
 
-    /** Expected height of a flag, in pixels. */
+    /** 
+     * Expected height of a flag, in pixels. 
+     */
     private static final double EXPECTED_FLAG_HEIGHT = 32.0;
 
-    /** Delta time used for a single large simulation step, in seconds. */
+    /** 
+     * Delta time used for a single large simulation step, in seconds. 
+     */
     private static final double LARGE_DELTA = 0.05;
 
-    /** Number of simulation steps used to drive the flag all the way down. */
+    /** 
+     * Number of simulation steps used to drive the flag all the way down. 
+     */
     private static final int LOWER_ITERATIONS = 1000;
 
-    /** The pole instance shared across tests in this class. */
+    private static final double SHORT_DELTA = 0.1;
+
+    private static final double DEFAULT_DELTA = 0.016;
+
+    /**
+     *  The pole instance shared across tests in this class. 
+     */
     private Pole pole;
 
-    /** The flag instance shared across tests in this class. */
+    /** 
+     * The flag instance shared across tests in this class. 
+     */
     private Flag flag;
 
-    /** Creates a fresh pole and flag before each test. */
+    /**
+     *  Creates a fresh pole and flag before each test. 
+     */
     @BeforeEach
     void setUp() {
         pole = new Pole(POLE_X, POLE_Y, POLE_HEIGHT);
         flag = new Flag(pole);
     }
-
-    // -----------------------------------------------------------------------
-    // Pole geometry
-    // -----------------------------------------------------------------------
 
     /**
      * Verifies that the pole stores the correct position.
@@ -75,13 +97,9 @@ class FlagPoleTest {
      * Calling {@code update()} on a pole must not throw an exception.
      */
     @Test
-    void poleupdate_doesNotThrow() {
-        assertDoesNotThrow(() -> pole.update(0.016));
+    void poleupdatedoesNotThrow() {
+        assertDoesNotThrow(() -> pole.update(DEFAULT_DELTA));
     }
-
-    // -----------------------------------------------------------------------
-    // Flag initial state
-    // -----------------------------------------------------------------------
 
     /**
      * The flag must start at the very top of the pole (same Y coordinate).
@@ -124,10 +142,6 @@ class FlagPoleTest {
         assertTrue(flag.getHeight() == EXPECTED_FLAG_HEIGHT);
     }
 
-    // -----------------------------------------------------------------------
-    // Flag.lower()
-    // -----------------------------------------------------------------------
-
     /**
      * After calling {@code lower()}, the flag must report that it is lowering.
      */
@@ -144,7 +158,7 @@ class FlagPoleTest {
     void flagafterLowerupdateMovesItDown() {
         final double startY = flag.getY();
         flag.lower();
-        flag.update(0.1);
+        flag.update(SHORT_DELTA);
         assertTrue(flag.getY() > startY);
     }
 
