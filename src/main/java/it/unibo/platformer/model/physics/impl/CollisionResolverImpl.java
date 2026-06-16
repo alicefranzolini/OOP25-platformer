@@ -8,14 +8,14 @@ import it.unibo.platformer.model.physics.api.CollisionResolver;
 public class CollisionResolverImpl implements CollisionResolver{
 
     @Override
-    public void ResolveAll(List<CollisionResult> collisions) throws NoSideException{
+    public void resolveAll(List<CollisionResult> collisions) throws NoSideException{
         for(CollisionResult res : collisions){
-            ResolveOne(res);
+            resolveOne(res);
         }
     }
-
+    
     @Override
-    public void ResolveOne(CollisionResult res) throws NoSideException{
+    public void resolveOne(CollisionResult res) throws NoSideException{
         GameObjectImpl a = res.getDynamicObj();
         GameObjectImpl b = res.getStaticObj();
 
