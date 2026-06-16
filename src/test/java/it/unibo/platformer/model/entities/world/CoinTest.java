@@ -17,29 +17,40 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class CoinTest {
 
-    
-
-    /** X coordinate used when creating test coins. */
+    /** 
+     * X coordinate used when creating test coins.
+     */
     private static final double COIN_X = 10.0;
 
-    /** Y coordinate used when creating stationary test coins. */
+    /** 
+     * Y coordinate used when creating stationary test coins. 
+     */
     private static final double COIN_Y = 10.0;
 
-    /** Y coordinate used when creating popping test coins. */
+    /** 
+     * Y coordinate used when creating popping test coins. 
+     */
     private static final double POP_Y = 200.0;
 
-    /** Expected width and height of a coin sprite, in pixels. */
+    /** 
+     * Expected width and height of a coin sprite, in pixels. 
+     */
     private static final double COIN_SIZE = 16.0;
 
-    /** Delta time used for each step in the pop-flight simulation. */
+    /**
+     *  Delta time used for each step in the pop-flight simulation. 
+     */
     private static final double POP_STEP = 0.05;
 
-    /** Maximum number of simulation steps before the popping coin must land. */
+    /** 
+     * Maximum number of simulation steps before the popping coin must land. 
+     */
     private static final int POP_MAX_STEPS = 300;
 
-    // -----------------------------------------------------------------------
-    // Stationary coin
-    // -----------------------------------------------------------------------
+     private static final double NCOIN_X = 30.0;
+
+    private static final double NNCOIN_Y = 40.0;
+
 
     /**
      * A freshly constructed stationary coin must be active.
@@ -64,9 +75,9 @@ class CoinTest {
      */
     @Test
     void stationaryCoinpositionIsCorrect() {
-        final Coin coin = new Coin(30, 40, new NoOpPhysics());
-        assertTrue(coin.getX() == 30);
-        assertTrue(coin.getY() == 40);
+        final Coin coin = new Coin(NCOIN_X, NNCOIN_Y, new NoOpPhysics());
+        assertTrue(coin.getX() == NCOIN_X);
+        assertTrue(coin.getY() == NNCOIN_Y);
     }
 
     /**
@@ -88,10 +99,6 @@ class CoinTest {
         coin.update(1.0);
         assertTrue(coin.isActive());
     }
-
-    // -----------------------------------------------------------------------
-    // Popping coin (factory method)
-    // -----------------------------------------------------------------------
 
     /**
      * A coin created via {@code createPopping} must report that it is popping.
@@ -135,7 +142,7 @@ class CoinTest {
         }
         assertFalse(coin.isActive());
     }
-    
+
     /**
      * Minimal no-op {@link BasicPhysics} stub that allows entity instantiation
      * without a real physics engine.
