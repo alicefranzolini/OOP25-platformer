@@ -8,4 +8,5 @@ public class NoSideException extends IOException{
     public NoSideException(){
         super(msg);
     }
+    
 }

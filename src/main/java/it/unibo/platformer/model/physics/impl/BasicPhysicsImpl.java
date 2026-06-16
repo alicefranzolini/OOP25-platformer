@@ -8,7 +8,7 @@ public class BasicPhysicsImpl implements BasicPhysics{
     private static final float GRAVITY = 800.0f;
 
     @Override
-    public void updatePosition(GameObject o, double DeltaTime){
+    public void updatePosition(final GameObject o, final double DeltaTime){
         /*Update the speed*/
         if(!o.IsOnGround()){
         /*If the object isn't on the ground, it fall */

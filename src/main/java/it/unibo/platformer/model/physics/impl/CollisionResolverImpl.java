@@ -43,4 +43,5 @@ public class CollisionResolverImpl implements CollisionResolver{
                 throw new NoSideException();
         }
     }
+    
 }
