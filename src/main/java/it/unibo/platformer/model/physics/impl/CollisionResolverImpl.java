@@ -5,26 +5,22 @@ import java.util.List;
 import it.unibo.platformer.model.physics.NoSideException;
 import it.unibo.platformer.model.physics.api.CollisionResolver;
 
-public class CollisionResolverImpl implements CollisionResolver{
-    /*This class resolve all the collision cases*/
+/**
+ * Collision resolver implementation.
+ */
+public final class CollisionResolverImpl implements CollisionResolver {
 
-    /*This method check the collisions
-    @Param List<CollisionResult> collision
-    */
     @Override
-    public void ResolveAll(List<CollisionResult> collisions) throws NoSideException{
-        for(CollisionResult res : collisions){
-            ResolveOne(res);
+    public void resolveAll(final List<CollisionResult> collisions) throws NoSideException {
+        for (final CollisionResult res : collisions) {
+            resolveOne(res);
         }
     }
 
-    /*This method check where is the collision
-    @Param CollisionResult res
-    */
     @Override
-    public void ResolveOne(CollisionResult res) throws NoSideException{
-        GameObjectImpl a = res.getDynamicObj();
-        GameObjectImpl b = res.getStaticObj();
+    public void resolveOne(final CollisionResult res) throws NoSideException {
+        final GameObjectImpl a = res.getDynamicObj();
+        final GameObjectImpl b = res.getStaticObj();
 
         switch (res.getSide()) {
             case TOP:
@@ -50,4 +46,5 @@ public class CollisionResolverImpl implements CollisionResolver{
                 throw new NoSideException();
         }
     }
+
 }

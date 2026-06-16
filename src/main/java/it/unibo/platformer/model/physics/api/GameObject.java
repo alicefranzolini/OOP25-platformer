@@ -2,25 +2,81 @@ package it.unibo.platformer.model.physics.api;
 
 import it.unibo.platformer.model.physics.impl.VectorImpl;
 
+/**
+ * This class create the objects of the game.
+ */
 public interface GameObject {
 
-    public void setPosition(float x, float y);
+    /**
+     * set the position.
+     * 
+     * @param x the x
+     * @param y the y
+     */
+    void setPosition(float x, float y);
 
-    public void setSpeed(float x, float y);
+    /** 
+     * set the speed.
+     * 
+     * @param x the x
+     * @param y the y
+     */
+    void setSpeed(float x, float y);
 
-    public void setWidth(float width);
+    /** 
+     * set the width.
+     * 
+     * @param width the width
+     */
+    void setWidth(float width);
 
-    public void setHeight(float height);
+    /**
+     * set the height.
+     * 
+     * @param height the height
+     */
+    void setHeight(float height);
 
-    public float getWidth();
+    /** 
+     * get the width.
+     * 
+     * @return width
+     */
+    float getWidth();
 
-    public float getHeight();
+    /**
+     * set the height.
+     * 
+     * @return height
+     */
+    float getHeight();
 
-    public VectorImpl getPosition();
+    /**
+     * get the position.
+     * 
+     * @return VectorImpl
+     */
+    VectorImpl getPosition();
 
-    public VectorImpl getSpeed();
+    /** 
+     * get the speed.
+     * 
+     * @return VectorImpl
+     */
+    VectorImpl getSpeed();
 
-    public boolean IsOnGround();
+    /** 
+     * return if the object is on ground.
+     * 
+     * @return boolean 
+     */
+    boolean isOnGround();
 
-    public void setOnGround(boolean onGround);
+    /** 
+     * set the object on ground.
+     * 
+     * @param onGround if the object is on ground
+     */
+    void setOnGround(boolean onGround);
+
 }

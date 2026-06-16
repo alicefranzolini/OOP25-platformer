@@ -64,7 +64,7 @@ public class TestPhysics {
         VectorImpl speed = new VectorImpl(10,10);
         assertEquals(pos.getX(), o.getPosition().getX());
         assertEquals(pos.getY(), o.getPosition().getY());
-        assertEquals(false, o.IsOnGround());
+        assertEquals(false, o.isOnGround());
         o.setSpeed(10, 10);
         assertEquals(speed.getX(), o.getSpeed().getX());
         assertEquals(speed.getY(), o.getSpeed().getY());
@@ -75,7 +75,7 @@ public class TestPhysics {
         o.setWidth(10);
         assertEquals(10, o.getWidth());
         o.setOnGround(true);
-        assertEquals(true, o.IsOnGround());
+        assertEquals(true, o.isOnGround());
     }
 
     @Test
