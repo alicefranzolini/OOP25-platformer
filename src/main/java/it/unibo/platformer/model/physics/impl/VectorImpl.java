@@ -5,7 +5,7 @@ import it.unibo.platformer.model.physics.api.Vector;
 /**
  * The implementation of Vector.
  */
-public final class VectorImpl implements Vector {
+public final class VectorImpl implements Vector, Cloneable {
 
     private float x;
     private float y;
@@ -70,8 +70,13 @@ public final class VectorImpl implements Vector {
      * 
      *  @return VectorImpl
      */
+    @Override
     public VectorImpl clone() {
-        return new VectorImpl(this.x, this.y);
+        try {
+            return (VectorImpl) super.clone();
+        } catch (final CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 
     @Override
