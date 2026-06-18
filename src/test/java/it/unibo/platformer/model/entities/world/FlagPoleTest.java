@@ -12,52 +12,74 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class FlagPoleTest {
 
-    /** X coordinate of the pole used in each test. */
+    /**
+     *  X coordinate of the pole used in each test. 
+     */
     private static final double POLE_X = 100.0;
 
-    /** Y coordinate of the pole used in each test. */
+    /**
+     *  Y coordinate of the pole used in each test. 
+     */
     private static final double POLE_Y = 50.0;
 
-    /** Height of the pole used in each test. */
+    /** 
+     * Height of the pole used in each test. 
+     */
     private static final double POLE_HEIGHT = 200.0;
 
-    /** Expected width of a pole, in pixels. */
+    /**
+     *  Expected width of a pole, in pixels. 
+     */
     private static final double EXPECTED_POLE_WIDTH = 6.0;
 
-    /** Expected width of a flag, in pixels. */
+    /** 
+     * Expected width of a flag, in pixels. 
+     */
     private static final double EXPECTED_FLAG_WIDTH = 48.0;
 
-    /** Expected height of a flag, in pixels. */
+    /** 
+     * Expected height of a flag, in pixels. 
+     */
     private static final double EXPECTED_FLAG_HEIGHT = 32.0;
 
-    /** Delta time used for a single large simulation step, in seconds. */
+    /** 
+     * Delta time used for a single large simulation step, in seconds. 
+     */
     private static final double LARGE_DELTA = 0.05;
 
-    /** Number of simulation steps used to drive the flag all the way down. */
+    /** 
+     * Number of simulation steps used to drive the flag all the way down. 
+     */
     private static final int LOWER_ITERATIONS = 1000;
 
-    /** The pole instance shared across tests in this class. */
+    private static final double SHORT_DELTA = 0.1;
+
+    private static final double DEFAULT_DELTA = 0.016;
+
+    /**
+     *  The pole instance shared across tests in this class. 
+     */
     private Pole pole;
 
-    /** The flag instance shared across tests in this class. */
+    /** 
+     * The flag instance shared across tests in this class. 
+     */
     private Flag flag;
 
-    /** Creates a fresh pole and flag before each test. */
+    /**
+     *  Creates a fresh pole and flag before each test. 
+     */
     @BeforeEach
     void setUp() {
         pole = new Pole(POLE_X, POLE_Y, POLE_HEIGHT);
         flag = new Flag(pole);
     }
 
-    // -----------------------------------------------------------------------
-    // Pole geometry
-    // -----------------------------------------------------------------------
-
     /**
      * Verifies that the pole stores the correct position.
      */
     @Test
-    void pole_positionIsCorrect() {
+    void polepositionIsCorrect() {
         assertTrue(pole.getX() == POLE_X);
         assertTrue(pole.getY() == POLE_Y);
     }
@@ -66,7 +88,7 @@ class FlagPoleTest {
      * Verifies that the pole has the expected fixed width and provided height.
      */
     @Test
-    void pole_sizeIsCorrect() {
+    void polesizeIsCorrect() {
         assertTrue(pole.getWidth() == EXPECTED_POLE_WIDTH);
         assertTrue(pole.getHeight() == POLE_HEIGHT);
     }
@@ -75,19 +97,15 @@ class FlagPoleTest {
      * Calling {@code update()} on a pole must not throw an exception.
      */
     @Test
-    void pole_update_doesNotThrow() {
-        assertDoesNotThrow(() -> pole.update(0.016));
+    void poleupdatedoesNotThrow() {
+        assertDoesNotThrow(() -> pole.update(DEFAULT_DELTA));
     }
-
-    // -----------------------------------------------------------------------
-    // Flag initial state
-    // -----------------------------------------------------------------------
 
     /**
      * The flag must start at the very top of the pole (same Y coordinate).
      */
     @Test
-    void flag_startsAtTopOfPole() {
+    void flagstartsAtTopOfPole() {
         assertTrue(flag.getY() == POLE_Y);
     }
 
@@ -95,7 +113,7 @@ class FlagPoleTest {
      * The flag must not be in a lowering state before {@code lower()} is called.
      */
     @Test
-    void flag_startsNotLowering() {
+    void flagstartsNotLowering() {
         assertFalse(flag.isLowering());
     }
 
@@ -103,7 +121,7 @@ class FlagPoleTest {
      * The flag must not be considered down when it starts at the top.
      */
     @Test
-    void flag_startsNotDown() {
+    void flagstartsNotDown() {
         assertFalse(flag.isDown());
     }
 
@@ -111,7 +129,7 @@ class FlagPoleTest {
      * The flag entity must be non-solid so the player can pass through it.
      */
     @Test
-    void flag_isNotSolid() {
+    void flagisNotSolid() {
         assertFalse(flag.isSolid());
     }
 
@@ -119,20 +137,16 @@ class FlagPoleTest {
      * Verifies that the flag has the expected fixed dimensions.
      */
     @Test
-    void flag_sizeIsCorrect() {
+    void flagsizeIsCorrect() {
         assertTrue(flag.getWidth() == EXPECTED_FLAG_WIDTH);
         assertTrue(flag.getHeight() == EXPECTED_FLAG_HEIGHT);
     }
-
-    // -----------------------------------------------------------------------
-    // Flag.lower()
-    // -----------------------------------------------------------------------
 
     /**
      * After calling {@code lower()}, the flag must report that it is lowering.
      */
     @Test
-    void flag_lower_setsLoweringTrue() {
+    void flaglowersetsLoweringTrue() {
         flag.lower();
         assertTrue(flag.isLowering());
     }
@@ -141,10 +155,10 @@ class FlagPoleTest {
      * After {@code lower()}, an update tick must move the flag downward.
      */
     @Test
-    void flag_afterLower_updateMovesItDown() {
+    void flagafterLowerupdateMovesItDown() {
         final double startY = flag.getY();
         flag.lower();
-        flag.update(0.1);
+        flag.update(SHORT_DELTA);
         assertTrue(flag.getY() > startY);
     }
 
@@ -152,7 +166,7 @@ class FlagPoleTest {
      * Without calling {@code lower()}, the flag must not move on update.
      */
     @Test
-    void flag_withoutLower_updateDoesNotMove() {
+    void flagwithoutLowerupdateDoesNotMove() {
         final double startY = flag.getY();
         flag.update(1.0);
         assertTrue(flag.getY() == startY);
@@ -166,7 +180,7 @@ class FlagPoleTest {
      * After enough simulation ticks, the flag must reach the bottom of the pole.
      */
     @Test
-    void flag_afterEnoughUpdates_reachesBottom() {
+    void flagafterEnoughUpdatesreachesBottom() {
         flag.lower();
         for (int i = 0; i < LOWER_ITERATIONS; i++) {
             flag.update(LARGE_DELTA);
@@ -178,7 +192,7 @@ class FlagPoleTest {
      * Once at the bottom, the flag must not descend further on additional updates.
      */
     @Test
-    void flag_onceDown_doesNotDescendFurther() {
+    void flagonceDowndoesNotDescendFurther() {
         flag.lower();
         for (int i = 0; i < LOWER_ITERATIONS; i++) {
             flag.update(LARGE_DELTA);

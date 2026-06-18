@@ -10,16 +10,15 @@ import javafx.scene.paint.Color;
 /**
  * A Koopa enemy that walks, can be stomped into a shell, and kicked.
  */
-public class Koopa extends EnemyImpl {
+public final class Koopa extends AbstractEnemyImpl {
 
     private static final double WALK_SPEED = 50.0;
     private static final double WALK_FRAME_DURATION = 0.15;
     private static final double SHELL_FRAME_DURATION = 0.08;
-
     private static final String WALK_ANIMATION = "walk";
     private static final String SHELL_ANIMATION = "shell";
     private static final String SHELL_MOVING_ANIMATION = "shell_moving";
-    
+    private static final int SPRITE_SIZE = 48;
     private KoopaState state;
 
     /**
@@ -30,7 +29,7 @@ public class Koopa extends EnemyImpl {
      * @param physics the physics engine to use
      */
     public Koopa(final double x, final double y, final BasicPhysics physics) {
-        super(x, y, 32, 48, physics);
+        super(x, y, 32, SPRITE_SIZE, physics);
         this.state = KoopaState.WALK;
         transitionTo(KoopaState.WALK);
         setVelocityX(-WALK_SPEED);
@@ -118,9 +117,9 @@ public class Koopa extends EnemyImpl {
     }
 
     /** Walk handler. */
-    private final class WalkHandler implements EnemyImpl.WalkingHandler {
+    private final class WalkHandler implements AbstractEnemyImpl.WalkingHandler {
         @Override
-        public void update(final EnemyImpl e, final double deltaTime) {
+        public void update(final AbstractEnemyImpl e, final double deltaTime) {
             final double vx = e.getVelocityX();
             if (vx < 0) {
                 e.setFacingLeft(true);
@@ -133,9 +132,9 @@ public class Koopa extends EnemyImpl {
         }
 
         @Override
-        public void render(final EnemyImpl e, final GraphicsContext gc) {
+        public void render(final AbstractEnemyImpl e, final GraphicsContext gc) {
             if (e.getAnim().hasAnimation(WALK_ANIMATION)) {
-                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.isFacingLeft());
+                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), !e.isFacingLeft());
             } else {
                 gc.setFill(Color.GREEN);
                 gc.fillRect(e.getX(), e.getY(), e.getWidth(), e.getHeight());
@@ -149,18 +148,18 @@ public class Koopa extends EnemyImpl {
     }
 
     /** Shell handler. */
-    private final class ShellHandler implements EnemyImpl.EnemyStateHandler {
+    private final class ShellHandler implements AbstractEnemyImpl.EnemyStateHandler {
         @Override
-        public void update(final EnemyImpl e, final double deltaTime) {
+        public void update(final AbstractEnemyImpl e, final double deltaTime) {
             e.getAnim().play(SHELL_ANIMATION);
             e.getAnim().update(deltaTime);
             e.physicsTick(deltaTime);
         }
 
         @Override
-        public void render(final EnemyImpl e, final GraphicsContext gc) {
+        public void render(final AbstractEnemyImpl e, final GraphicsContext gc) {
             if (e.getAnim().hasAnimation(SHELL_ANIMATION)) {
-                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.isFacingLeft());
+                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), !e.isFacingLeft());
             }
         }
 
@@ -171,18 +170,18 @@ public class Koopa extends EnemyImpl {
     }
 
     /** Shell moving handler. */
-    private static final class ShellMovingHandler implements EnemyImpl.EnemyStateHandler {
+    private static final class ShellMovingHandler implements AbstractEnemyImpl.EnemyStateHandler {
         @Override
-        public void update(final EnemyImpl e, final double deltaTime) {
+        public void update(final AbstractEnemyImpl e, final double deltaTime) {
             e.getAnim().play(SHELL_MOVING_ANIMATION);
             e.getAnim().update(deltaTime);
             e.physicsTick(deltaTime);
         }
 
         @Override
-        public void render(final EnemyImpl e, final GraphicsContext gc) {
+        public void render(final AbstractEnemyImpl e, final GraphicsContext gc) {
             if (e.getAnim().hasAnimation(SHELL_MOVING_ANIMATION)) {
-                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), e.isFacingLeft());
+                e.getAnim().render(gc, e.getX(), e.getY(), e.getWidth(), e.getHeight(), !e.isFacingLeft());
             }
         }
 

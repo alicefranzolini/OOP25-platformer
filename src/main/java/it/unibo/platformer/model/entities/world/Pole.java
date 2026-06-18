@@ -26,11 +26,10 @@ public final class Pole extends AbstractStaticEntity {
     public Pole(final double x, final double y, final double height) {
         super(x, y, POLE_WIDTH, height);
     }
-    
- /** Draw the pole */
+
+    /** Draw the pole.*/
     @Override
     public void render(final GraphicsContext gc) {
-       
         gc.setFill(POLE_COLOR);
         gc.fillRect(getX(), getY(), POLE_WIDTH, getHeight());
 

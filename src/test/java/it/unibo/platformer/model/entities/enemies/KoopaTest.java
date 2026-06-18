@@ -19,52 +19,46 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 class KoopaTest {
 
-    /**
-     * Minimal no-op {@link BasicPhysics} stub that allows enemy instantiation
-     * without a real physics engine.
+    /** 
+     * Initial X position of the Koopa under test. 
      */
-    static final class NoOpPhysics implements BasicPhysics {
+    private static final double STARTX = 50.0;
 
-        /**
-         * Does nothing – physics is not under test here.
-         *
-         * @param entity    the entity that would be updated
-         * @param deltaTime time elapsed since the last frame, in seconds
-         */
-        @Override
-       public void updatePosition(GameObject obj, double dt) { }
-    }
+    /** 
+     * Initial Y position of the Koopa under test. 
+     */
+    private static final double STARTY = 100.0;
 
-    /** Initial X position of the Koopa under test. */
-    private static final double START_X = 50.0;
+    /** 
+     * Expected width of a Koopa sprite, in pixels. 
+     */
+    private static final double KOOPAWIDTH = 32.0;
 
-    /** Initial Y position of the Koopa under test. */
-    private static final double START_Y = 100.0;
+    /** 
+     * Expected height of a Koopa sprite, in pixels. 
+     */
+    private static final double KOOPAHEIGHT = 48.0;
 
-    /** Expected width of a Koopa sprite, in pixels. */
-    private static final double KOOPA_WIDTH = 32.0;
+    private static final double DELTA_TIME = 0.016;
 
-    /** Expected height of a Koopa sprite, in pixels. */
-    private static final double KOOPA_HEIGHT = 48.0;
-
-    /** The Koopa instance shared across tests in this class. */
+    /** 
+     * The Koopa instance shared across tests in this class. 
+     */
     private Koopa koopa;
 
-    /** Creates a fresh Koopa before each test. */
+    /** 
+     * Creates a fresh Koopa before each test. 
+     */
     @BeforeEach
     void setUp() {
-        koopa = new Koopa(START_X, START_Y, new NoOpPhysics());
+        koopa = new Koopa(STARTX, STARTY, new NoOpPhysics());
     }
-
-    // -----------------------------------------------------------------------
-    // Initial state
-    // -----------------------------------------------------------------------
 
     /**
      * The Koopa must begin in the {@link KoopaState#WALK} state.
      */
     @Test
-    void initialState_isWalk() {
+    void initialStateisWalk() {
         assertTrue(koopa.getState() == KoopaState.WALK);
     }
 
@@ -72,7 +66,7 @@ class KoopaTest {
      * The Koopa must be active immediately after construction.
      */
     @Test
-    void initialState_isActive() {
+    void initialStateisActive() {
         assertTrue(koopa.isActive());
     }
 
@@ -80,7 +74,7 @@ class KoopaTest {
      * The Koopa must report that it is walking in the initial state.
      */
     @Test
-    void initialState_isWalking() {
+    void initialStateisWalking() {
         assertTrue(koopa.isWalking());
     }
 
@@ -88,7 +82,7 @@ class KoopaTest {
      * The Koopa must be able to hit the player while walking.
      */
     @Test
-    void initialState_hitsPlayer() {
+    void initialStatehitsPlayer() {
         assertTrue(koopa.hitsPlayer());
     }
 
@@ -96,7 +90,7 @@ class KoopaTest {
      * A walking Koopa must not be able to kill other enemies.
      */
     @Test
-    void initialState_cannotKillEnemies() {
+    void initialStatecannotKillEnemies() {
         assertFalse(koopa.canKillEnemies());
     }
 
@@ -104,20 +98,16 @@ class KoopaTest {
      * Verifies that the Koopa has the expected fixed dimensions.
      */
     @Test
-    void initialState_sizeIsCorrect() {
-        assertTrue(koopa.getWidth() == KOOPA_WIDTH);
-        assertTrue(koopa.getHeight() == KOOPA_HEIGHT);
+    void initialStatesizeIsCorrect() {
+        assertTrue(koopa.getWidth() == KOOPAWIDTH);
+        assertTrue(koopa.getHeight() == KOOPAHEIGHT);
     }
-
-    // -----------------------------------------------------------------------
-    // stomp()
-    // -----------------------------------------------------------------------
 
     /**
      * After {@code stomp()}, the state must change to {@link KoopaState#SHELL}.
      */
     @Test
-    void stomp_changesStateToShell() {
+    void stompchangesStateToShell() {
         koopa.stomp();
         assertTrue(koopa.getState() == KoopaState.SHELL);
     }
@@ -126,7 +116,7 @@ class KoopaTest {
      * A sheltered Koopa must not be able to hurt the player.
      */
     @Test
-    void stomp_shellState_doesNotHitPlayer() {
+    void stompshellStatedoesNotHitPlayer() {
         koopa.stomp();
         assertFalse(koopa.hitsPlayer());
     }
@@ -135,7 +125,7 @@ class KoopaTest {
      * A sheltered Koopa must no longer report that it is walking.
      */
     @Test
-    void stomp_shellState_isNotWalking() {
+    void stompshellStateisNotWalking() {
         koopa.stomp();
         assertFalse(koopa.isWalking());
     }
@@ -144,7 +134,7 @@ class KoopaTest {
      * A stationary shell must not be able to kill other enemies.
      */
     @Test
-    void stomp_shellState_cannotKillEnemies() {
+    void stompshellStatecannotKillEnemies() {
         koopa.stomp();
         assertFalse(koopa.canKillEnemies());
     }
@@ -153,22 +143,18 @@ class KoopaTest {
      * Calling {@code stomp()} a second time must be a no-op and must not throw.
      */
     @Test
-    void stomp_idempotent_whenAlreadyShell() {
+    void stompidempotentwhenAlreadyShell() {
         koopa.stomp();
         assertDoesNotThrow(() -> koopa.stomp());
         assertTrue(koopa.getState() == KoopaState.SHELL);
     }
-
-    // -----------------------------------------------------------------------
-    // kick()
-    // -----------------------------------------------------------------------
 
     /**
      * Kicking the shell to the right must set the state to
      * {@link KoopaState#SHELL_MOVING}.
      */
     @Test
-    void kick_right_changesStateToShellMoving() {
+    void kickrightchangesStateToShellMoving() {
         koopa.stomp();
         koopa.kick(true);
         assertTrue(koopa.getState() == KoopaState.SHELL_MOVING);
@@ -179,7 +165,7 @@ class KoopaTest {
      * {@link KoopaState#SHELL_MOVING}.
      */
     @Test
-    void kick_left_changesStateToShellMoving() {
+    void kickleftchangesStateToShellMoving() {
         koopa.stomp();
         koopa.kick(false);
         assertTrue(koopa.getState() == KoopaState.SHELL_MOVING);
@@ -189,7 +175,7 @@ class KoopaTest {
      * Kicking to the right must give the shell a positive horizontal velocity.
      */
     @Test
-    void kick_right_velocityIsPositive() {
+    void kickrightvelocityIsPositive() {
         koopa.stomp();
         koopa.kick(true);
         assertTrue(koopa.getVelocityX() > 0);
@@ -199,7 +185,7 @@ class KoopaTest {
      * Kicking to the left must give the shell a negative horizontal velocity.
      */
     @Test
-    void kick_left_velocityIsNegative() {
+    void kickleftvelocityIsNegative() {
         koopa.stomp();
         koopa.kick(false);
         assertTrue(koopa.getVelocityX() < 0);
@@ -209,7 +195,7 @@ class KoopaTest {
      * A moving shell must be able to hurt the player.
      */
     @Test
-    void kick_shellMoving_hitsPlayer() {
+    void kickshellMovinghitsPlayer() {
         koopa.stomp();
         koopa.kick(true);
         assertTrue(koopa.hitsPlayer());
@@ -219,7 +205,7 @@ class KoopaTest {
      * A moving shell must be able to kill other enemies.
      */
     @Test
-    void kick_shellMoving_canKillEnemies() {
+    void kickshellMovingcanKillEnemies() {
         koopa.stomp();
         koopa.kick(true);
         assertTrue(koopa.canKillEnemies());
@@ -229,56 +215,64 @@ class KoopaTest {
      * A moving shell must not be considered "walking" (it is a distinct state).
      */
     @Test
-    void kick_shellMoving_isNotWalking() {
+    void kickshellMovingisNotWalking() {
         koopa.stomp();
         koopa.kick(true);
         assertFalse(koopa.isWalking());
     }
-
-    // -----------------------------------------------------------------------
-    // State-machine guard
-    // -----------------------------------------------------------------------
 
     /**
      * Calling {@code stomp()} while the shell is already moving must be ignored;
      * the state must remain {@link KoopaState#SHELL_MOVING}.
      */
     @Test
-    void stomp_whileShellMoving_isIgnored() {
+    void stompwhileShellMovingisIgnored() {
         koopa.stomp();
         koopa.kick(true);
         koopa.stomp();
         assertTrue(koopa.getState() == KoopaState.SHELL_MOVING);
     }
 
-    // -----------------------------------------------------------------------
-    // update() – no-op physics: only verify no exceptions are thrown
-    // -----------------------------------------------------------------------
-
     /**
      * Calling {@code update()} while walking must not throw an exception.
      */
     @Test
-    void update_walkState_doesNotThrow() {
-        assertDoesNotThrow(() -> koopa.update(0.016));
+    void updatewalkStatedoesNotThrow() {
+        assertDoesNotThrow(() -> koopa.update(DELTA_TIME));
     }
 
     /**
      * Calling {@code update()} while in the shell state must not throw an exception.
      */
     @Test
-    void update_shellState_doesNotThrow() {
+    void updateshellStatedoesNotThrow() {
         koopa.stomp();
-        assertDoesNotThrow(() -> koopa.update(0.016));
+        assertDoesNotThrow(() -> koopa.update(DELTA_TIME));
     }
 
     /**
      * Calling {@code update()} while the shell is moving must not throw an exception.
      */
     @Test
-    void update_shellMovingState_doesNotThrow() {
+    void updateshellMovingStatesdoesNotThrow() {
         koopa.stomp();
         koopa.kick(true);
-        assertDoesNotThrow(() -> koopa.update(0.016));
+        assertDoesNotThrow(() -> koopa.update(DELTA_TIME));
+    }
+
+    /**
+     * Minimal no-op {@link BasicPhysics} stub that allows enemy instantiation
+     * without a real physics engine.
+     */
+    static final class NoOpPhysics implements BasicPhysics {
+
+        /**
+         * Does nothing – physics is not under test here.
+         *
+         * @param obj the object to update
+         * @param dt the time elapsed since the last frame, in seconds
+         */
+        @Override
+        public void updatePosition(final GameObject obj, final double dt) { }
     }
 }

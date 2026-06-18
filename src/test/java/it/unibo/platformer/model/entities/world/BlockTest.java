@@ -13,35 +13,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class BlockTest {
 
     /** X coordinate used for all test blocks. */
-    private static final double BLOCK_X = 10.0;
+    private static final double BLOCKX = 10.0;
 
     /** Y coordinate used for all test blocks. */
-    private static final double BLOCK_Y = 20.0;
+    private static final double BLOCKY = 20.0;
 
     /** Expected side length of a block, in pixels. */
-    private static final double BLOCK_SIZE = 32.0;
+    private static final double BLOCKSIZE = 32.0;
 
-    // -----------------------------------------------------------------------
-    // Construction
-    // -----------------------------------------------------------------------
+    private static final double DELTATIME = 0.016;
 
     /**
      * Verifies that position and size are stored correctly on construction.
      */
     @Test
-    void constructorNormalType_setsPositionAndSize() {
-        final Block block = new Block(BLOCK_X, BLOCK_Y, BlockType.NORMAL);
-        assertTrue(block.getX() == BLOCK_X);
-        assertTrue(block.getY() == BLOCK_Y);
-        assertTrue(block.getWidth() == BLOCK_SIZE);
-        assertTrue(block.getHeight() == BLOCK_SIZE);
+    void constructorNormalTypesetsPositionAndSize() {
+        final Block block = new Block(BLOCKX, BLOCKY, BlockType.NORMAL);
+        assertTrue(block.getX() == BLOCKX);
+        assertTrue(block.getY() == BLOCKY);
+        assertTrue(block.getWidth() == BLOCKSIZE);
+        assertTrue(block.getHeight() == BLOCKSIZE);
     }
 
     /**
      * Verifies that the convenience constructor creates a block with no content.
      */
     @Test
-    void convenienceConstructor_createsNormalBlock() {
+    void convenienceConstructorcreatesNormalBlock() {
         final Block block = new Block(0, 0);
         assertFalse(block.onHit());
     }
@@ -54,7 +52,7 @@ class BlockTest {
      * A normal block has no content and must return {@code false} on hit.
      */
     @Test
-    void normalBlock_onHit_returnsFalse() {
+    void normalBlockonHitreturnsFalse() {
         final Block block = new Block(0, 0, BlockType.NORMAL);
         assertFalse(block.onHit());
     }
@@ -63,7 +61,7 @@ class BlockTest {
      * Hitting a normal block multiple times must always return {@code false}.
      */
     @Test
-    void normalBlock_onHitTwice_alwaysReturnsFalse() {
+    void normalBlockonHitTwicealwaysReturnsFalse() {
         final Block block = new Block(0, 0, BlockType.NORMAL);
         assertFalse(block.onHit());
         assertFalse(block.onHit());
@@ -77,7 +75,7 @@ class BlockTest {
      * A brick block has no content, so {@code onHit()} must return {@code false}.
      */
     @Test
-    void brickBlock_firstHit_returnsFalse() {
+    void brickBlockfirstHitreturnsFalse() {
         final Block block = new Block(0, 0, BlockType.BRICK);
         assertFalse(block.onHit());
     }
@@ -86,7 +84,7 @@ class BlockTest {
      * Hitting a brick block a second time must still return {@code false}.
      */
     @Test
-    void brickBlock_secondHit_stillReturnsFalse() {
+    void brickBlocksecondHitstillReturnsFalse() {
         final Block block = new Block(0, 0, BlockType.BRICK);
         block.onHit();
         assertFalse(block.onHit());
@@ -101,7 +99,7 @@ class BlockTest {
      * signalling that content was released.
      */
     @Test
-    void questionBlock_firstHit_returnsTrue() {
+    void questionBlockfirstHitreturnsTrue() {
         final Block block = new Block(0, 0, BlockType.QUESTION);
         assertTrue(block.onHit());
     }
@@ -110,7 +108,7 @@ class BlockTest {
      * After the content is consumed, subsequent hits must return {@code false}.
      */
     @Test
-    void questionBlock_secondHit_returnsFalse() {
+    void questionBlocksecondHitreturnsFalse() {
         final Block block = new Block(0, 0, BlockType.QUESTION);
         block.onHit();
         assertFalse(block.onHit());
@@ -120,7 +118,7 @@ class BlockTest {
      * Only the first hit yields content; every further hit must return {@code false}.
      */
     @Test
-    void questionBlock_multipleHits_neverReturnTrueAgain() {
+    void questionBlockmultipleHitsneverReturnTrueAgain() {
         final Block block = new Block(0, 0, BlockType.QUESTION);
         block.onHit();
         final int extraHits = 5;
@@ -137,8 +135,8 @@ class BlockTest {
      * Calling {@code update()} on any block must not throw an exception.
      */
     @Test
-    void update_doesNotThrow() {
+    void updatedoesNotThrow() {
         final Block block = new Block(5, 5, BlockType.BRICK);
-        assertDoesNotThrow(() -> block.update(0.016));
+        assertDoesNotThrow(() -> block.update(DELTATIME));
     }
 }

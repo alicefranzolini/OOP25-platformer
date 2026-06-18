@@ -1,6 +1,9 @@
 package it.unibo.platformer.model.physics.impl;
 
-/*This enum class check al the possible state of collision*/
+/**
+ * This enum has all the collision side.
+ */
 public enum CollisionSide {
-    TOP, BOTTOM, LEFT, RIGHT, NONE;
+    TOP, BOTTOM, LEFT, RIGHT, NONE
+
 }
