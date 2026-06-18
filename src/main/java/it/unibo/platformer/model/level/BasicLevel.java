@@ -3,9 +3,11 @@ package it.unibo.platformer.model.level;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import it.unibo.platformer.model.entities.AbstractEntity;
 import it.unibo.platformer.model.entities.AbstractDynamicEntity;
@@ -30,11 +32,22 @@ import it.unibo.platformer.model.physics.impl.GameObjectImpl;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-// CHECKSTYLE: MagicNumber OFF
 /**
  * Basic implementation of a playable platform level.
  */
 public final class BasicLevel implements Level {
+    private static final int DEFAULT_LEVEL_NUMBER = 1;
+    private static final double DEFAULT_LEVEL_WIDTH = 2000.0;
+    private static final double DEFAULT_LEVEL_HEIGHT = 720.0;
+    private static final double DEFAULT_SPAWN_X = 100.0;
+    private static final double DEFAULT_SPAWN_Y = 300.0;
+    private static final int INITIAL_COUNTER = 0;
+    private static final int PREVIOUS_X_INDEX = 0;
+    private static final int PREVIOUS_Y_INDEX = 1;
+    private static final double ORIGIN = 0.0;
+    private static final double HALF_DIVISOR = 2.0;
+    private static final double POWER_UP_COIN_X_OFFSET = 8.0;
+    private static final double POWER_UP_COIN_Y_OFFSET = 24.0;
     private static final double GROUND_EPSILON = 2.0;
     private static final double TOP_COLLISION_TOLERANCE = 10.0;
     private static final double BOTTOM_COLLISION_TOLERANCE = 18.0;
@@ -47,6 +60,76 @@ public final class BasicLevel implements Level {
     private static final double EDGE_CHECK_DISTANCE = 8.0;
     private static final double FALL_LIMIT_OFFSET = 160.0;
     private static final double GOAL_DISTANCE_FROM_END = 96.0;
+    private static final int LEVEL_TWO = 2;
+    private static final int LEVEL_THREE = 3;
+    private static final int LEVEL_ONE_SKY_RED = 113;
+    private static final int LEVEL_ONE_SKY_GREEN = 190;
+    private static final int LEVEL_ONE_SKY_BLUE = 244;
+    private static final int LEVEL_TWO_SKY_RED = 99;
+    private static final int LEVEL_TWO_SKY_GREEN = 170;
+    private static final int LEVEL_TWO_SKY_BLUE = 224;
+    private static final int LEVEL_THREE_SKY_RED = 78;
+    private static final int LEVEL_THREE_SKY_GREEN = 126;
+    private static final int LEVEL_THREE_SKY_BLUE = 193;
+    private static final double SUN_BASE_X = 180.0;
+    private static final double SUN_BASE_Y = 80.0;
+    private static final double SUN_LEVEL_X_STEP = 45.0;
+    private static final double SUN_LEVEL_Y_STEP = 10.0;
+    private static final double SUN_SIZE = 70.0;
+    private static final double SUN_INNER_OFFSET = 12.0;
+    private static final double SUN_INNER_SIZE = 46.0;
+    private static final int SUN_RED = 255;
+    private static final int SUN_GREEN = 222;
+    private static final int SUN_BLUE = 89;
+    private static final double SUN_ALPHA = 0.9;
+    private static final int SUN_INNER_RED = 255;
+    private static final int SUN_INNER_GREEN = 244;
+    private static final int SUN_INNER_BLUE = 170;
+    private static final double SUN_INNER_ALPHA = 0.65;
+    private static final double CLOUD_START_X = 260.0;
+    private static final double CLOUD_SPACING = 520.0;
+    private static final double CLOUD_BASE_Y = 85.0;
+    private static final double CLOUD_VARIATION_STEP = 18.0;
+    private static final int CLOUD_VARIATIONS = 3;
+    private static final int CLOUD_RED = 255;
+    private static final int CLOUD_GREEN = 255;
+    private static final int CLOUD_BLUE = 255;
+    private static final double CLOUD_ALPHA = 0.78;
+    private static final double CLOUD_LEFT_WIDTH = 70.0;
+    private static final double CLOUD_LEFT_HEIGHT = 34.0;
+    private static final double CLOUD_MIDDLE_X_OFFSET = 35.0;
+    private static final double CLOUD_MIDDLE_Y_OFFSET = 18.0;
+    private static final double CLOUD_MIDDLE_WIDTH = 78.0;
+    private static final double CLOUD_MIDDLE_HEIGHT = 48.0;
+    private static final double CLOUD_RIGHT_X_OFFSET = 82.0;
+    private static final double CLOUD_RIGHT_WIDTH = 76.0;
+    private static final double CLOUD_RIGHT_HEIGHT = 34.0;
+    private static final double HILL_START_X = -80.0;
+    private static final double HILL_SPACING = 360.0;
+    private static final int HILL_FRONT_RED = 84;
+    private static final int HILL_FRONT_GREEN = 174;
+    private static final int HILL_FRONT_BLUE = 91;
+    private static final int HILL_BACK_RED = 63;
+    private static final int HILL_BACK_GREEN = 145;
+    private static final int HILL_BACK_BLUE = 76;
+    private static final double HILL_FRONT_Y_OFFSET = 245.0;
+    private static final double HILL_FRONT_WIDTH = 280.0;
+    private static final double HILL_FRONT_HEIGHT = 220.0;
+    private static final double HILL_BACK_X_OFFSET = 120.0;
+    private static final double HILL_BACK_Y_OFFSET = 195.0;
+    private static final double HILL_BACK_WIDTH = 260.0;
+    private static final double HILL_BACK_HEIGHT = 170.0;
+    private static final int GROUND_SHADOW_RED = 67;
+    private static final int GROUND_SHADOW_GREEN = 128;
+    private static final int GROUND_SHADOW_BLUE = 73;
+    private static final double GROUND_SHADOW_ALPHA = 0.45;
+    private static final int GROUND_DARK_RED = 42;
+    private static final int GROUND_DARK_GREEN = 93;
+    private static final int GROUND_DARK_BLUE = 59;
+    private static final double GROUND_DARK_ALPHA = 0.35;
+    private static final double GROUND_SHADOW_HEIGHT = 175.0;
+    private static final double GROUND_DARK_Y = 500.0;
+    private static final double GROUND_DARK_HEIGHT = 18.0;
 
     private enum QuestionReward {
         COIN,
@@ -57,6 +140,7 @@ public final class BasicLevel implements Level {
     private final List<AbstractEntity> entities;
     private final List<AbstractEntity> pendingEntities;
     private final List<QuestionReward> questionRewards;
+    private final Set<AbstractEntity> playerSafeShells;
     private final Random random;
     private final int levelNumber;
     private final double width;
@@ -77,7 +161,7 @@ public final class BasicLevel implements Level {
      * Creates the default test level.
      */
     public BasicLevel() {
-        this(1, 2000, 720, 100, 300);
+        this(DEFAULT_LEVEL_NUMBER, DEFAULT_LEVEL_WIDTH, DEFAULT_LEVEL_HEIGHT, DEFAULT_SPAWN_X, DEFAULT_SPAWN_Y);
     }
 
     /**
@@ -99,17 +183,18 @@ public final class BasicLevel implements Level {
         this.entities = new ArrayList<>();
         this.pendingEntities = new ArrayList<>();
         this.questionRewards = new ArrayList<>();
+        this.playerSafeShells = new HashSet<>();
         this.random = new Random();
         this.levelNumber = levelNumber;
         this.width = levelWidth;
         this.height = levelHeight;
         this.spawnX = playerSpawnX;
         this.spawnY = playerSpawnY;
-        this.collectedCoins = 0;
-        this.defeatedEnemies = 0;
+        this.collectedCoins = INITIAL_COUNTER;
+        this.defeatedEnemies = INITIAL_COUNTER;
         this.completed = false;
-        this.wallContactDirection = 0;
-        this.wallContactTimer = 0;
+        this.wallContactDirection = INITIAL_COUNTER;
+        this.wallContactTimer = INITIAL_COUNTER;
         this.detector = new CollisionDetectorImpl();
     }
 
@@ -176,7 +261,7 @@ public final class BasicLevel implements Level {
 
     @Override
     public void resetCollectedCoins() {
-        this.collectedCoins = 0;
+        this.collectedCoins = INITIAL_COUNTER;
     }
 
     @Override
@@ -186,7 +271,7 @@ public final class BasicLevel implements Level {
 
     @Override
     public void resetDefeatedEnemies() {
-        this.defeatedEnemies = 0;
+        this.defeatedEnemies = INITIAL_COUNTER;
     }
 
     @Override
@@ -251,8 +336,12 @@ public final class BasicLevel implements Level {
                 );
 
                 final double[] previousPosition = previousPositions.get(dynamicEntity);
-                final double previousX = previousPosition == null ? movingEntity.getX() : previousPosition[0];
-                final double previousY = previousPosition == null ? movingEntity.getY() : previousPosition[1];
+                final double previousX = previousPosition == null
+                    ? movingEntity.getX()
+                    : previousPosition[PREVIOUS_X_INDEX];
+                final double previousY = previousPosition == null
+                    ? movingEntity.getY()
+                    : previousPosition[PREVIOUS_Y_INDEX];
 
                 if (result != null) {
                     handleGoalCollision(dynamicEntity, staticEntity);
@@ -281,6 +370,7 @@ public final class BasicLevel implements Level {
         handleEnemyLedges();
         handleEnemyBounds();
         handleShellEnemyCollisions();
+        updateShellContactProtection();
         handlePlayerEnemyCollisions();
         handlePlayerPowerUpCollisions();
         handlePlayerFallOut();
@@ -307,7 +397,10 @@ public final class BasicLevel implements Level {
 
     @Override
     public void handleJumpPressed(final boolean jumpPressed) {
-        if (!jumpPressed || this.player == null || this.wallContactTimer <= 0 || this.wallContactDirection == 0) {
+        if (!jumpPressed
+            || this.player == null
+            || this.wallContactTimer <= INITIAL_COUNTER
+            || this.wallContactDirection == INITIAL_COUNTER) {
             return;
         }
 
@@ -324,7 +417,7 @@ public final class BasicLevel implements Level {
         dynamicPlayer.setVelocityX(-this.wallContactDirection * WALL_JUMP_SPEED_X);
         dynamicPlayer.setVelocityY(WALL_JUMP_SPEED_Y);
         dynamicPlayer.setOnGround(false);
-        this.wallContactTimer = 0;
+        this.wallContactTimer = INITIAL_COUNTER;
     }
 
     private AbstractEntity playerEntity(final Player currentPlayer) {
@@ -352,7 +445,11 @@ public final class BasicLevel implements Level {
         final QuestionReward reward = takeNextQuestionReward();
         switch (reward) {
             case COIN:
-                return new Coin(block.getX() + 8, block.getY() - 24, new BasicPhysicsImpl());
+                return new Coin(
+                    block.getX() + POWER_UP_COIN_X_OFFSET,
+                    block.getY() - POWER_UP_COIN_Y_OFFSET,
+                    new BasicPhysicsImpl()
+                );
             case STAR:
                 return new StarPowerUp(block.getX(), block.getY(), new BasicPhysicsImpl());
             case MUSHROOM:
@@ -365,7 +462,7 @@ public final class BasicLevel implements Level {
         if (this.questionRewards.isEmpty()) {
             refillQuestionRewards();
         }
-        return this.questionRewards.remove(0);
+        return this.questionRewards.remove(INITIAL_COUNTER);
     }
 
     private void refillQuestionRewards() {
@@ -424,16 +521,16 @@ public final class BasicLevel implements Level {
         final double staticLeft = staticEntity.getX();
         final double staticRight = staticEntity.getX() + staticEntity.getWidth();
 
-        if (previousRight <= staticLeft || speedXBeforeCollision > 0) {
+        if (previousRight <= staticLeft || speedXBeforeCollision > INITIAL_COUNTER) {
             dynamicEntity.setX(staticEntity.getX() - dynamicEntity.getWidth());
-        } else if (previousX >= staticRight || speedXBeforeCollision < 0) {
+        } else if (previousX >= staticRight || speedXBeforeCollision < INITIAL_COUNTER) {
             dynamicEntity.setX(staticEntity.getX() + staticEntity.getWidth());
         } else if (dynamicEntity.getX() < staticEntity.getX()) {
             dynamicEntity.setX(staticEntity.getX() - dynamicEntity.getWidth());
         } else {
             dynamicEntity.setX(staticEntity.getX() + staticEntity.getWidth());
         }
-        dynamicEntity.setVelocityX(0);
+        dynamicEntity.setVelocityX(INITIAL_COUNTER);
     }
 
     private void rememberWallContact(final AbstractEntity dynamicEntity, final AbstractEntity staticEntity) {
@@ -446,17 +543,17 @@ public final class BasicLevel implements Level {
             return;
         }
 
-        final double playerCenterX = dynamicPlayer.getX() + dynamicPlayer.getWidth() / 2.0;
-        final double staticCenterX = staticEntity.getX() + staticEntity.getWidth() / 2.0;
+        final double playerCenterX = dynamicPlayer.getX() + dynamicPlayer.getWidth() / HALF_DIVISOR;
+        final double staticCenterX = staticEntity.getX() + staticEntity.getWidth() / HALF_DIVISOR;
         this.wallContactDirection = playerCenterX < staticCenterX ? 1 : -1;
         this.wallContactTimer = WALL_JUMP_TIME;
     }
 
     private void updateWallJumpTimer(final double deltaTime) {
-        if (this.wallContactTimer > 0) {
-            this.wallContactTimer = Math.max(0, this.wallContactTimer - deltaTime);
-            if (this.wallContactTimer == 0) {
-                this.wallContactDirection = 0;
+        if (this.wallContactTimer > INITIAL_COUNTER) {
+            this.wallContactTimer = Math.max(INITIAL_COUNTER, this.wallContactTimer - deltaTime);
+            if (this.wallContactTimer == INITIAL_COUNTER) {
+                this.wallContactDirection = INITIAL_COUNTER;
             }
         }
     }
@@ -474,13 +571,13 @@ public final class BasicLevel implements Level {
         final boolean closeToTop = dynamicBottom >= staticTop
             && dynamicBottom <= staticTop + TOP_COLLISION_TOLERANCE;
 
-        return horizontalOverlap(dynamicEntity, staticEntity) > 0
-            && (cameFromAbove || closeToTop && dynamicEntity.getVelocityY() >= 0);
+        return horizontalOverlap(dynamicEntity, staticEntity) > INITIAL_COUNTER
+            && (cameFromAbove || closeToTop && dynamicEntity.getVelocityY() >= INITIAL_COUNTER);
     }
 
     private void placeOnTopOfBlock(final AbstractDynamicEntity dynamicEntity, final AbstractEntity staticEntity) {
         dynamicEntity.setY(staticEntity.getY() - dynamicEntity.getHeight());
-        dynamicEntity.setVelocityY(0);
+        dynamicEntity.setVelocityY(INITIAL_COUNTER);
         dynamicEntity.setOnGround(true);
     }
 
@@ -503,12 +600,12 @@ public final class BasicLevel implements Level {
             && dynamicEntity.getY() <= staticBottom;
         final boolean enoughOverlap = horizontalOverlap(dynamicEntity, staticEntity) >= MIN_BLOCK_HIT_OVERLAP;
 
-        return dynamicEntity.getVelocityY() <= 0 && cameFromBelow && enoughOverlap;
+        return dynamicEntity.getVelocityY() <= INITIAL_COUNTER && cameFromBelow && enoughOverlap;
     }
 
     private void resolveBottomCollision(final AbstractDynamicEntity dynamicEntity, final AbstractEntity staticEntity) {
         dynamicEntity.setY(staticEntity.getY() + staticEntity.getHeight());
-        dynamicEntity.setVelocityY(0);
+        dynamicEntity.setVelocityY(INITIAL_COUNTER);
     }
 
     private void reverseAfterWallHit(final AbstractEntity entity, final double speedXBeforeCollision) {
@@ -520,7 +617,7 @@ public final class BasicLevel implements Level {
     private boolean isStandingOn(final AbstractDynamicEntity dynamicEntity, final AbstractEntity staticEntity) {
         final double dynamicBottom = dynamicEntity.getY() + dynamicEntity.getHeight();
         final double staticTop = staticEntity.getY();
-        return horizontalOverlap(dynamicEntity, staticEntity) > 0
+        return horizontalOverlap(dynamicEntity, staticEntity) > INITIAL_COUNTER
             && dynamicBottom >= staticTop
             && dynamicBottom <= staticTop + GROUND_EPSILON;
     }
@@ -534,8 +631,8 @@ public final class BasicLevel implements Level {
         for (final AbstractEntity entity : this.entities) {
             if (entity instanceof Enemy && entity instanceof AbstractDynamicEntity && entity.isActive()) {
                 final AbstractDynamicEntity enemy = (AbstractDynamicEntity) entity;
-                if (enemy.getX() <= 0) {
-                    enemy.setX(0);
+                if (enemy.getX() <= INITIAL_COUNTER) {
+                    enemy.setX(INITIAL_COUNTER);
                     enemy.setVelocityX(Math.abs(enemy.getVelocityX()));
                 } else if (enemy.getX() + enemy.getWidth() >= this.width) {
                     enemy.setX(this.width - enemy.getWidth());
@@ -550,14 +647,17 @@ public final class BasicLevel implements Level {
             if (!(entity instanceof Enemy) || !(entity instanceof AbstractDynamicEntity) || !entity.isActive()) {
                 continue;
             }
+            if (isMovingKoopaShell(entity)) {
+                continue;
+            }
 
             final AbstractDynamicEntity enemy = (AbstractDynamicEntity) entity;
-            if (!enemy.isOnGround() || enemy.getVelocityX() == 0) {
+            if (!enemy.isOnGround() || enemy.getVelocityX() == INITIAL_COUNTER) {
                 continue;
             }
 
             final double direction = Math.signum(enemy.getVelocityX());
-            final double probeX = direction > 0
+            final double probeX = direction > INITIAL_COUNTER
                 ? enemy.getX() + enemy.getWidth() + EDGE_CHECK_DISTANCE
                 : enemy.getX() - EDGE_CHECK_DISTANCE;
             final double probeY = enemy.getY() + enemy.getHeight() + EDGE_CHECK_DISTANCE;
@@ -624,6 +724,13 @@ public final class BasicLevel implements Level {
         }
 
         if (isMovingKoopaShell(enemyEntity)) {
+            if (isPlayerStompingEnemy(playerEntity, enemyEntity)) {
+                stompMovingShell(enemyEntity, (AbstractDynamicEntity) playerEntity);
+            } else if (this.playerSafeShells.contains(enemyEntity)) {
+                return;
+            } else {
+                this.player.die();
+            }
             return;
         }
 
@@ -647,10 +754,19 @@ public final class BasicLevel implements Level {
             final Koopa koopa = (Koopa) enemyEntity;
             if (koopa.getState() == Koopa.KoopaState.SHELL) {
                 koopa.kick(this.player.getX() < koopa.getX());
+                this.playerSafeShells.add(enemyEntity);
                 return true;
             }
         }
         return false;
+    }
+
+    private void updateShellContactProtection() {
+        if (this.player == null) {
+            this.playerSafeShells.clear();
+            return;
+        }
+        this.playerSafeShells.removeIf(shell -> !shell.isActive() || !overlaps(this.player, shell));
     }
 
     private boolean isPlayerStompingEnemy(final AbstractEntity playerEntity, final AbstractEntity enemyEntity) {
@@ -659,8 +775,8 @@ public final class BasicLevel implements Level {
         }
         final AbstractDynamicEntity dynamicPlayer = (AbstractDynamicEntity) playerEntity;
         final double playerBottom = playerEntity.getY() + playerEntity.getHeight();
-        final double enemyMiddle = enemyEntity.getY() + enemyEntity.getHeight() / 2.0;
-        return dynamicPlayer.getVelocityY() >= 0 && playerBottom <= enemyMiddle + STOMP_TOLERANCE;
+        final double enemyMiddle = enemyEntity.getY() + enemyEntity.getHeight() / HALF_DIVISOR;
+        return dynamicPlayer.getVelocityY() >= INITIAL_COUNTER && playerBottom <= enemyMiddle + STOMP_TOLERANCE;
     }
 
     private void stompEnemy(final AbstractEntity enemyEntity, final AbstractDynamicEntity playerEntity) {
@@ -674,6 +790,11 @@ public final class BasicLevel implements Level {
                 koopa.stomp();
             }
         }
+        playerEntity.setVelocityY(PLAYER_BOUNCE_AFTER_STOMP);
+    }
+
+    private void stompMovingShell(final AbstractEntity enemyEntity, final AbstractDynamicEntity playerEntity) {
+        defeatEnemy(enemyEntity);
         playerEntity.setVelocityY(PLAYER_BOUNCE_AFTER_STOMP);
     }
 
@@ -698,11 +819,15 @@ public final class BasicLevel implements Level {
         for (final AbstractEntity entity : this.entities) {
             if (entity instanceof PowerUp && entity.isActive() && overlaps(this.player, entity)) {
                 final PowerUp powerUp = (PowerUp) entity;
-                if (!powerUp.isEmerging()) {
+                if (canCollectPowerUp(powerUp, entity)) {
                     powerUp.collect(this.player);
                 }
             }
         }
+    }
+
+    private boolean canCollectPowerUp(final PowerUp powerUp, final AbstractEntity powerUpEntity) {
+        return !powerUp.isEmerging() || this.player.getY() <= powerUpEntity.getY();
     }
 
     private void handlePlayerFallOut() {
@@ -740,7 +865,7 @@ public final class BasicLevel implements Level {
         final double backgroundHeight = Math.max(this.height, gc.getCanvas().getHeight());
 
         gc.setFill(getSkyColor());
-        gc.fillRect(0, 0, backgroundWidth, backgroundHeight);
+        gc.fillRect(ORIGIN, ORIGIN, backgroundWidth, backgroundHeight);
         drawSun(gc);
         drawClouds(gc, backgroundWidth);
         drawHills(gc, backgroundWidth, backgroundHeight);
@@ -749,40 +874,57 @@ public final class BasicLevel implements Level {
 
     private Color getSkyColor() {
         switch (this.levelNumber) {
-            case 2:
-                return Color.rgb(99, 170, 224);
-            case 3:
-                return Color.rgb(78, 126, 193);
+            case LEVEL_TWO:
+                return Color.rgb(LEVEL_TWO_SKY_RED, LEVEL_TWO_SKY_GREEN, LEVEL_TWO_SKY_BLUE);
+            case LEVEL_THREE:
+                return Color.rgb(LEVEL_THREE_SKY_RED, LEVEL_THREE_SKY_GREEN, LEVEL_THREE_SKY_BLUE);
             default:
-                return Color.rgb(113, 190, 244);
+                return Color.rgb(LEVEL_ONE_SKY_RED, LEVEL_ONE_SKY_GREEN, LEVEL_ONE_SKY_BLUE);
         }
     }
 
     private void drawSun(final GraphicsContext gc) {
-        final double sunX = 180 + this.levelNumber * 45;
-        final double sunY = 80 + this.levelNumber * 10;
-        gc.setFill(Color.rgb(255, 222, 89, 0.9));
-        gc.fillOval(sunX, sunY, 70, 70);
-        gc.setFill(Color.rgb(255, 244, 170, 0.65));
-        gc.fillOval(sunX + 12, sunY + 12, 46, 46);
+        final double sunX = SUN_BASE_X + this.levelNumber * SUN_LEVEL_X_STEP;
+        final double sunY = SUN_BASE_Y + this.levelNumber * SUN_LEVEL_Y_STEP;
+        gc.setFill(Color.rgb(SUN_RED, SUN_GREEN, SUN_BLUE, SUN_ALPHA));
+        gc.fillOval(sunX, sunY, SUN_SIZE, SUN_SIZE);
+        gc.setFill(Color.rgb(SUN_INNER_RED, SUN_INNER_GREEN, SUN_INNER_BLUE, SUN_INNER_ALPHA));
+        gc.fillOval(
+            sunX + SUN_INNER_OFFSET,
+            sunY + SUN_INNER_OFFSET,
+            SUN_INNER_SIZE,
+            SUN_INNER_SIZE
+        );
     }
 
     private void drawClouds(final GraphicsContext gc, final double backgroundWidth) {
-        for (double x = 260; x < backgroundWidth; x += 520) {
-            final double y = 85 + (x % 3) * 18;
-            gc.setFill(Color.rgb(255, 255, 255, 0.78));
-            gc.fillOval(x, y, 70, 34);
-            gc.fillOval(x + 35, y - 18, 78, 48);
-            gc.fillOval(x + 82, y, 76, 34);
+        int cloudIndex = INITIAL_COUNTER;
+        for (double x = CLOUD_START_X; x < backgroundWidth; x += CLOUD_SPACING) {
+            final double y = CLOUD_BASE_Y + cloudIndex % CLOUD_VARIATIONS * CLOUD_VARIATION_STEP;
+            gc.setFill(Color.rgb(CLOUD_RED, CLOUD_GREEN, CLOUD_BLUE, CLOUD_ALPHA));
+            gc.fillOval(x, y, CLOUD_LEFT_WIDTH, CLOUD_LEFT_HEIGHT);
+            gc.fillOval(
+                x + CLOUD_MIDDLE_X_OFFSET,
+                y - CLOUD_MIDDLE_Y_OFFSET,
+                CLOUD_MIDDLE_WIDTH,
+                CLOUD_MIDDLE_HEIGHT
+            );
+            gc.fillOval(x + CLOUD_RIGHT_X_OFFSET, y, CLOUD_RIGHT_WIDTH, CLOUD_RIGHT_HEIGHT);
+            cloudIndex++;
         }
     }
 
     private void drawHills(final GraphicsContext gc, final double backgroundWidth, final double backgroundHeight) {
-        for (double x = -80; x < backgroundWidth; x += 360) {
-            gc.setFill(Color.rgb(84, 174, 91));
-            gc.fillOval(x, backgroundHeight - 245, 280, 220);
-            gc.setFill(Color.rgb(63, 145, 76));
-            gc.fillOval(x + 120, backgroundHeight - 195, 260, 170);
+        for (double x = HILL_START_X; x < backgroundWidth; x += HILL_SPACING) {
+            gc.setFill(Color.rgb(HILL_FRONT_RED, HILL_FRONT_GREEN, HILL_FRONT_BLUE));
+            gc.fillOval(x, backgroundHeight - HILL_FRONT_Y_OFFSET, HILL_FRONT_WIDTH, HILL_FRONT_HEIGHT);
+            gc.setFill(Color.rgb(HILL_BACK_RED, HILL_BACK_GREEN, HILL_BACK_BLUE));
+            gc.fillOval(
+                x + HILL_BACK_X_OFFSET,
+                backgroundHeight - HILL_BACK_Y_OFFSET,
+                HILL_BACK_WIDTH,
+                HILL_BACK_HEIGHT
+            );
         }
     }
 
@@ -791,11 +933,10 @@ public final class BasicLevel implements Level {
         final double backgroundWidth,
         final double backgroundHeight
     ) {
-        gc.setFill(Color.rgb(67, 128, 73, 0.45));
-        gc.fillRect(0, backgroundHeight - 175, backgroundWidth, 175);
-        gc.setFill(Color.rgb(42, 93, 59, 0.35));
-        gc.fillRect(0, 500, backgroundWidth, 18);
+        gc.setFill(Color.rgb(GROUND_SHADOW_RED, GROUND_SHADOW_GREEN, GROUND_SHADOW_BLUE, GROUND_SHADOW_ALPHA));
+        gc.fillRect(ORIGIN, backgroundHeight - GROUND_SHADOW_HEIGHT, backgroundWidth, GROUND_SHADOW_HEIGHT);
+        gc.setFill(Color.rgb(GROUND_DARK_RED, GROUND_DARK_GREEN, GROUND_DARK_BLUE, GROUND_DARK_ALPHA));
+        gc.fillRect(ORIGIN, GROUND_DARK_Y, backgroundWidth, GROUND_DARK_HEIGHT);
     }
 
 }
-// CHECKSTYLE: MagicNumber ON

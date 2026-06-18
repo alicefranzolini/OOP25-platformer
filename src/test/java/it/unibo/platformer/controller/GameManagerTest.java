@@ -14,6 +14,24 @@ import org.junit.jupiter.api.Test;
 
 class GameManagerTest {
 
+    private static final int FIRST_LEVEL = 1;
+    private static final int SECOND_LEVEL = 2;
+    private static final int THIRD_LEVEL = 3;
+    private static final int ZERO_COUNT = 0;
+    private static final int ONE_COUNT = 1;
+    private static final int STARTING_LIVES = 3;
+    private static final int COIN_SCORE = 100;
+    private static final int ENEMY_SCORE = 200;
+    private static final int OLD_SCORE = 500;
+    private static final double ZERO_DELTA_TIME = 0.0;
+    private static final double CAMERA_START_X = 0.0;
+    private static final double VIEW_WIDTH = 800.0;
+    private static final double VIEW_HEIGHT = 720.0;
+    private static final double COIN_X = 105.0;
+    private static final double COIN_Y = 300.0;
+    private static final double LARGE_FRAME_TIME = 10.0;
+    private static final double VICTORY_RETURN_TIME = 3.0;
+
     @Test
     void startsFromMenuState() {
         final GameManager gameManager = new GameManager();
@@ -47,22 +65,22 @@ class GameManagerTest {
 
     @Test
     void loadLevelResetsCameraAndChangesCurrentLevel() {
-        final GameManager gameManager = new GameManager(800, 720);
+        final GameManager gameManager = new GameManager(VIEW_WIDTH, VIEW_HEIGHT);
 
-        gameManager.loadLevel(2);
+        gameManager.loadLevel(SECOND_LEVEL);
 
-        assertEquals(2, gameManager.getCurrentLevel().getLevelNumber());
-        assertEquals(0, gameManager.getCameraX());
+        assertEquals(SECOND_LEVEL, gameManager.getCurrentLevel().getLevelNumber());
+        assertEquals(CAMERA_START_X, gameManager.getCameraX());
     }
 
     @Test
     void nextLevelLoadsFollowingLevelUntilLastLevel() {
         final GameManager gameManager = new GameManager();
 
-        gameManager.loadLevel(1);
+        gameManager.loadLevel(FIRST_LEVEL);
         gameManager.nextLevel();
         assertEquals(GameManager.GameState.MENU, gameManager.getCurrentState());
-        assertEquals(1, gameManager.getCurrentLevel().getLevelNumber());
+        assertEquals(FIRST_LEVEL, gameManager.getCurrentLevel().getLevelNumber());
     }
 
     @Test
@@ -99,26 +117,26 @@ class GameManagerTest {
     void restartKeyLoadsFirstLevelAndStartsGame() {
         final GameManager gameManager = new GameManager();
 
-        gameManager.loadLevel(3);
+        gameManager.loadLevel(THIRD_LEVEL);
         gameManager.gameOver();
         gameManager.getInputController().pressKey(KeyCode.R);
         gameManager.update();
 
         assertEquals(GameManager.GameState.PLAYING, gameManager.getCurrentState());
-        assertEquals(1, gameManager.getCurrentLevel().getLevelNumber());
+        assertEquals(FIRST_LEVEL, gameManager.getCurrentLevel().getLevelNumber());
     }
 
     @Test
     void collectingCoinUpdatesScoreSystem() {
         final GameManager gameManager = new GameManager();
 
-        gameManager.getCurrentLevel().addEntity(new Coin(105, 300, new BasicPhysicsImpl()));
+        gameManager.getCurrentLevel().addEntity(new Coin(COIN_X, COIN_Y, new BasicPhysicsImpl()));
         gameManager.startGame();
-        gameManager.update(0);
+        gameManager.update(ZERO_DELTA_TIME);
 
-        assertEquals(1, gameManager.getScoreSystem().getCoins());
-        assertEquals(100, gameManager.getScoreSystem().getScore());
-        assertEquals(0, gameManager.getCurrentLevel().getCollectedCoins());
+        assertEquals(ONE_COUNT, gameManager.getScoreSystem().getCoins());
+        assertEquals(COIN_SCORE, gameManager.getScoreSystem().getScore());
+        assertEquals(ZERO_COUNT, gameManager.getCurrentLevel().getCollectedCoins());
     }
 
     @Test
@@ -129,24 +147,24 @@ class GameManagerTest {
         gameManager.update();
 
         assertEquals(GameManager.GameState.PLAYING, gameManager.getCurrentState());
-        assertEquals(3, gameManager.getCurrentLevel().getLevelNumber());
+        assertEquals(THIRD_LEVEL, gameManager.getCurrentLevel().getLevelNumber());
     }
 
     @Test
     void menuLevelSelectionStartsWithFreshScoreSystem() {
         final GameManager gameManager = new GameManager();
 
-        gameManager.getScoreSystem().addScore(500);
+        gameManager.getScoreSystem().addScore(OLD_SCORE);
         gameManager.getScoreSystem().addCoin();
         gameManager.getScoreSystem().loseLife();
         gameManager.getInputController().pressKey(KeyCode.DIGIT2);
         gameManager.update();
 
         assertEquals(GameManager.GameState.PLAYING, gameManager.getCurrentState());
-        assertEquals(2, gameManager.getCurrentLevel().getLevelNumber());
-        assertEquals(0, gameManager.getScoreSystem().getScore());
-        assertEquals(0, gameManager.getScoreSystem().getCoins());
-        assertEquals(3, gameManager.getScoreSystem().getLives());
+        assertEquals(SECOND_LEVEL, gameManager.getCurrentLevel().getLevelNumber());
+        assertEquals(ZERO_COUNT, gameManager.getScoreSystem().getScore());
+        assertEquals(ZERO_COUNT, gameManager.getScoreSystem().getCoins());
+        assertEquals(STARTING_LIVES, gameManager.getScoreSystem().getLives());
     }
 
     @Test
@@ -160,7 +178,7 @@ class GameManagerTest {
         gameManager.update();
 
         assertEquals(GameManager.GameState.MENU, gameManager.getCurrentState());
-        assertEquals(1, gameManager.getCurrentLevel().getLevelNumber());
+        assertEquals(FIRST_LEVEL, gameManager.getCurrentLevel().getLevelNumber());
     }
 
     @Test
@@ -171,9 +189,9 @@ class GameManagerTest {
         player.setState(Player.PlayerState.INVINCIBLE);
         gameManager.getCurrentLevel().addEntity(new Goomba(player.getX(), player.getY(), new BasicPhysicsImpl()));
         gameManager.startGame();
-        gameManager.update(0);
+        gameManager.update(ZERO_DELTA_TIME);
 
-        assertEquals(200, gameManager.getScoreSystem().getScore());
+        assertEquals(ENEMY_SCORE, gameManager.getScoreSystem().getScore());
     }
 
     @Test
@@ -181,7 +199,7 @@ class GameManagerTest {
         final GameManager gameManager = new GameManager();
 
         gameManager.startGame();
-        gameManager.update(10.0);
+        gameManager.update(LARGE_FRAME_TIME);
 
         assertTrue(gameManager.getCurrentLevel().getEntities().stream()
             .filter(Enemy.class::isInstance)
@@ -194,11 +212,11 @@ class GameManagerTest {
 
         gameManager.startGame();
         ((AbstractEntity) gameManager.getCurrentLevel().getPlayer()).setX(gameManager.getCurrentLevel().getWidth());
-        gameManager.update(0);
+        gameManager.update(ZERO_DELTA_TIME);
 
         assertEquals(GameManager.GameState.VICTORY, gameManager.getCurrentState());
 
-        gameManager.update(3.0);
+        gameManager.update(VICTORY_RETURN_TIME);
 
         assertEquals(GameManager.GameState.MENU, gameManager.getCurrentState());
     }
