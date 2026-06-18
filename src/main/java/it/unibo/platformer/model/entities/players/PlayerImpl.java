@@ -22,7 +22,7 @@ public final class PlayerImpl extends AbstractDynamicEntity implements Player {
     private static final double BLINK_INTERVAL = 0.1;
     private static final double MOVING_THRESHOLD = 1.0;
     private static final double DEATH_JUMP_VELOCITY = -350.0;
-    private static final double DEATH_GRAVITY = 500.0;
+    private static final double DEATH_GRAVITY = 900.0;
     private static final double DEATH_COMPLETE_Y = 1000.0;
     private static final double HAT_OFFSET_X = 2.0;
     private static final double HAT_OFFSET_Y = 6.0;
