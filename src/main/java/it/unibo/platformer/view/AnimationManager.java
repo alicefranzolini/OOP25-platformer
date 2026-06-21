@@ -94,15 +94,15 @@ public class AnimationManager {
     }
  
     /**
-     * Load a single PNG from the classpath resources folder.
+     *  Load a single PNG from the classpath resources folder.
      *
      *  <p>Path example: "/sprites/enemies/goomba1.png"
      *
      *  <p>Returns null (with a console warning) if the resource is not found,
-     * so the caller can fall back to placeholder rendering without crashing.
+     *  so the caller can fall back to placeholder rendering without crashing.
      * 
      *  @param resourcePath the absolute classpath path to the image resource
-     * @return the loaded {@link Image}, or {@code null} if the resource was not found
+     *  @return the loaded {@link Image}, or {@code null} if the resource was not found
      */
     public static Image loadImage(final String resourcePath) {
         final var stream = AnimationManager.class.getResourceAsStream(resourcePath);

@@ -71,6 +71,7 @@ class BasicLevelTest {
     private static final double BLOCK_HIT_X_OFFSET = 8.0;
     private static final double BLOCK_HIT_Y_OFFSET = 8.0;
     private static final double BLOCK_HIT_SPEED = -100.0;
+    private static final int FLAG_LOWERING_UPDATES = 30;
 
     @Test
     void collectsCoinWhenPlayerBoundingBoxOverlapsIt() {
@@ -195,6 +196,24 @@ class BasicLevelTest {
         level.update(ZERO_DELTA_TIME);
 
         assertEquals(PlayerImpl.PlayerState.BIG, player.getPlayerState());
+        assertEquals(BIG_PLAYER_HEIGHT, player.getHeight());
+        assertFalse(mushroom.isActive());
+    }
+
+    @Test
+    void collectingMushroomWhileInvincibleMakesPlayerBigAndKeepsStarEffect() {
+        final BasicLevel level = new BasicLevel();
+        final PlayerImpl player = new PlayerImpl(PLAYER_X, MUSHROOM_PLAYER_Y, new BasicPhysicsImpl());
+        final MushroomPowerUp mushroom = new MushroomPowerUp(PLAYER_X, MUSHROOM_Y, new BasicPhysicsImpl());
+
+        player.setState(PlayerImpl.PlayerState.INVINCIBLE);
+        level.setPlayer(player);
+        level.addEntity(mushroom);
+        finishPowerUpEmergence(mushroom);
+
+        level.update(ZERO_DELTA_TIME);
+
+        assertTrue(player.isInvincible());
         assertEquals(BIG_PLAYER_HEIGHT, player.getHeight());
         assertFalse(mushroom.isActive());
     }
@@ -422,7 +441,7 @@ class BasicLevelTest {
     }
 
     @Test
-    void touchingGoalPoleCompletesLevelAndLowersFlag() {
+    void touchingGoalPoleLowersFlagBeforeCompletingLevel() {
         final BasicLevel level = new BasicLevel();
         final PlayerImpl player = new PlayerImpl(PLAYER_X, GOAL_PLAYER_Y, new BasicPhysicsImpl());
         final Pole pole = new Pole(POLE_X, POLE_Y, POLE_HEIGHT);
@@ -434,8 +453,15 @@ class BasicLevelTest {
 
         level.update(ZERO_DELTA_TIME);
 
-        assertTrue(level.isCompleted());
+        assertFalse(level.isCompleted());
         assertTrue(flag.isLowering());
+
+        for (int i = ZERO_COUNT; i < FLAG_LOWERING_UPDATES; i++) {
+            level.update(SHORT_DELTA_TIME);
+        }
+
+        assertTrue(flag.isDown());
+        assertTrue(level.isCompleted());
     }
 
     private void hitQuestionBlock(final BasicLevel level, final PlayerImpl player, final Block block) {

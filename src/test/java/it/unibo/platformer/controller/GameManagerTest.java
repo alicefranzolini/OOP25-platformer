@@ -31,6 +31,8 @@ class GameManagerTest {
     private static final double COIN_Y = 300.0;
     private static final double LARGE_FRAME_TIME = 10.0;
     private static final double VICTORY_RETURN_TIME = 3.0;
+    private static final double FLAG_FRAME_TIME = 0.05;
+    private static final int FLAG_LOWERING_FRAMES = 60;
 
     @Test
     void startsFromMenuState() {
@@ -212,7 +214,9 @@ class GameManagerTest {
 
         gameManager.startGame();
         ((AbstractEntity) gameManager.getCurrentLevel().getPlayer()).setX(gameManager.getCurrentLevel().getWidth());
-        gameManager.update(ZERO_DELTA_TIME);
+        for (int i = ZERO_COUNT; i < FLAG_LOWERING_FRAMES; i++) {
+            gameManager.update(FLAG_FRAME_TIME);
+        }
 
         assertEquals(GameManager.GameState.VICTORY, gameManager.getCurrentState());
 

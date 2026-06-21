@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import it.unibo.platformer.model.entities.AbstractEntity;
 import it.unibo.platformer.model.entities.AbstractStaticEntity;
 import it.unibo.platformer.model.entities.enemies.Enemy;
+import it.unibo.platformer.model.entities.world.Block;
 import it.unibo.platformer.model.entities.world.Coin;
 import it.unibo.platformer.model.entities.world.Flag;
 import it.unibo.platformer.model.entities.world.Pole;
@@ -24,17 +25,30 @@ class BasicLevelLoaderTest {
     private static final double SCREEN_HEIGHT = 720.0;
     private static final double PLAYER_SPAWN_X = 100.0;
     private static final double PLAYER_SPAWN_Y = 300.0;
-    private static final long MIN_LEVEL_ONE_COINS = 10;
+    private static final double GROUND_Y = 500.0;
+    private static final long MIN_LEVEL_ONE_COINS = 15;
     private static final long MIN_LEVEL_TWO_COINS = 25;
-    private static final long MIN_LEVEL_THREE_COINS = 35;
+    private static final long MIN_LEVEL_THREE_COINS = 25;
+    private static final long MAX_LEVEL_ONE_COINS = 30;
+    private static final long MAX_LEVEL_TWO_COINS = 40;
+    private static final long MAX_LEVEL_THREE_COINS = 40;
     private static final double EPSILON = 0.001;
     private static final double TILE_SIZE = 32.0;
     private static final double BIG_PLAYER_WIDTH = 16.0;
     private static final double BIG_PLAYER_HEIGHT = 48.0;
+    private static final double SMALL_PLAYER_HEIGHT = 24.0;
+    private static final double SAFE_JUMP_HEIGHT = 100.0;
     private static final double MIN_VERTICAL_CLEARANCE = BIG_PLAYER_HEIGHT * 2.0;
     private static final double MIN_ENEMY_WALKABLE_WIDTH = TILE_SIZE * 3.0;
     private static final int FIRST_INDEX = 0;
     private static final int NEXT_INDEX_OFFSET = 1;
+    private static final int PIT_START_INDEX = 0;
+    private static final int PIT_END_INDEX = 1;
+    private static final long MIN_PIT_PLATFORM_BLOCKS = 4;
+    private static final int[][] THIRD_LEVEL_PITS = {
+        {600, 840}, {1280, 1540}, {2100, 2360}, {2960, 3240}, {3880, 4160}, {4840, 5120},
+    };
+    private static final String X_COORDINATE_MESSAGE = " at x=";
     private static final String Y_COORDINATE_MESSAGE = ", y=";
 
     private final LevelLoader loader = new BasicLevelLoader();
@@ -72,6 +86,53 @@ class BasicLevelLoaderTest {
         assertTrue(countCoins(firstLevel) >= MIN_LEVEL_ONE_COINS);
         assertTrue(countCoins(secondLevel) >= MIN_LEVEL_TWO_COINS);
         assertTrue(countCoins(thirdLevel) >= MIN_LEVEL_THREE_COINS);
+        assertTrue(countCoins(firstLevel) <= MAX_LEVEL_ONE_COINS);
+        assertTrue(countCoins(secondLevel) <= MAX_LEVEL_TWO_COINS);
+        assertTrue(countCoins(thirdLevel) <= MAX_LEVEL_THREE_COINS);
+    }
+
+    @Test
+    void coinsDoNotOverlapSolidBlocks() {
+        for (int levelNumber = FIRST_LEVEL; levelNumber <= THIRD_LEVEL; levelNumber++) {
+            final Level level = loader.loadLevel(levelNumber);
+            final List<AbstractStaticEntity> solidBlocks = solidBlocks(level);
+
+            for (final AbstractEntity entity : level.getEntities()) {
+                if (entity instanceof Coin) {
+                    for (final AbstractStaticEntity block : solidBlocks) {
+                        assertTrue(
+                            !overlaps(entity, block),
+                            "Coin inside a block in level "
+                                + levelNumber
+                                + X_COORDINATE_MESSAGE
+                                + entity.getX()
+                                + Y_COORDINATE_MESSAGE
+                                + entity.getY()
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void questionBlocksCanBeReachedWithANormalJump() {
+        for (int levelNumber = FIRST_LEVEL; levelNumber <= THIRD_LEVEL; levelNumber++) {
+            final Level level = loader.loadLevel(levelNumber);
+            for (final AbstractEntity entity : level.getEntities()) {
+                if (entity instanceof Block block && block.onHit()) {
+                    assertTrue(
+                        requiredJumpHeight(level, block) <= SAFE_JUMP_HEIGHT,
+                        "Question block is too high in level "
+                            + levelNumber
+                            + X_COORDINATE_MESSAGE
+                            + block.getX()
+                            + Y_COORDINATE_MESSAGE
+                            + block.getY()
+                    );
+                }
+            }
+        }
     }
 
     @Test
@@ -84,7 +145,7 @@ class BasicLevelLoaderTest {
                         hasSolidGroundBelow(level, entity),
                         "Enemy has no ground below in level "
                             + levelNumber
-                            + " at x="
+                            + X_COORDINATE_MESSAGE
                             + entity.getX()
                             + Y_COORDINATE_MESSAGE
                             + entity.getY()
@@ -163,7 +224,7 @@ class BasicLevelLoaderTest {
                         walkableWidthBelow(level, entity) >= MIN_ENEMY_WALKABLE_WIDTH,
                         "Enemy has too little walking space in level "
                             + levelNumber
-                            + " at x="
+                            + X_COORDINATE_MESSAGE
                             + entity.getX()
                             + Y_COORDINATE_MESSAGE
                             + entity.getY()
@@ -183,6 +244,27 @@ class BasicLevelLoaderTest {
         }
     }
 
+    @Test
+    void thirdLevelHasPlatformsAcrossEveryPit() {
+        final Level level = loader.loadLevel(THIRD_LEVEL);
+
+        for (final int[] pit : THIRD_LEVEL_PITS) {
+            final long platformBlocks = solidBlocks(level).stream()
+                .filter(block -> block.getX() > pit[PIT_START_INDEX])
+                .filter(block -> block.getX() < pit[PIT_END_INDEX])
+                .filter(block -> block.getY() < GROUND_Y)
+                .count();
+
+            assertTrue(
+                platformBlocks >= MIN_PIT_PLATFORM_BLOCKS,
+                "Pit has too few platform blocks between x="
+                    + pit[PIT_START_INDEX]
+                    + " and x="
+                    + pit[PIT_END_INDEX]
+            );
+        }
+    }
+
     private List<AbstractStaticEntity> solidBlocks(final Level level) {
         return level.getEntities().stream()
             .filter(AbstractStaticEntity.class::isInstance)
@@ -195,6 +277,20 @@ class BasicLevelLoaderTest {
         return level.getEntities().stream()
             .filter(Coin.class::isInstance)
             .count();
+    }
+
+    private double requiredJumpHeight(final Level level, final Block questionBlock) {
+        final double supportY = solidBlocks(level).stream()
+            .filter(block -> block != questionBlock)
+            .filter(block -> block.getY() >= questionBlock.getY() + questionBlock.getHeight())
+            .filter(block -> horizontalOverlap(block, questionBlock) >= BIG_PLAYER_WIDTH)
+            .mapToDouble(AbstractStaticEntity::getY)
+            .min()
+            .orElse(Double.POSITIVE_INFINITY);
+        return supportY
+            - SMALL_PLAYER_HEIGHT
+            - questionBlock.getY()
+            - questionBlock.getHeight();
     }
 
     private boolean hasSolidGroundBelow(final Level level, final AbstractEntity enemy) {

@@ -20,9 +20,6 @@ public final class GameManager {
     private static final double FIXED_DELTA_TIME = 0.016;
     private static final double MAX_DELTA_TIME = 0.05;
     private static final double CAMERA_PLAYER_OFFSET = 400;
-    private static final int COIN_SCORE = 100;
-    private static final int ENEMY_SCORE = 200;
-    private static final double LEVEL_END_DISTANCE = 64;
     private static final double VICTORY_MENU_DELAY = 2.5;
 
     /**
@@ -299,14 +296,13 @@ public final class GameManager {
 
         for (int i = 0; i < collectedCoins; i++) {
             this.scoreSystem.addCoin();
-            this.scoreSystem.addScore(COIN_SCORE);
         }
 
         this.currentLevel.resetCollectedCoins();
 
         final int defeatedEnemies = this.currentLevel.getDefeatedEnemies();
         for (int i = 0; i < defeatedEnemies; i++) {
-            this.scoreSystem.addScore(ENEMY_SCORE);
+            this.scoreSystem.addDefeatedEnemy();
         }
 
         this.currentLevel.resetDefeatedEnemies();
@@ -317,11 +313,7 @@ public final class GameManager {
             return;
         }
 
-        final double playerEndX = this.currentLevel.getPlayer().getX()
-            + this.currentLevel.getPlayer().getWidth();
-
-        if (this.currentLevel.isCompleted()
-            || playerEndX >= this.currentLevel.getWidth() - LEVEL_END_DISTANCE) {
+        if (this.currentLevel.isCompleted()) {
             completeLevel();
         }
     }
