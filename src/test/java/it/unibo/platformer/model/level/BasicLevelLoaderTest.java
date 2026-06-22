@@ -44,7 +44,8 @@ class BasicLevelLoaderTest {
     private static final int NEXT_INDEX_OFFSET = 1;
     private static final int PIT_START_INDEX = 0;
     private static final int PIT_END_INDEX = 1;
-    private static final long MIN_PIT_PLATFORM_BLOCKS = 4;
+    private static final double MIN_PIT_PLATFORM_Y = 300.0;
+    private static final double MAX_HORIZONTAL_PIT_GAP = 120.0;
     private static final int[][] THIRD_LEVEL_PITS = {
         {600, 840}, {1280, 1540}, {2100, 2360}, {2960, 3240}, {3880, 4160}, {4840, 5120},
     };
@@ -249,15 +250,9 @@ class BasicLevelLoaderTest {
         final Level level = loader.loadLevel(THIRD_LEVEL);
 
         for (final int[] pit : THIRD_LEVEL_PITS) {
-            final long platformBlocks = solidBlocks(level).stream()
-                .filter(block -> block.getX() > pit[PIT_START_INDEX])
-                .filter(block -> block.getX() < pit[PIT_END_INDEX])
-                .filter(block -> block.getY() < GROUND_Y)
-                .count();
-
             assertTrue(
-                platformBlocks >= MIN_PIT_PLATFORM_BLOCKS,
-                "Pit has too few platform blocks between x="
+                largestHorizontalGap(level, pit) <= MAX_HORIZONTAL_PIT_GAP,
+                "Pit has an unreachable horizontal gap between x="
                     + pit[PIT_START_INDEX]
                     + " and x="
                     + pit[PIT_END_INDEX]
@@ -281,7 +276,7 @@ class BasicLevelLoaderTest {
 
     private double requiredJumpHeight(final Level level, final Block questionBlock) {
         final double supportY = solidBlocks(level).stream()
-            .filter(block -> block != questionBlock)
+            .filter(block -> !block.equals(questionBlock))
             .filter(block -> block.getY() >= questionBlock.getY() + questionBlock.getHeight())
             .filter(block -> horizontalOverlap(block, questionBlock) >= BIG_PLAYER_WIDTH)
             .mapToDouble(AbstractStaticEntity::getY)
@@ -340,9 +335,29 @@ class BasicLevelLoaderTest {
         final List<AbstractStaticEntity> solidBlocks,
         final AbstractStaticEntity upperBlock
     ) {
-        return solidBlocks.stream().anyMatch(block -> block != upperBlock
+        return solidBlocks.stream().anyMatch(block -> !block.equals(upperBlock)
             && Math.abs(block.getY() - (upperBlock.getY() + upperBlock.getHeight())) < EPSILON
             && horizontalOverlap(block, upperBlock) > EPSILON);
+    }
+
+    private double largestHorizontalGap(final Level level, final int[] pit) {
+        final double pitStart = pit[PIT_START_INDEX];
+        final double pitEnd = pit[PIT_END_INDEX];
+        final List<AbstractStaticEntity> platforms = solidBlocks(level).stream()
+            .filter(block -> block.getX() + block.getWidth() > pitStart)
+            .filter(block -> block.getX() < pitEnd)
+            .filter(block -> block.getY() >= MIN_PIT_PLATFORM_Y)
+            .filter(block -> block.getY() < GROUND_Y)
+            .sorted((first, second) -> Double.compare(first.getX(), second.getX()))
+            .toList();
+
+        double currentEnd = pitStart;
+        double largestGap = 0.0;
+        for (final AbstractStaticEntity platform : platforms) {
+            largestGap = Math.max(largestGap, platform.getX() - currentEnd);
+            currentEnd = Math.max(currentEnd, platform.getX() + platform.getWidth());
+        }
+        return Math.max(largestGap, pitEnd - currentEnd);
     }
 
     private boolean overlaps(final AbstractEntity first, final AbstractEntity second) {

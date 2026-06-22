@@ -3,6 +3,7 @@ package it.unibo.platformer.model.level;
 /**
  * Loads playable levels by level number.
  */
+@FunctionalInterface
 public interface LevelLoader {
 
     /**

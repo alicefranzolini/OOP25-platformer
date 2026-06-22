@@ -103,6 +103,7 @@ final class EnemyInteractionManager {
         return false;
     }
 
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     private void handleShellEnemyCollisions(final List<AbstractEntity> entities) {
         for (final AbstractEntity shellEntity : entities) {
             if (!(shellEntity instanceof Koopa) || !((Koopa) shellEntity).canKillEnemies()) {
@@ -120,6 +121,7 @@ final class EnemyInteractionManager {
         }
     }
 
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     private void handlePlayerEnemyCollisions(
         final List<AbstractEntity> entities,
         final Player player

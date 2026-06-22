@@ -20,6 +20,13 @@ public final class Main extends Application {
     private static final double NANOSECONDS_PER_SECOND = 1_000_000_000.0;
 
     /**
+     * Creates the JavaFX application.
+     */
+    public Main() {
+        super();
+    }
+
+    /**
      * Creates the window, canvas, input controller and game loop.
      *
      * @param stage the main JavaFX stage

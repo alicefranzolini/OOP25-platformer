@@ -74,7 +74,7 @@ public interface Level {
     void removeEntity(AbstractEntity entity);
 
     /**
-     * Gets all entities currently in the level.
+     * Gets a read-only view of all entities currently in the level.
      *
      * @return the level entities
      */

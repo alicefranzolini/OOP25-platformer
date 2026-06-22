@@ -71,6 +71,7 @@ class BasicLevelTest {
     private static final double BLOCK_HIT_X_OFFSET = 8.0;
     private static final double BLOCK_HIT_Y_OFFSET = 8.0;
     private static final double BLOCK_HIT_SPEED = -100.0;
+    private static final double INVINCIBILITY_END_TIME = 11.0;
     private static final int FLAG_LOWERING_UPDATES = 30;
 
     @Test
@@ -216,6 +217,21 @@ class BasicLevelTest {
         assertTrue(player.isInvincible());
         assertEquals(BIG_PLAYER_HEIGHT, player.getHeight());
         assertFalse(mushroom.isActive());
+    }
+
+    @Test
+    void endingInvincibilityRestoresBigPlayerSize() {
+        final BasicLevel level = new BasicLevel();
+        final PlayerImpl player = new PlayerImpl(PLAYER_X, PLAYER_Y, new BasicPhysicsImpl());
+
+        player.setAffectedByGravity(false);
+        player.setState(PlayerImpl.PlayerState.INVINCIBLE);
+        level.setPlayer(player);
+
+        level.update(INVINCIBILITY_END_TIME);
+
+        assertEquals(PlayerImpl.PlayerState.BIG, player.getPlayerState());
+        assertEquals(BIG_PLAYER_HEIGHT, player.getHeight());
     }
 
     @Test

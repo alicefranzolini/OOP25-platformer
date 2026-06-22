@@ -221,10 +221,13 @@ final class LevelBuilder {
 
     private void addBridgeOverPit(final BasicLevel level, final double startX, final double y, final int platforms) {
         for (int i = FIRST_LOOP_INDEX; i < platforms; i++) {
+            final int yOffset = i % EVEN_DIVISOR == FIRST_LOOP_INDEX
+                ? FIRST_LOOP_INDEX
+                : BRIDGE_Y_STEP;
             addBlockRow(
                 level,
                 startX + i * BRIDGE_X_STEP,
-                y - (i % EVEN_DIVISOR) * BRIDGE_Y_STEP,
+                y - yOffset,
                 BRIDGE_PLATFORM_BLOCKS,
                 BlockType.NORMAL
             );

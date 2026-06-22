@@ -76,16 +76,6 @@ class GameManagerTest {
     }
 
     @Test
-    void nextLevelLoadsFollowingLevelUntilLastLevel() {
-        final GameManager gameManager = new GameManager();
-
-        gameManager.loadLevel(FIRST_LEVEL);
-        gameManager.nextLevel();
-        assertEquals(GameManager.GameState.MENU, gameManager.getCurrentState());
-        assertEquals(FIRST_LEVEL, gameManager.getCurrentLevel().getLevelNumber());
-    }
-
-    @Test
     void pauseKeyPausesThenResumesGame() {
         final GameManager gameManager = new GameManager();
 

@@ -1,5 +1,6 @@
 package it.unibo.platformer.controller;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.platformer.model.level.BasicLevelLoader;
 import it.unibo.platformer.model.level.Level;
 import it.unibo.platformer.model.level.LevelLoader;
@@ -41,7 +42,6 @@ public final class GameManager {
     private double cameraX;
     private final InputController inputController;
     private GameState currentState;
-    private boolean running;
     private final ScoreSystem scoreSystem;
     private final HudView hudView;
     private double viewWidth;
@@ -66,7 +66,6 @@ public final class GameManager {
      */
     public GameManager(final double initialViewWidth, final double initialViewHeight) {
         this.currentState = GameState.MENU;
-        this.running = false;
         this.scoreSystem = new ScoreSystem();
         this.hudView = new HudView();
         this.loader = new BasicLevelLoader();
@@ -95,7 +94,6 @@ public final class GameManager {
      */
     public void startGame() {
         this.currentState = GameState.PLAYING;
-        this.running = true;
         this.victoryTimer = 0;
     }
 
@@ -104,7 +102,6 @@ public final class GameManager {
      */
     public void gameOver() {
         this.currentState = GameState.GAME_OVER;
-        this.running = false;
     }
 
     /**
@@ -126,22 +123,10 @@ public final class GameManager {
     }
 
     /**
-     * Toggles between playing and paused states.
-     */
-    public void togglePause() {
-        if (this.currentState == GameState.PLAYING) {
-            pauseGame();
-        } else if (this.currentState == GameState.PAUSED) {
-            resumeGame();
-        }
-    }
-
-    /**
      * Returns to the level selection menu.
      */
     public void backToMenu() {
         this.currentState = GameState.MENU;
-        this.running = false;
         this.victoryTimer = 0;
     }
 
@@ -166,13 +151,6 @@ public final class GameManager {
     }
 
     /**
-     * Ends the current level flow and returns to the menu.
-     */
-    public void nextLevel() {
-        backToMenu();
-    }
-
-    /**
      * Updates the game using the default fixed delta time.
      */
     public void update() {
@@ -185,7 +163,8 @@ public final class GameManager {
      * @param deltaTime elapsed time in seconds
      */
     public void update(final double deltaTime) {
-        final double safeDeltaTime = Math.max(0, Math.min(deltaTime, MAX_DELTA_TIME));
+        final double nonNegativeDeltaTime = Math.max(0, deltaTime);
+        final double safeDeltaTime = Math.min(nonNegativeDeltaTime, MAX_DELTA_TIME);
 
         handleGameCommands();
         discardLevelSelectionOutsideMenu();
@@ -198,13 +177,11 @@ public final class GameManager {
                 updateGame(safeDeltaTime);
                 break;
             case PAUSED:
-                updatePaused();
                 break;
             case GAME_OVER:
-                updateGameOver();
                 break;
             case VICTORY:
-                updateVictory(deltaTime);
+                updateVictory(nonNegativeDeltaTime);
                 break;
         }
     }
@@ -246,24 +223,6 @@ public final class GameManager {
             || this.currentState == GameState.GAME_OVER
             || this.currentState == GameState.VICTORY) {
             backToMenu();
-        }
-    }
-
-    /**
-     * Runs a simple blocking loop used by non-JavaFX tests or experiments.
-     */
-    public void gameLoop() {
-        this.running = true;
-
-        while (running) {
-            update();
-
-            try {
-                Thread.sleep(16);
-            } catch (final InterruptedException e) {
-                Thread.currentThread().interrupt();
-                this.running = false;
-            }
         }
     }
 
@@ -336,7 +295,6 @@ public final class GameManager {
 
     private void completeLevel() {
         this.currentState = GameState.VICTORY;
-        this.running = true;
         this.victoryTimer = 0;
     }
 
@@ -382,30 +340,11 @@ public final class GameManager {
         );
     }
 
-    private void updatePaused() {
-        // paused logic
-    }
-
-    private void updateGameOver() {
-        // game over logic
-    }
-
     private void updateVictory(final double deltaTime) {
         this.victoryTimer += deltaTime;
         if (this.victoryTimer >= VICTORY_MENU_DELAY) {
             backToMenu();
         }
-    }
-
-    /**
-     * Gets the current state.
-     *
-     * @return the current state
-     * @deprecated use {@link #getCurrentState()} instead
-     */
-    @Deprecated
-    public GameState getCurrentSate() {
-        return getCurrentState();
     }
 
     /**
@@ -431,6 +370,10 @@ public final class GameManager {
      *
      * @return the current level
      */
+    @SuppressFBWarnings(
+        value = "EI_EXPOSE_REP",
+        justification = "The controller exposes the active level to the application and its tests."
+    )
     public Level getCurrentLevel() {
         return this.currentLevel;
     }
@@ -440,6 +383,10 @@ public final class GameManager {
      *
      * @return the score system
      */
+    @SuppressFBWarnings(
+        value = "EI_EXPOSE_REP",
+        justification = "The controller exposes the current score data to the HUD and its tests."
+    )
     public ScoreSystem getScoreSystem() {
         return this.scoreSystem;
     }

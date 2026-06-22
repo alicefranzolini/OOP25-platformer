@@ -1,6 +1,6 @@
 package it.unibo.platformer.controller;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 import it.unibo.platformer.model.entities.players.Player;
@@ -15,7 +15,6 @@ public final class InputController {
     private static final KeyCode KEY_LEFT = KeyCode.LEFT;
     private static final KeyCode KEY_RIGHT = KeyCode.RIGHT;
     private static final KeyCode KEY_JUMP = KeyCode.SPACE;
-    private static final KeyCode KEY_RUN = KeyCode.SHIFT;
     private static final KeyCode KEY_PAUSE = KeyCode.ESCAPE;
     private static final KeyCode KEY_MENU = KeyCode.M;
     private static final KeyCode KEY_RESTART = KeyCode.R;
@@ -23,8 +22,26 @@ public final class InputController {
     private static final KeyCode KEY_LEVEL_TWO = KeyCode.DIGIT2;
     private static final KeyCode KEY_LEVEL_THREE = KeyCode.DIGIT3;
 
-    private final Set<KeyCode> keysPressed = new HashSet<>();
-    private final Set<KeyCode> keysToConsume = new HashSet<>();
+    private static final Set<KeyCode> CONSUMABLE_KEYS = EnumSet.of(
+        KEY_JUMP,
+        KEY_PAUSE,
+        KEY_MENU,
+        KEY_RESTART,
+        KEY_LEVEL_ONE,
+        KEY_LEVEL_TWO,
+        KEY_LEVEL_THREE
+    );
+
+    private final Set<KeyCode> keysPressed;
+    private final Set<KeyCode> keysToConsume;
+
+    /**
+     * Creates an empty keyboard state.
+     */
+    public InputController() {
+        this.keysPressed = EnumSet.noneOf(KeyCode.class);
+        this.keysToConsume = EnumSet.noneOf(KeyCode.class);
+    }
 
     /**
      * Connects the keyboard events of the scene to this controller.
@@ -42,7 +59,7 @@ public final class InputController {
      * @param key the pressed key
      */
     public void pressKey(final KeyCode key) {
-        if (!this.keysPressed.contains(key)) {
+        if (!this.keysPressed.contains(key) && CONSUMABLE_KEYS.contains(key)) {
             this.keysToConsume.add(key);
         }
         this.keysPressed.add(key);
@@ -100,15 +117,6 @@ public final class InputController {
     }
 
     /**
-     * Checks whether the run key is currently pressed.
-     *
-     * @return true if run is pressed
-     */
-    public boolean isRunPressed() {
-        return this.keysPressed.contains(KEY_RUN);
-    }
-
-    /**
      * Checks whether the left key is currently pressed.
      *
      * @return true if left is pressed
@@ -159,13 +167,16 @@ public final class InputController {
      * @return the selected level number, or zero when no level was selected
      */
     public int consumeSelectedLevel() {
+        int selectedLevel = 0;
         if (this.keysToConsume.remove(KEY_LEVEL_ONE)) {
-            return 1;
-        } else if (this.keysToConsume.remove(KEY_LEVEL_TWO)) {
-            return 2;
-        } else if (this.keysToConsume.remove(KEY_LEVEL_THREE)) {
-            return 3;
+            selectedLevel = 1;
         }
-        return 0;
+        if (this.keysToConsume.remove(KEY_LEVEL_TWO) && selectedLevel == 0) {
+            selectedLevel = 2;
+        }
+        if (this.keysToConsume.remove(KEY_LEVEL_THREE) && selectedLevel == 0) {
+            selectedLevel = 3;
+        }
+        return selectedLevel;
     }
 }

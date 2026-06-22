@@ -1,10 +1,12 @@
 package it.unibo.platformer.model.level;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import it.unibo.platformer.model.entities.AbstractEntity;
 import it.unibo.platformer.model.entities.AbstractDynamicEntity;
 import it.unibo.platformer.model.entities.players.Player;
@@ -114,6 +116,10 @@ public final class BasicLevel implements Level {
     }
 
     @Override
+    @SuppressFBWarnings(
+        value = "EI_EXPOSE_REP2",
+        justification = "The level owns the player instance used by the game loop."
+    )
     public void setPlayer(final Player player) {
         if (this.player != null) {
             removeEntity(playerEntity(this.player));
@@ -125,6 +131,10 @@ public final class BasicLevel implements Level {
     }
 
     @Override
+    @SuppressFBWarnings(
+        value = "EI_EXPOSE_REP",
+        justification = "The current player is part of the public Level contract."
+    )
     public Player getPlayer() {
         return this.player;
     }
@@ -141,7 +151,7 @@ public final class BasicLevel implements Level {
 
     @Override
     public List<AbstractEntity> getEntities() {
-        return this.entities;
+        return Collections.unmodifiableList(this.entities);
     }
 
     @Override
@@ -186,6 +196,7 @@ public final class BasicLevel implements Level {
                 }
             }
         }
+        ensureBigPlayerSize();
 
         this.collisionManager.resolveWorldCollisions(
             this.entities,
@@ -311,10 +322,22 @@ public final class BasicLevel implements Level {
             return;
         }
 
-        final AbstractEntity playerEntity = playerEntity(this.player);
-        final double heightDifference = BIG_PLAYER_HEIGHT - playerEntity.getHeight();
-        playerEntity.setHeight(BIG_PLAYER_HEIGHT);
-        playerEntity.setY(playerEntity.getY() - heightDifference);
+        growPlayerToBigSize();
+    }
+
+    private void ensureBigPlayerSize() {
+        if (this.player != null
+            && this.player.getPlayerState() == Player.PlayerState.BIG
+            && this.player.getHeight() < BIG_PLAYER_HEIGHT) {
+            growPlayerToBigSize();
+        }
+    }
+
+    private void growPlayerToBigSize() {
+        final AbstractEntity currentPlayer = playerEntity(this.player);
+        final double heightDifference = BIG_PLAYER_HEIGHT - currentPlayer.getHeight();
+        currentPlayer.setHeight(BIG_PLAYER_HEIGHT);
+        currentPlayer.setY(currentPlayer.getY() - heightDifference);
     }
 
     private boolean canCollectPowerUp(final PowerUp powerUp, final AbstractEntity powerUpEntity) {

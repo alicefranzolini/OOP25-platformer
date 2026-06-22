@@ -181,6 +181,7 @@ final class LevelCollisionManager {
         return entity instanceof PowerUp && ((PowerUp) entity).isEmerging();
     }
 
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
     private boolean isPlayer(final AbstractEntity entity, final Player player) {
         return player != null && entity == (AbstractEntity) player;
     }

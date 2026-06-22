@@ -31,19 +31,15 @@ final class QuestionBlockRewardManager {
 
     AbstractEntity createReward(final Block block) {
         final QuestionReward reward = takeNextReward();
-        switch (reward) {
-            case COIN:
-                return new Coin(
+        return switch (reward) {
+            case COIN -> new Coin(
                     block.getX() + COIN_X_OFFSET,
                     block.getY() - COIN_Y_OFFSET,
                     new BasicPhysicsImpl()
                 );
-            case STAR:
-                return new StarPowerUp(block.getX(), block.getY(), new BasicPhysicsImpl());
-            case MUSHROOM:
-            default:
-                return new MushroomPowerUp(block.getX(), block.getY(), new BasicPhysicsImpl());
-        }
+            case STAR -> new StarPowerUp(block.getX(), block.getY(), new BasicPhysicsImpl());
+            case MUSHROOM -> new MushroomPowerUp(block.getX(), block.getY(), new BasicPhysicsImpl());
+        };
     }
 
     private QuestionReward takeNextReward() {

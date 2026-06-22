@@ -82,6 +82,13 @@ public final class LevelBackgroundRenderer {
     private static final double GROUND_DARK_HEIGHT = 18.0;
 
     /**
+     * Creates a renderer for the level backgrounds.
+     */
+    public LevelBackgroundRenderer() {
+        // This renderer does not keep mutable state.
+    }
+
+    /**
      * Draws the background for the selected level.
      *
      * @param gc the canvas graphics context

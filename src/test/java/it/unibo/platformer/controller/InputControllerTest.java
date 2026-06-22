@@ -72,4 +72,15 @@ class InputControllerTest {
         assertEquals(2, inputController.consumeSelectedLevel());
         assertEquals(0, inputController.consumeSelectedLevel());
     }
+
+    @Test
+    void consumingLevelSelectionClearsOtherLevelKeys() {
+        final InputController inputController = new InputController();
+
+        inputController.pressKey(KeyCode.DIGIT1);
+        inputController.pressKey(KeyCode.DIGIT3);
+
+        assertEquals(1, inputController.consumeSelectedLevel());
+        assertEquals(0, inputController.consumeSelectedLevel());
+    }
 }

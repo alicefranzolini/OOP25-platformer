@@ -107,6 +107,13 @@ public final class HudView {
     private static final double MESSAGE_SUBTITLE_Y_OFFSET = 20;
 
     /**
+     * Creates the view used for menus and game information.
+     */
+    public HudView() {
+        // This view does not keep mutable state.
+    }
+
+    /**
      * Renders the correct HUD screen for the current game state.
      *
      * @param gc the canvas graphics context
