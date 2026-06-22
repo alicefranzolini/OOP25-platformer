@@ -67,17 +67,19 @@ public final class HudView {
     private static final double MENU_WATER_HEIGHT = 150;
     private static final double MENU_GRASS_HEIGHT = 105;
     private static final double MENU_GROUND_HEIGHT = 75;
-    private static final double TITLE_PANEL_X_OFFSET = 210;
+    private static final double TITLE_PANEL_X_OFFSET = 245;
     private static final double TITLE_PANEL_Y_OFFSET = 50;
-    private static final double TITLE_PANEL_WIDTH = 420;
+    private static final double TITLE_PANEL_WIDTH = 490;
     private static final double TITLE_PANEL_HEIGHT = 82;
     private static final double TITLE_PANEL_ARC = 22;
-    private static final double TITLE_TEXT_X_OFFSET = 165;
-    private static final double FIRST_MENU_OPTION_Y_OFFSET = 70;
-    private static final double SECOND_MENU_OPTION_Y_OFFSET = 125;
-    private static final double THIRD_MENU_OPTION_Y_OFFSET = 180;
+    private static final double TITLE_TEXT_X_OFFSET = 160;
+    private static final double LEVEL_PROMPT_X_OFFSET = 180;
+    private static final double LEVEL_PROMPT_Y_OFFSET = 72;
+    private static final double FIRST_MENU_OPTION_Y_OFFSET = 120;
+    private static final double SECOND_MENU_OPTION_Y_OFFSET = 175;
+    private static final double THIRD_MENU_OPTION_Y_OFFSET = 230;
     private static final double HELP_TEXT_X_OFFSET = 190;
-    private static final double HELP_TEXT_Y_OFFSET = 250;
+    private static final double HELP_TEXT_Y_OFFSET = 300;
     private static final double HELP_TEXT_ALPHA = 0.88;
     private static final double OPTION_BOX_X_OFFSET = 170;
     private static final double OPTION_BOX_Y_OFFSET = 30;
@@ -86,7 +88,11 @@ public final class HudView {
     private static final double OPTION_BOX_ARC = 14;
     private static final double OPTION_BOX_ALPHA = 0.14;
     private static final double OPTION_STROKE_ALPHA = 0.22;
-    private static final double OPTION_KEY_X_OFFSET = 140;
+    private static final double OPTION_KEY_BOX_X_OFFSET = 155;
+    private static final double OPTION_KEY_BOX_Y_OFFSET = 26;
+    private static final double OPTION_KEY_BOX_SIZE = 36;
+    private static final double OPTION_KEY_BOX_ARC = 8;
+    private static final double OPTION_KEY_TEXT_X_OFFSET = 143;
     private static final double OPTION_TEXT_X_OFFSET = 90;
     private static final double MESSAGE_OUTER_X_OFFSET = 230;
     private static final double MESSAGE_OUTER_Y_OFFSET = 95;
@@ -255,7 +261,15 @@ public final class HudView {
         );
         gc.setFill(Color.WHITE);
         gc.setFont(Font.font(TITLE_FONT_SIZE));
-        gc.fillText("PLATFORMER", centerX - TITLE_TEXT_X_OFFSET, startY);
+        gc.fillText("Mario's World", centerX - TITLE_TEXT_X_OFFSET, startY);
+
+        gc.setFill(Color.rgb(WHITE_RGB, WHITE_RGB, WHITE_RGB, HELP_TEXT_ALPHA));
+        gc.setFont(Font.font(FONT_SIZE));
+        gc.fillText(
+            "PRESS 1, 2 OR 3 ON YOUR KEYBOARD",
+            centerX - LEVEL_PROMPT_X_OFFSET,
+            startY + LEVEL_PROMPT_Y_OFFSET
+        );
 
         drawMenuOption(gc, centerX, startY + FIRST_MENU_OPTION_Y_OFFSET, "1", "Level 1");
         drawMenuOption(gc, centerX, startY + SECOND_MENU_OPTION_Y_OFFSET, "2", "Level 2");
@@ -296,8 +310,17 @@ public final class HudView {
             OPTION_BOX_ARC
         );
         gc.setFill(Color.rgb(ACCENT_RED, ACCENT_GREEN, ACCENT_BLUE));
+        gc.fillRoundRect(
+            centerX - OPTION_KEY_BOX_X_OFFSET,
+            y - OPTION_KEY_BOX_Y_OFFSET,
+            OPTION_KEY_BOX_SIZE,
+            OPTION_KEY_BOX_SIZE,
+            OPTION_KEY_BOX_ARC,
+            OPTION_KEY_BOX_ARC
+        );
+        gc.setFill(Color.rgb(DARK_PANEL_RED, DARK_PANEL_GREEN, DARK_PANEL_BLUE));
         gc.setFont(Font.font(MENU_FONT_SIZE));
-        gc.fillText(key, centerX - OPTION_KEY_X_OFFSET, y);
+        gc.fillText(key, centerX - OPTION_KEY_TEXT_X_OFFSET, y);
         gc.setFill(Color.WHITE);
         gc.fillText(text, centerX - OPTION_TEXT_X_OFFSET, y);
     }
