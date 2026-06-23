@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests for player movement, state transitions and damage handling.
  */
-public final class PlayerTest {
+final class PlayerTest {
 
     private static final double DELTA = 0.01;
     private static final double UPDATE_TIME = 0.016;
@@ -25,12 +25,11 @@ public final class PlayerTest {
     private static final int FPS = 60;
     private static final double FRAME_TIME = 1.0 / FPS;
 
-    private BasicPhysics physics;
     private PlayerImpl player;
 
     @BeforeEach
-    void setup() {
-        physics = new BasicPhysicsImpl();
+    void setUp() {
+        final BasicPhysics physics = new BasicPhysicsImpl();
         player = new PlayerImpl(100, 100, physics);
     }
 
