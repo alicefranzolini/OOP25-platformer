@@ -16,8 +16,6 @@ public final class MushroomPowerUp extends AbstractPowerUp {
     private static final double FRAME_DURATION = 1.0;
     private static final String ANIMATION_NAME = "mushroom";
     private static final String SPRITE_PATH = "/sprites/powerup/red_mushroom.png";
-    private static final String MISSING_SPRITE_MESSAGE =
-            "[MushroomPowerUp] Sprite red_mushroom non trovato - uso fallback.";
 
     private final AnimationManager anim = new AnimationManager();
 
@@ -39,8 +37,6 @@ public final class MushroomPowerUp extends AbstractPowerUp {
         if (img != null) {
             final Animation animation = new Animation(new Image[] {img}, FRAME_DURATION, false);
             anim.register(ANIMATION_NAME, animation);
-        } else {
-            System.err.println(MISSING_SPRITE_MESSAGE);
         }
     }
 
