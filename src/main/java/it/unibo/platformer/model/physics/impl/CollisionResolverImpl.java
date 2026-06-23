@@ -42,8 +42,6 @@ public final class CollisionResolverImpl implements CollisionResolver {
                 break;
             case NONE:
                 break;
-            default:
-                throw new NoSideException();
         }
     }
 
