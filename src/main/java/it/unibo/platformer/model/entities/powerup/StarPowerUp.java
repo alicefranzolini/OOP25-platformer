@@ -22,8 +22,6 @@ public final class StarPowerUp extends AbstractPowerUp {
     private static final int OUTER_POINT_STEP = 2;
     private static final String ANIMATION_NAME = "star";
     private static final String SPRITE_PATH = "/sprites/powerup/star.png";
-    private static final String MISSING_SPRITE_MESSAGE =
-            "[StarPowerUp] Sprite star non trovato - uso fallback.";
 
     private final AnimationManager anim = new AnimationManager();
     private boolean spriteLoaded;
@@ -49,8 +47,6 @@ public final class StarPowerUp extends AbstractPowerUp {
             final Animation animation = new Animation(new Image[] {img}, FRAME_DURATION, false);
             anim.register(ANIMATION_NAME, animation);
             spriteLoaded = true;
-        } else {
-            System.err.println(MISSING_SPRITE_MESSAGE);
         }
     }
 
