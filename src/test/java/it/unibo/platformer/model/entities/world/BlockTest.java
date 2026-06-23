@@ -4,9 +4,9 @@ import it.unibo.platformer.model.entities.world.Block.BlockType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit tests for {@link Block}.
  */
@@ -29,10 +29,10 @@ class BlockTest {
     @Test
     void constructorNormalTypesetsPositionAndSize() {
         final Block block = new Block(BLOCKX, BLOCKY, BlockType.NORMAL);
-        assertTrue(block.getX() == BLOCKX);
-        assertTrue(block.getY() == BLOCKY);
-        assertTrue(block.getWidth() == BLOCKSIZE);
-        assertTrue(block.getHeight() == BLOCKSIZE);
+        assertEquals(BLOCKX, block.getX());
+        assertEquals(BLOCKY, block.getY());
+        assertEquals(BLOCKSIZE, block.getWidth());
+        assertEquals(BLOCKSIZE, block.getHeight());
     }
 
     /**

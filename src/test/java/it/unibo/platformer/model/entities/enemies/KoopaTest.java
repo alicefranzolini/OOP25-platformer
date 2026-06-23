@@ -8,7 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -59,7 +61,7 @@ class KoopaTest {
      */
     @Test
     void initialStateisWalk() {
-        assertTrue(koopa.getState() == KoopaState.WALK);
+        assertSame(KoopaState.WALK, koopa.getState());
     }
 
     /**
@@ -99,8 +101,8 @@ class KoopaTest {
      */
     @Test
     void initialStatesizeIsCorrect() {
-        assertTrue(koopa.getWidth() == KOOPAWIDTH);
-        assertTrue(koopa.getHeight() == KOOPAHEIGHT);
+        assertEquals(KOOPAWIDTH, koopa.getWidth());
+        assertEquals(KOOPAHEIGHT, koopa.getHeight());
     }
 
     /**
@@ -109,7 +111,7 @@ class KoopaTest {
     @Test
     void stompchangesStateToShell() {
         koopa.stomp();
-        assertTrue(koopa.getState() == KoopaState.SHELL);
+        assertSame(KoopaState.SHELL, koopa.getState());
     }
 
     /**
@@ -146,7 +148,7 @@ class KoopaTest {
     void stompidempotentwhenAlreadyShell() {
         koopa.stomp();
         assertDoesNotThrow(() -> koopa.stomp());
-        assertTrue(koopa.getState() == KoopaState.SHELL);
+        assertSame(KoopaState.SHELL, koopa.getState());
     }
 
     /**
@@ -157,7 +159,7 @@ class KoopaTest {
     void kickrightchangesStateToShellMoving() {
         koopa.stomp();
         koopa.kick(true);
-        assertTrue(koopa.getState() == KoopaState.SHELL_MOVING);
+        assertSame(KoopaState.SHELL_MOVING, koopa.getState());
     }
 
     /**
@@ -168,7 +170,7 @@ class KoopaTest {
     void kickleftchangesStateToShellMoving() {
         koopa.stomp();
         koopa.kick(false);
-        assertTrue(koopa.getState() == KoopaState.SHELL_MOVING);
+        assertSame(KoopaState.SHELL_MOVING, koopa.getState());
     }
 
     /**
@@ -230,7 +232,7 @@ class KoopaTest {
         koopa.stomp();
         koopa.kick(true);
         koopa.stomp();
-        assertTrue(koopa.getState() == KoopaState.SHELL_MOVING);
+        assertSame(KoopaState.SHELL_MOVING, koopa.getState());
     }
 
     /**

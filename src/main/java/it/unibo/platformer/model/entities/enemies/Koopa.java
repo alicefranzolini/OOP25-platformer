@@ -30,6 +30,7 @@ public final class Koopa extends AbstractEnemyImpl {
      */
     public Koopa(final double x, final double y, final BasicPhysics physics) {
         super(x, y, 32, SPRITE_SIZE, physics);
+        loadAnimations();
         this.state = KoopaState.WALK;
         transitionTo(KoopaState.WALK);
         setVelocityX(-WALK_SPEED);

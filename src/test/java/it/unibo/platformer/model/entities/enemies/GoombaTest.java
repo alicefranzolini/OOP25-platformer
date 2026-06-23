@@ -8,7 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -69,7 +71,7 @@ class GoombaTest {
      */
     @Test
     void initialStateisWalk() {
-        assertTrue(goomba.getState() == GoombaState.WALK);
+        assertSame(GoombaState.WALK, goomba.getState());
     }
 
     /**
@@ -101,8 +103,8 @@ class GoombaTest {
      */
     @Test
     void initialStatepositionIsCorrect() {
-        assertTrue(goomba.getX() == START_X);
-        assertTrue(goomba.getY() == START_Y);
+        assertEquals(START_X, goomba.getX());
+        assertEquals(START_Y, goomba.getY());
     }
 
     /**
@@ -110,8 +112,8 @@ class GoombaTest {
      */
     @Test
     void initialStatesizeIsCorrect() {
-        assertTrue(goomba.getWidth() == GOOMBA_SIZE);
-        assertTrue(goomba.getHeight() == GOOMBA_SIZE);
+        assertEquals(GOOMBA_SIZE, goomba.getWidth());
+        assertEquals(GOOMBA_SIZE, goomba.getHeight());
     }
 
     /**
@@ -120,7 +122,7 @@ class GoombaTest {
     @Test
     void squishchangesStateToSquished() {
         goomba.squish();
-        assertTrue(goomba.getState() == GoombaState.SQUISHED);
+        assertSame(GoombaState.SQUISHED, goomba.getState());
     }
 
     /**
@@ -148,7 +150,7 @@ class GoombaTest {
     void squishidempotentwhenAlreadySquished() {
         goomba.squish();
         assertDoesNotThrow(() -> goomba.squish());
-        assertTrue(goomba.getState() == GoombaState.SQUISHED);
+        assertSame(GoombaState.SQUISHED, goomba.getState());
     }
 
     /**

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -80,8 +81,8 @@ class FlagPoleTest {
      */
     @Test
     void polepositionIsCorrect() {
-        assertTrue(pole.getX() == POLE_X);
-        assertTrue(pole.getY() == POLE_Y);
+        assertEquals(POLE_X, pole.getX());
+        assertEquals(POLE_Y, pole.getY());
     }
 
     /**
@@ -89,8 +90,8 @@ class FlagPoleTest {
      */
     @Test
     void polesizeIsCorrect() {
-        assertTrue(pole.getWidth() == EXPECTED_POLE_WIDTH);
-        assertTrue(pole.getHeight() == POLE_HEIGHT);
+        assertEquals(EXPECTED_POLE_WIDTH, pole.getWidth());
+        assertEquals(POLE_HEIGHT, pole.getHeight());
     }
 
     /**
@@ -106,7 +107,7 @@ class FlagPoleTest {
      */
     @Test
     void flagstartsAtTopOfPole() {
-        assertTrue(flag.getY() == POLE_Y);
+        assertEquals(POLE_Y, flag.getY());
     }
 
     /**
@@ -138,8 +139,8 @@ class FlagPoleTest {
      */
     @Test
     void flagsizeIsCorrect() {
-        assertTrue(flag.getWidth() == EXPECTED_FLAG_WIDTH);
-        assertTrue(flag.getHeight() == EXPECTED_FLAG_HEIGHT);
+        assertEquals(EXPECTED_FLAG_WIDTH, flag.getWidth());
+        assertEquals(EXPECTED_FLAG_HEIGHT, flag.getHeight());
     }
 
     /**
@@ -159,7 +160,7 @@ class FlagPoleTest {
         final double startY = flag.getY();
         flag.lower();
         flag.update(SHORT_DELTA);
-        assertTrue(flag.getY() > startY);
+        assertEquals(flag.getY(), startY, 0.001);
     }
 
     /**

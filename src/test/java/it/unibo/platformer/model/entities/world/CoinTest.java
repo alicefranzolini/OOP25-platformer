@@ -5,9 +5,9 @@ import it.unibo.platformer.model.physics.api.GameObject;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * Unit tests for {@link Coin}.
  *
@@ -76,8 +76,8 @@ class CoinTest {
     @Test
     void stationaryCoinpositionIsCorrect() {
         final Coin coin = new Coin(NCOIN_X, NNCOIN_Y, new NoOpPhysics());
-        assertTrue(coin.getX() == NCOIN_X);
-        assertTrue(coin.getY() == NNCOIN_Y);
+        assertEquals(NCOIN_X, coin.getX());
+        assertEquals(NNCOIN_Y, coin.getY());
     }
 
     /**
@@ -86,8 +86,8 @@ class CoinTest {
     @Test
     void stationaryCoinsizeIsCorrect() {
         final Coin coin = new Coin(COIN_X, COIN_Y, new NoOpPhysics());
-        assertTrue(coin.getWidth() == COIN_SIZE);
-        assertTrue(coin.getHeight() == COIN_SIZE);
+        assertEquals(COIN_SIZE, coin.getWidth());
+        assertEquals(COIN_SIZE, coin.getHeight());
     }
 
     /**
