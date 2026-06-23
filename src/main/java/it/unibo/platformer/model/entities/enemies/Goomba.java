@@ -50,14 +50,10 @@ public final class Goomba extends AbstractEnemyImpl {
         if (frame1 != null && frame2 != null) {
             getAnim().register("walk",
                     new Animation(new Image[]{frame1, frame2}, FRAME_DURATION, true));
-        } else {
-            //System.err.println("[Goomba] Walk sprites not found – using fallback.");
         }
         if (dead != null) {
             getAnim().register("squished",
                     new Animation(new Image[]{dead}, SQUISH_TIME, false));
-        } else {
-            //System.err.println("[Goomba] Squish sprite not found – using fallback.");
         }
     }
 
