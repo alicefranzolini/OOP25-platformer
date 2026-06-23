@@ -3,6 +3,7 @@ package it.unibo.platformer.model.physics.api;
 /**
  * This class create the physics for the objects.
  */
+@FunctionalInterface
 public interface BasicPhysics {
 
     /**
