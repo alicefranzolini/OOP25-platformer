@@ -35,6 +35,7 @@ public final class Goomba extends AbstractEnemyImpl {
      */
     public Goomba(final double x, final double y, final BasicPhysics physics) {
         super(x, y, 32, 32, physics);
+        loadAnimations();
         this.state = GoombaState.WALK;
         transitionTo(GoombaState.WALK);
         setVelocityX(-WALK_SPEED);
@@ -50,13 +51,13 @@ public final class Goomba extends AbstractEnemyImpl {
             getAnim().register("walk",
                     new Animation(new Image[]{frame1, frame2}, FRAME_DURATION, true));
         } else {
-            System.err.println("[Goomba] Walk sprites not found – using fallback.");
+            //System.err.println("[Goomba] Walk sprites not found – using fallback.");
         }
         if (dead != null) {
             getAnim().register("squished",
                     new Animation(new Image[]{dead}, SQUISH_TIME, false));
         } else {
-            System.err.println("[Goomba] Squish sprite not found – using fallback.");
+            //System.err.println("[Goomba] Squish sprite not found – using fallback.");
         }
     }
 

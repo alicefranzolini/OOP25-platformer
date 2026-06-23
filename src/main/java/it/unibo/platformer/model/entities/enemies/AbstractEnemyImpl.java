@@ -37,7 +37,6 @@ public abstract class AbstractEnemyImpl extends AbstractDynamicEntity implements
     protected AbstractEnemyImpl(final double x, final double y, final double width, final double height, 
                                 final BasicPhysics physics) {
         super(x, y, width, height, physics);
-        loadAnimations();
     }
 
     /**
