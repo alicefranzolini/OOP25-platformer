@@ -45,7 +45,7 @@ public abstract class AbstractDynamicEntity extends AbstractEntity {
 
     /** {@inheritDoc} */
     @Override
-    public double getY() { 
+    public final double getY() {
         return gameObject.getPosition().getY();
     }
 
@@ -57,7 +57,7 @@ public abstract class AbstractDynamicEntity extends AbstractEntity {
 
     /** {@inheritDoc} */
     @Override
-    public double getHeight() {
+    public final double getHeight() {
         return gameObject.getHeight();
     }
 
@@ -122,14 +122,14 @@ public abstract class AbstractDynamicEntity extends AbstractEntity {
     /**
      * @param vx the new horizontal velocity
      */
-    public void setVelocityX(final double vx) {
+    public final void setVelocityX(final double vx) {
         gameObject.getSpeed().setX((float) vx);
     }
 
     /**
      * @param vy the new vertical velocity
      */
-    public void setVelocityY(final double vy) {
+    public final void setVelocityY(final double vy) {
         gameObject.getSpeed().setY((float) vy);
     }
 
@@ -150,7 +150,7 @@ public abstract class AbstractDynamicEntity extends AbstractEntity {
     /**
      * @param g true to enable gravity for this entity, false to disable it
      */
-    public void setAffectedByGravity(final boolean g) {
+    public final void setAffectedByGravity(final boolean g) {
         this.affectedByGravity = g;
     }
 

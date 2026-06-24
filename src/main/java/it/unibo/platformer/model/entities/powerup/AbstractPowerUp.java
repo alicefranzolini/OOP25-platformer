@@ -20,7 +20,7 @@ public abstract class AbstractPowerUp extends AbstractDynamicEntity implements P
     protected static final double EMERGE_SPEED = -40.0;
 
     private boolean emerging;
-    private double emergeTarget;
+    private final double emergeTarget;
 
     /**
      * Creates a power-up with emergence movement enabled.
@@ -43,7 +43,7 @@ public abstract class AbstractPowerUp extends AbstractDynamicEntity implements P
         setVelocityY(EMERGE_SPEED);
         setAffectedByGravity(false);
         this.emerging = true;
-        this.emergeTarget = getY() - getHeight();
+        this.emergeTarget = y - height;
     }
 
     /**
