@@ -147,7 +147,7 @@ class KoopaTest {
     @Test
     void stompidempotentwhenAlreadyShell() {
         koopa.stomp();
-        assertDoesNotThrow(() -> koopa.stomp());
+        assertDoesNotThrow(koopa::stomp);
         assertSame(KoopaState.SHELL, koopa.getState());
     }
 

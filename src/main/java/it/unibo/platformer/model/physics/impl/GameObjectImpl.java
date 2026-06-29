@@ -6,8 +6,8 @@ import it.unibo.platformer.model.physics.api.GameObject;
  * This class implements GameObject.
  */
 public final class GameObjectImpl implements GameObject {
-    private VectorImpl position;
-    private VectorImpl speed;
+    private final VectorImpl position;
+    private final VectorImpl speed;
     private float width;
     private float height;
     private boolean onGround;
@@ -60,11 +60,19 @@ public final class GameObjectImpl implements GameObject {
         return this.height;
     }
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    value = "EI_EXPOSE_REP",
+    justification = "Intentional: callers mutate position and speed via setX/setY"
+    )
     @Override
     public VectorImpl getPosition() {
         return this.position;
     }
 
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    value = "EI_EXPOSE_REP",
+    justification = "Intentional: callers mutate position and speed via setX/setY"
+    )
     @Override
     public VectorImpl getSpeed() {
         return this.speed;

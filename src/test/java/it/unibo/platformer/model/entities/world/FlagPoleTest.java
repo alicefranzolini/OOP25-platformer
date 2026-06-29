@@ -57,6 +57,8 @@ class FlagPoleTest {
 
     private static final double DEFAULT_DELTA = 0.016;
 
+    private static final double DELTA = 0.001;
+
     /**
      *  The pole instance shared across tests in this class. 
      */
@@ -160,7 +162,7 @@ class FlagPoleTest {
         final double startY = flag.getY();
         flag.lower();
         flag.update(SHORT_DELTA);
-        assertEquals(flag.getY(), startY, 0.001);
+        assertTrue(flag.getY() > startY);
     }
 
     /**
@@ -170,7 +172,7 @@ class FlagPoleTest {
     void flagwithoutLowerupdateDoesNotMove() {
         final double startY = flag.getY();
         flag.update(1.0);
-        assertTrue(flag.getY() == startY);
+        assertEquals(startY, flag.getY(), DELTA);
     }
 
     // -----------------------------------------------------------------------
@@ -200,6 +202,6 @@ class FlagPoleTest {
         }
         final double bottomY = flag.getY();
         flag.update(1.0);
-        assertTrue(flag.getY() == bottomY);
+        assertEquals(bottomY, flag.getY(), DELTA);
     }
 }

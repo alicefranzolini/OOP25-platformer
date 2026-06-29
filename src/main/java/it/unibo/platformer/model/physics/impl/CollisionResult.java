@@ -4,9 +4,9 @@ package it.unibo.platformer.model.physics.impl;
  * This class give the side of the collision.
  */
 public final class CollisionResult {
-    private GameObjectImpl dynamicObj;
-    private GameObjectImpl staticObj;
-    private CollisionSide side;
+    private final GameObjectImpl dynamicObj;
+    private final GameObjectImpl staticObj;
+    private final CollisionSide side;
 
     /**
      * the builder of the collision result.

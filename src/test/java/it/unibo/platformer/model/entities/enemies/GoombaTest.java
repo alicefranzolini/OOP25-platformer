@@ -149,7 +149,7 @@ class GoombaTest {
     @Test
     void squishidempotentwhenAlreadySquished() {
         goomba.squish();
-        assertDoesNotThrow(() -> goomba.squish());
+        assertDoesNotThrow(goomba::squish);
         assertSame(GoombaState.SQUISHED, goomba.getState());
     }
 

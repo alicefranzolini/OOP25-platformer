@@ -31,7 +31,7 @@ class TestPowerUps {
     private BasicPhysics physics;
 
     @BeforeEach
-    void setup() {
+    void setUp() {
         physics = new BasicPhysicsImpl();
     }
 
